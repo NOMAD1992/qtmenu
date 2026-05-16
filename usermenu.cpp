@@ -16,8 +16,12 @@ UserMenu::UserMenu(QWidget *parent, int menuWidth)
 {
     setAttribute(Qt::WA_StyledBackground, true);
     
-    // Убираем рамку окна
-    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    // Убираем рамку окна и делаем его независимым окном верхнего уровня
+    // Без Qt::Popup - это обычное окно, которое нужно позиционировать вручную
+    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus);
+    
+    // Важно: не закрывать окно при потере фокуса (поведение как у Popup)
+    setAttribute(Qt::WA_ShowWithoutActivating, true);
     
     setupUi();
     setupAnimations();
@@ -140,6 +144,9 @@ void UserMenu::setMenuOffset(int offset)
 
 void UserMenu::showMenu()
 {   
+    // Убеждаемся, что геометрия обновлена перед показом
+    updateMenuGeometry();
+    
     show();
     raise();
     activateWindow();
