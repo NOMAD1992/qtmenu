@@ -87,7 +87,7 @@ QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QW
         "   background-color: transparent;"
         "   color: white;"
         "   border: none;"
-        "   padding: 6px 12px;"
+        "   padding: 2px 4px;"
         "   text-align: left;"
         "   border-radius: 4px;"
         "   font-size: 13px;"

@@ -3,14 +3,17 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
+#include <QStringListModel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_slidingMenu(nullptr)
     , m_userMenu(nullptr)
+    , m_bottomSheet(nullptr)
     , m_menuButton(nullptr)
     , m_userMenuButton(nullptr)
+    , m_listView(nullptr)
 {
     ui->setupUi(this);
     
@@ -19,23 +22,22 @@ MainWindow::MainWindow(QWidget *parent)
     m_menuButton->setToolTip("Открыть меню");
     m_menuButton->setCursor(Qt::PointingHandCursor);
     m_menuButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   padding: 8px 16px;"
-        "   border-radius: 6px;"
-        "   font-size: 14px;"
-        "   font-weight: 500;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   border-color: rgba(255, 255, 255, 80);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}"
-    );
+                "QPushButton {"
+                "   background-color: rgba(255, 255, 255, 30);"
+                "   color: white;"
+                "   border: 1px solid rgba(255, 255, 255, 50);"
+                "   padding: 2px 4px;"
+                "   border-radius: 2px;"
+                "   font-size: 12px;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgba(255, 255, 255, 50);"
+                "   border-color: rgba(255, 255, 255, 80);"
+                "}"
+                "QPushButton:pressed {"
+                "   background-color: rgba(255, 255, 255, 20);"
+                "}"
+                );
     connect(m_menuButton, &QPushButton::clicked, this, &MainWindow::toggleMenu);
     
     // Добавляем кнопку меню в верхнюю панель (слева)
@@ -43,26 +45,26 @@ MainWindow::MainWindow(QWidget *parent)
     ui->m_menuBarLayout->addStretch();
     
     // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
-    m_userMenuButton = new QPushButton("👤", this);
+    m_userMenuButton = new QPushButton("☰", this);
     m_userMenuButton->setToolTip("Профиль пользователя");
     m_userMenuButton->setCursor(Qt::PointingHandCursor);
-    m_userMenuButton->setFixedSize(40, 40);
     m_userMenuButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 6px;"
-        "   font-size: 18px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   border-color: rgba(255, 255, 255, 80);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}"
-    );
+                "QPushButton {"
+                "   background-color: rgba(255, 255, 255, 30);"
+                "   color: white;"
+                "   border: 1px solid rgba(255, 255, 255, 50);"
+                "   padding: 2px 4px;"
+                "   border-radius: 2px;"
+                "   font-size: 12px;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgba(255, 255, 255, 50);"
+                "   border-color: rgba(255, 255, 255, 80);"
+                "}"
+                "QPushButton:pressed {"
+                "   background-color: rgba(255, 255, 255, 20);"
+                "}"
+                );
     connect(m_userMenuButton, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
     
     // Добавляем кнопку пользователя в правую часть верхней панели
@@ -172,11 +174,36 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitBtn, &QPushButton::clicked, []() {
         qDebug() << "Exit clicked";
     });
+    
+    // Создаем нижнюю полупрозрачную шторку (всегда открыта)
+    m_bottomSheet = new BottomSheet(this);
+    
+    // Создаем QListView для отображения сообщений вместо QDebug
+    m_listView = new QListView(this);
+    QStringListModel *model = new QStringListModel(this);
+    m_listView->setModel(model);
+    
+    // Добавляем listView в шторку
+    addListView(m_listView);
+    
+    // Добавляем тестовые сообщения
+    QStringList messages;
+    messages << "Сообщение 1: Приложение запущено"
+             << "Сообщение 2: Меню инициализировано"
+             << "Сообщение 3: Шторка готова к работе";
+    model->setStringList(messages);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addListView(QListView *view)
+{
+    if (m_bottomSheet) {
+        m_bottomSheet->addListView(view);
+    }
 }
 
 void MainWindow::toggleMenu()
