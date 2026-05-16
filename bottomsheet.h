@@ -5,6 +5,7 @@
 #include <QListView>
 #include <QVBoxLayout>
 #include <QMouseEvent>
+#include <QLabel>
 
 class BottomSheet : public QWidget
 {
@@ -22,6 +23,12 @@ public:
     
     // Метод для обновления максимальной высоты (вызывается из MainWindow)
     void updateMaxHeight(int maxHeight);
+    
+    // Метод для настройки прозрачности фона (0-255)
+    void setOpacity(int alpha);
+    
+    // Метод для установки текста на ручке перетаскивания
+    void setHandleText(const QString &text);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -41,6 +48,7 @@ private:
 
     // Элементы интерфейса
     QWidget *m_handleWidget;      // Узкая полоска сверху для перетаскивания
+    QLabel *m_handleLabel;        // Надпись на ручке
     QListView *m_listView;
     QVBoxLayout *m_mainLayout;
 
@@ -49,6 +57,7 @@ private:
     int m_minHeight;
     int m_maxHeight;
     int m_menubarHeight;  // Высота верхней панели меню
+    int m_opacity;        // Прозрачность фона (0-255)
     
     // Для перетаскивания
     bool m_dragging;

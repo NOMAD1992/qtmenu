@@ -7,6 +7,7 @@
 BottomSheet::BottomSheet(QWidget *parent)
     : QWidget(parent)
     , m_handleWidget(nullptr)
+    , m_handleLabel(nullptr)
     , m_listView(nullptr)
     , m_mainLayout(nullptr)
     , m_isVisible(true)  // Шторка всегда открыта по умолчанию
@@ -14,6 +15,7 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_minHeight(100)   // Минимальная высота
     , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
     , m_menubarHeight(0) // Высота menubar будет определена динамически
+    , m_opacity(200)     // Прозрачность по умолчанию (200 из 255)
     , m_dragging(false)
     , m_dragStartY(0)
     , m_startHeight(0)
@@ -58,6 +60,18 @@ void BottomSheet::setupUi()
     m_handleWidget->setFixedHeight(20);  // Высота полоски для захвата
     m_handleWidget->setCursor(Qt::SizeVerCursor);  // Курсор изменения размера
     
+    // Добавляем надпись на ручку
+    m_handleLabel = new QLabel("Лог", m_handleWidget);
+    m_handleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    m_handleLabel->setStyleSheet(
+        "QLabel {"
+        "   color: rgba(255, 255, 255, 150);"
+        "   font-size: 10px;"
+        "   padding-left: 8px;"
+        "}"
+    );
+    m_handleLabel->raise();  // Поднимаем label над фоном
+    
     // Добавляем ручку в layout
     m_mainLayout->addWidget(m_handleWidget);
     
@@ -66,12 +80,12 @@ void BottomSheet::setupUi()
 
 void BottomSheet::applyStyles()
 {
-    // Полупрозрачный фон в стиле шторки
+    // Полупрозрачный фон в стиле шторки с настраиваемой прозрачностью
     setStyleSheet(
-        "BottomSheet {"
-        "   background-color: rgba(40, 40, 40, 200);"
-        "   border: none;"
-        "}"
+        QString("BottomSheet {") +
+        QString("   background-color: rgba(40, 40, 40, %1);").arg(m_opacity) +
+        QString("   border: none;") +
+        QString("}")
     );
     
     // Стиль для ручки (полоски сверху)
@@ -225,4 +239,17 @@ void BottomSheet::recalculateMaxHeight()
 void BottomSheet::updateMaxHeight(int maxHeight)
 {
     m_maxHeight = qMax(m_minHeight, maxHeight);
+}
+
+void BottomSheet::setOpacity(int alpha)
+{
+    m_opacity = qBound(0, alpha, 255);
+    applyStyles();
+}
+
+void BottomSheet::setHandleText(const QString &text)
+{
+    if (m_handleLabel) {
+        m_handleLabel->setText(text);
+    }
 }
