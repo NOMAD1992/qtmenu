@@ -20,7 +20,7 @@ UserMenu::UserMenu(QWidget *parent, int menuWidth)
     // Убираем рамку окна и тень, но не используем Qt::Popup чтобы сохранить прозрачность
     // Qt::FramelessWindowHint - убирает рамку окна
     // Qt::NoDropShadowWindowHint - отключает тень (может мешать прозрачности)
-    setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Tool);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
     
     setupUi();
     setupAnimations();
@@ -239,11 +239,8 @@ void UserMenu::focusOutEvent(QFocusEvent *event)
     // Проверяем, что фокус перешел не на дочерний виджет этого меню
     if (event->reason() == Qt::MouseFocusReason) {
         QWidget *newFocusWidget = QApplication::focusWidget();
-        if (newFocusWidget && newFocusWidget->isAncestorOf(this)) {
-            // Фокус внутри меню - не закрываем
-            return;
-        }
-        // Проверяем, является ли новый фокус потомком этого меню
+        
+        // Проверяем, является ли новый фокус потомком этого меню или самим меню
         bool focusInsideMenu = false;
         QWidget *current = newFocusWidget;
         while (current) {

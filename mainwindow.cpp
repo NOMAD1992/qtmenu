@@ -240,11 +240,18 @@ void MainWindow::toggleUserMenu()
         
         // Устанавливаем позицию перед показом окна
         m_userMenu->move(menuX, menuY);
-        m_userMenu->showMenu();
-        
-        // Устанавливаем фокус на меню чтобы оно могло ловить события клавиатуры
+        m_userMenu->show();
+        m_userMenu->raise();
         m_userMenu->activateWindow();
-        m_userMenu->setFocus();
+        
+        // Анимация появления
+        m_userMenu->setWindowOpacity(0.0);
+        QPropertyAnimation *anim = new QPropertyAnimation(m_userMenu, "windowOpacity");
+        anim->setDuration(150);
+        anim->setStartValue(0.0);
+        anim->setEndValue(1.0);
+        anim->setEasingCurve(QEasingCurve::OutCubic);
+        anim->start(QPropertyAnimation::DeleteWhenStopped);
     }
 }
 
