@@ -226,27 +226,14 @@ void SlidingMenu::setupAnimations()
     m_opacityEffect = new QGraphicsOpacityEffect(this);
     m_opacityEffect->setOpacity(1.0);
     setGraphicsEffect(m_opacityEffect);
-    
-    // Устанавливаем атрибуты для корректной работы прозрачности
-    setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_NoSystemBackground);
-    
-    // Включаем автозаполнение фона
-    setAutoFillBackground(true);
-    
-    // Создаем палитру с полупрозрачным фоном
-    QPalette palette = this->palette();
-    QColor bgColor(36, 41, 47, 220); // Более непрозрачный фон (220 из 255)
-    palette.setColor(QPalette::Window, bgColor);
-    setPalette(palette);
 }
 
 void SlidingMenu::applyStyles()
 {
-    // Полупрозрачный фон в стиле GitHub (альфа-канал 180 для хорошей прозрачности)
+    // Непрозрачный фон в стиле GitHub
     setStyleSheet(
         "SlidingMenu {"
-        "   background-color: rgba(36, 41, 47, 180);"
+        "   background-color: rgb(36, 41, 47);"
         "   border: none;"
         "}"
     );
