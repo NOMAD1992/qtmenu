@@ -26,8 +26,13 @@ SlideMenu::SlideMenu(QWidget *parent)
     setAttribute(Qt::WA_NoSystemBackground);
     setAutoFillBackground(false);
     
+    // Устанавливаем прозрачную палитру, чтобы избежать фонового заполнения
+    QPalette pal = palette();
+    pal.setBrush(QPalette::Window, Qt::transparent);
+    setPalette(pal);
+    
     // Убираем фон через stylesheet - будем рисовать его вручную в paintEvent
-    setStyleSheet("border-radius: 8px;");
+    setStyleSheet("border-radius: 8px; background: transparent;");
     
     setFixedWidth(300);
     hide();
@@ -236,7 +241,7 @@ void SlideMenu::paintEvent(QPaintEvent *event)
     painter.setRenderHint(QPainter::Antialiasing);
     
     // Рисуем полупрозрачный фон с закругленными углами
-    QColor bgColor(40, 40, 45, 100); // alpha=100 для хорошей прозрачности
+    QColor bgColor(40, 40, 45, 80); // alpha=80 для хорошей прозрачности
     painter.setBrush(bgColor);
     painter.setPen(Qt::NoPen);
     
@@ -244,7 +249,7 @@ void SlideMenu::paintEvent(QPaintEvent *event)
     qreal radius = 8.0;
     painter.drawRoundedRect(rect, radius, radius);
     
-    QFrame::paintEvent(event);
+    // Не вызываем QFrame::paintEvent(event), чтобы не перерисовывать фон
 }
 
 void SlideMenu::onAnimationFinished()
