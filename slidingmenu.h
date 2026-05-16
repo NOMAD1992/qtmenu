@@ -51,9 +51,14 @@ signals:
     void menuHidden();
     void checkBoxToggled(bool checked);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
+
 private slots:
     void onAnimationFinished();
     void onCloseClicked();
+    void updateMenuHeight();
 
 private:
     int menuOffset() const;

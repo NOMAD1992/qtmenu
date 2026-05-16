@@ -1,5 +1,3 @@
-(slidingmenu.cpp is a source file, so no changes needed to .gitignore)
+(slidingmenu.cpp and slidingmenu.h are source files, no build artifacts, dependencies, or temp files detected in the changes)
 
-```gitignore
-
-```
+```(empty)```

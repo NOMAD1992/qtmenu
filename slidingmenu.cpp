@@ -2,6 +2,8 @@
 #include <QHBoxLayout>
 #include <QFrame>
 #include <QScrollArea>
+#include <QResizeEvent>
+#include <QShowEvent>
 
 SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidth)
     : QWidget(parent)
@@ -38,7 +40,9 @@ SlidingMenu::~SlidingMenu()
 
 void SlidingMenu::setupUi()
 {
-    setFixedSize(m_menuWidth, parentWidget() ? parentWidget()->height() : 600);
+    // Устанавливаем фиксированную ширину, но высоту по родителю
+    setFixedWidth(m_menuWidth);
+    updateMenuHeight();
     
     // Основной layout
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -390,4 +394,23 @@ void SlidingMenu::onAnimationFinished()
 void SlidingMenu::onCloseClicked()
 {
     hideMenu();
+}
+
+void SlidingMenu::resizeEvent(QResizeEvent *event)
+{
+    QWidget::resizeEvent(event);
+    updateMenuHeight();
+}
+
+void SlidingMenu::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+    updateMenuHeight();
+}
+
+void SlidingMenu::updateMenuHeight()
+{
+    if (parentWidget()) {
+        setFixedHeight(parentWidget()->height());
+    }
 }
