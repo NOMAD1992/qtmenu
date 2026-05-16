@@ -8,6 +8,7 @@
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QPropertyAnimation>
+#include <QResizeEvent>
 
 class SlidingMenu : public QWidget
 {
@@ -51,9 +52,13 @@ signals:
     void menuHidden();
     void checkBoxToggled(bool checked);
 
+protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
 private slots:
     void onAnimationFinished();
     void onCloseClicked();
+    void updateMenuHeight();
 
 private:
     int menuOffset() const;

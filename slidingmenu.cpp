@@ -23,6 +23,11 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     setupAnimations();
     applyStyles();
     
+    // Устанавливаем фильтр событий для отслеживания изменения размера родительского окна
+    if (parent) {
+        parent->installEventFilter(this);
+    }
+    
     // Начальная позиция (скрыто)
     if (m_direction == SlideDirection::FromLeft) {
         move(-m_menuWidth, 0);
@@ -38,7 +43,9 @@ SlidingMenu::~SlidingMenu()
 
 void SlidingMenu::setupUi()
 {
-    setFixedSize(m_menuWidth, parentWidget() ? parentWidget()->height() : 600);
+    // Устанавливаем высоту равной высоте родительского окна
+    int parentHeight = parentWidget() ? parentWidget()->height() : 600;
+    setFixedSize(m_menuWidth, parentHeight);
     
     // Основной layout
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
@@ -390,4 +397,25 @@ void SlidingMenu::onAnimationFinished()
 void SlidingMenu::onCloseClicked()
 {
     hideMenu();
+}
+
+bool SlidingMenu::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == parentWidget() && event->type() == QEvent::Resize) {
+        updateMenuHeight();
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
+void SlidingMenu::updateMenuHeight()
+{
+    if (!parentWidget()) return;
+    
+    int parentHeight = parentWidget()->height();
+    setFixedSize(m_menuWidth, parentHeight);
+    
+    // Обновляем позицию по Y для меню справа
+    if (m_direction == SlideDirection::FromRight && m_isVisible) {
+        move(parentWidget()->width() - m_menuWidth, 0);
+    }
 }
