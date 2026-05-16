@@ -32,6 +32,7 @@ private:
     void setupUi();
     void applyStyles();
     void installParentEventFilter();
+    void updateSheetWidth();
     void updateSheetHeight(int height);
 
     // Элементы интерфейса
