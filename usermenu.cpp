@@ -74,6 +74,9 @@ QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QW
     btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     btn->setMinimumHeight(32);
     
+    // Закрывать меню при нажатии на кнопку
+    connect(btn, &QPushButton::clicked, this, &UserMenu::hideMenu);
+    
     if (!icon.isNull()) {
         btn->setIcon(icon);
         btn->setIconSize(QSize(16, 16));

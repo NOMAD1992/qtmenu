@@ -1,1 +1,38 @@
-Nothing should be ignored based on the provided file changes. The modified files ('usermenu.cpp', 'usermenu.h') are source code files that should not be added to .gitignore. Since there are no build artifacts, dependencies, or temporary files in the changes, no additional ignore rules are needed.
+```
+# Build artifacts
+build/
+CMakeCache.txt
+
+# Compiled files
+*.o
+*.obj
+*.a
+*.so
+*.dll
+*.exe
+*.out
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+target/
+.gradle/
+
+# Logs and temp files
+*.log
+*.tmp
+*.swp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+```
