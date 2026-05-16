@@ -57,6 +57,7 @@ void BottomSheet::setupUi()
     
     // Создаем узкую полоску-ручку сверху для перетаскивания
     m_handleWidget = new QWidget(this);
+    m_handleWidget->setStyleSheet("background-color: black;");
     m_handleWidget->setFixedHeight(20);  // Высота полоски для захвата
     m_handleWidget->setCursor(Qt::SizeVerCursor);  // Курсор изменения размера
     
@@ -88,11 +89,11 @@ void BottomSheet::applyStyles()
         QString("}")
     );
     
-    // Стиль для ручки (полоски сверху)
+    // Стиль для ручки (полоски сверху) - только граница, фон задан в setupUi()
     if (m_handleWidget) {
         m_handleWidget->setStyleSheet(
             "QWidget {"
-            "   background-color: rgba(255, 255, 255, 30);"
+            "   background-color: black;"
             "   border-bottom: 1px solid rgba(255, 255, 255, 50);"
             "}"
         );
