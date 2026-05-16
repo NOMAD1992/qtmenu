@@ -48,6 +48,7 @@ private:
     
     // Вспомогательный метод для создания кнопки
     QPushButton* createButton(const QString &text, const QPixmap &icon, QWidget *parent);
+    int calculateOptimalWidth() const;
 
     int m_menuWidth;
     
