@@ -222,13 +222,23 @@ void SlidingMenu::setupAnimations()
     m_animation->setEasingCurve(QEasingCurve::OutCubic);
     connect(m_animation, &QPropertyAnimation::finished, this, &SlidingMenu::onAnimationFinished);
     
-    // Эффект прозрачности - устанавливаем начальную непрозрачность 1.0
+    // Эффект прозрачности
     m_opacityEffect = new QGraphicsOpacityEffect(this);
     m_opacityEffect->setOpacity(1.0);
     setGraphicsEffect(m_opacityEffect);
     
-    // Устанавливаем атрибут для корректной работы прозрачности
+    // Устанавливаем атрибуты для корректной работы прозрачности
     setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_NoSystemBackground);
+    
+    // Включаем автозаполнение фона
+    setAutoFillBackground(true);
+    
+    // Создаем палитру с полупрозрачным фоном
+    QPalette palette = this->palette();
+    QColor bgColor(36, 41, 47, 220); // Более непрозрачный фон (220 из 255)
+    palette.setColor(QPalette::Window, bgColor);
+    setPalette(palette);
 }
 
 void SlidingMenu::applyStyles()
