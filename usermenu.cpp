@@ -79,7 +79,7 @@ QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QW
     
     if (!icon.isNull()) {
         btn->setIcon(icon);
-        btn->setIconSize(QSize(16, 16));
+        btn->setIconSize(QSize(24, 24));
     }
     
     btn->setStyleSheet(

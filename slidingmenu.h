@@ -31,9 +31,9 @@ public:
     void setIcon(const QPixmap &icon);
     
     // Методы для создания элементов меню (возвращают указатели на созданные объекты)
-    QPushButton* addButton(const QString &text);
+    QPushButton* addButton(const QString &text, const QPixmap &icon = QPixmap());
     QCheckBox* addCheckBox(const QString &text);
-    QMenu* addMenu(const QString &title);
+    QMenu* addMenu(const QString &title, const QPixmap &icon);
     void addSplitter();
     
     // Показать/скрыть меню
@@ -75,7 +75,7 @@ private:
     void installParentEventFilter();
     
     // Вспомогательный метод для создания кнопки
-    QPushButton* createButton(const QString &text, QWidget *parent);
+    QPushButton* createButton(const QString &text, const QPixmap &icon, QWidget *parent);
 
     // Направление скольжения
     SlideDirection m_direction;

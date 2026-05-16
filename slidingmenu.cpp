@@ -123,10 +123,15 @@ void SlidingMenu::applyStyles()
     );
 }
 
-QPushButton* SlidingMenu::createButton(const QString &text, QWidget *parent)
+QPushButton* SlidingMenu::createButton(const QString &text, const QPixmap &icon, QWidget *parent)
 {
     QPushButton *btn = new QPushButton(text, parent);
     btn->setCursor(Qt::PointingHandCursor);
+    btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    if (!icon.isNull()) {
+        btn->setIcon(icon);
+        btn->setIconSize(QSize(24, 24));
+    }
     btn->setStyleSheet(
         "QPushButton {"
         "   background-color: rgba(255, 255, 255, 50);"
@@ -143,7 +148,7 @@ QPushButton* SlidingMenu::createButton(const QString &text, QWidget *parent)
     return btn;
 }
 
-QPushButton* SlidingMenu::addButton(const QString &text)
+QPushButton* SlidingMenu::addButton(const QString &text, const QPixmap &icon)
 {
     QWidget *contentWidget = findChild<QScrollArea*>()->widget();
     if (!contentWidget || !m_contentLayout) return nullptr;
@@ -155,7 +160,7 @@ QPushButton* SlidingMenu::addButton(const QString &text)
         delete lastItem;
     }
     
-    QPushButton *btn = createButton(text, contentWidget);
+    QPushButton *btn = createButton(text, icon, contentWidget);
     m_contentLayout->addWidget(btn);
     m_buttons.append(btn);
     
@@ -203,7 +208,7 @@ QCheckBox* SlidingMenu::addCheckBox(const QString &text)
     return m_checkBox;
 }
 
-QMenu* SlidingMenu::addMenu(const QString &title)
+QMenu* SlidingMenu::addMenu(const QString &title, const QPixmap &icon)
 {
     QWidget *contentWidget = findChild<QScrollArea*>()->widget();
     if (!contentWidget || !m_contentLayout) return nullptr;
@@ -248,7 +253,7 @@ QMenu* SlidingMenu::addMenu(const QString &title)
     );
     
     // Кнопка для открытия меню
-    QPushButton *menuButton = createButton(QString("%1 ▷").arg(title), contentWidget);
+    QPushButton *menuButton = createButton(QString("%1 ▷").arg(title), icon, contentWidget);
     connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
         m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });

@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/documentation.png</file>
+        <file>img/documentation_v2.png</file>
+        <file>img/exit.png</file>
+        <file>img/relogin.jpg</file>
+        <file>img/screen_resolution.png</file>
+        <file>img/users.png</file>
+    </qresource>
+</RCC>

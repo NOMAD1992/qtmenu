@@ -71,7 +71,7 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton *dashboardBtn = m_slidingMenu->addButton("Dashboard");
     QPushButton *repositoriesBtn = m_slidingMenu->addButton("Repositories");
     QPushButton *projectsBtn = m_slidingMenu->addButton("Projects");
-    QPushButton *settingsBtn = m_slidingMenu->addButton("Settings");
+    QPushButton *settingsBtn = m_slidingMenu->addButton("О программе", QPixmap(":/img/documentation.png"));
     
     // Добавляем разделитель
     m_slidingMenu->addSplitter();
@@ -85,7 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(framelessCheckBox_, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
     
     // Добавляем меню с действиями
-    QMenu *actionsMenu = m_slidingMenu->addMenu("Actions Menu");
+    QMenu *actionsMenu = m_slidingMenu->addMenu("Документация", QPixmap(":/img/documentation_v2.png"));
     
     // Настраиваем созданное меню (добавляем пункты и подменю)
     if (actionsMenu) {
@@ -105,7 +105,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     
     // Добавляем меню "Разрешение" с подменю для смены разрешения окна
-    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение");
+    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение", QPixmap(":/img/screen_resolution.png"));
     
     if (resolutionMenu) {
         // Создаем группу действий для взаимоисключающего выбора
@@ -165,15 +165,9 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Создаем выпадающее меню пользователя справа
     m_userMenu = new UserMenu(this, 180);
-    
-    // Добавляем иконки для кнопок пользователя
-    QPixmap usersIcon(16, 16);
-    usersIcon.fill(Qt::transparent);
-    QPixmap exitIcon(16, 16);
-    exitIcon.fill(Qt::transparent);
-    
+       
     // Кнопка "Пользователи"
-    QPushButton *usersBtn = m_userMenu->addButton("Пользователи", usersIcon);
+    QPushButton *usersBtn = m_userMenu->addButton("Пользователи", QPixmap(":/img/users.png"));
     connect(usersBtn, &QPushButton::clicked, []() {
         qDebug() << "Users clicked";
     });
@@ -182,7 +176,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_userMenu->addSplitter();
 
     // Кнопка "Релогин"
-    QPushButton *reloginBtn = m_userMenu->addButton("Сменить пользователя", usersIcon);
+    QPushButton *reloginBtn = m_userMenu->addButton("Сменить пользователя", QPixmap(":/img/relogin.jpg"));
     connect(reloginBtn, &QPushButton::clicked, []() {
         qDebug() << "User relogin";
     });
@@ -191,7 +185,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_userMenu->addSplitter();
     
     // Кнопка "Выход"
-    QPushButton *exitBtn = m_userMenu->addButton("Выход", exitIcon);
+    QPushButton *exitBtn = m_userMenu->addButton("Выход", QPixmap(":/img/exit.png"));
     connect(exitBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
     
     // Создаем нижнюю полупрозрачную шторку (всегда открыта)
