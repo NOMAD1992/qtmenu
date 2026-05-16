@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "slidingmenu.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -15,8 +16,13 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+private slots:
+    void toggleMenu();
+
 private:
     Ui::MainWindow *ui;
+    SlidingMenu *m_slidingMenu;
+    QPushButton *m_menuButton;
 };
 
 #endif // MAINWINDOW_H
