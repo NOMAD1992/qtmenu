@@ -18,10 +18,6 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
-        menubutton.h
-        menubutton.cpp
-        slidemenu.h
-        slidemenu.cpp
         mainwindow.ui
 )
 

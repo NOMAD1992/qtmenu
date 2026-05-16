@@ -15,9 +15,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
-    void setupMenuBar();   // вызывается из конструктора
-
 private:
     Ui::MainWindow *ui;
 };
