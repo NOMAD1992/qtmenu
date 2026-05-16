@@ -39,8 +39,20 @@ void HorizontalMenu::repositionSubMenu()
     if (!parentMenu)
         return;
 
+    // Получаем активное действие в родительском меню
+    QAction *activeAction = parentMenu->activeAction();
+    if (!activeAction)
+        return;
+
+    // Получаем геометрию активного действия
+    QRect actionRect = parentMenu->actionGeometry(activeAction);
+    
     // Получаем геометрию родительского меню
     QRect parentGeometry = parentMenu->geometry();
+    
+    // Вычисляем позицию для отображения подменю справа от активного действия
+    int x = parentGeometry.left() + parentGeometry.width();
+    int y = parentGeometry.top() + actionRect.y();
     
     // Определяем, с какой стороны экрана находится родительское меню
     QScreen *screen = QApplication::screenAt(parentGeometry.center());
@@ -48,10 +60,6 @@ void HorizontalMenu::repositionSubMenu()
         screen = QApplication::primaryScreen();
     
     QRect screenGeometry = screen->availableGeometry();
-    
-    // Вычисляем позицию для отображения подменю справа
-    int x = parentGeometry.right();
-    int y = parentGeometry.top();
     
     // Проверяем, помещается ли меню справа
     if (x + width() > screenGeometry.right()) {
