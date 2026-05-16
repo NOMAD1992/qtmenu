@@ -216,7 +216,8 @@ bool UserMenu::eventFilter(QObject *obj, QEvent *event)
         if (clickedWidget && !isAncestorOf(clickedWidget) && clickedWidget != this) {
             m_isVisible = false;
             hideMenu();
-            return true;
+            // Возвращаем false, чтобы событие клика прошло дальше к другим виджетам
+            return false;
         }
     }
     

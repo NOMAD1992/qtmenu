@@ -9,8 +9,13 @@ build/
 CMakeFiles/
 CMakeCache.txt
 cmake_install.cmake
-Makefile
 
 # Generated files
 *_autogen/
+
+# Executables
+*.exe
+*.dll
+*.so
+*.a
 ```
