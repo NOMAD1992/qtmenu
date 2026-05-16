@@ -16,6 +16,7 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     , m_checkBox(nullptr)
     , m_menu(nullptr)
     , m_separator(nullptr)
+    , m_contentLayout(nullptr)
     , m_animation(nullptr)
     , m_isVisible(false)
 {
@@ -84,136 +85,17 @@ void SlidingMenu::setupUi()
     scrollArea->setStyleSheet("border: none; background-color: transparent;");
     
     QWidget *contentWidget = new QWidget();
-    QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
-    contentLayout->setContentsMargins(15, 10, 15, 10);
-    contentLayout->setSpacing(15);
+    m_contentLayout = new QVBoxLayout(contentWidget);
+    m_contentLayout->setContentsMargins(15, 10, 15, 10);
+    m_contentLayout->setSpacing(15);
     
     // Разделитель после заголовка
     QFrame *separator1 = new QFrame(contentWidget);
     separator1->setFrameShape(QFrame::HLine);
     separator1->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
-    contentLayout->addWidget(separator1);
+    m_contentLayout->addWidget(separator1);
     
-    // Контейнер для кнопок
-    QVBoxLayout *buttonsLayout = new QVBoxLayout();
-    buttonsLayout->setSpacing(8);
-    contentLayout->addLayout(buttonsLayout);
-    
-    // Создаем 3 кнопки по умолчанию
-    for (int i = 0; i < 3; ++i) {
-        QPushButton *btn = new QPushButton(QString("Button %1").arg(i + 1), contentWidget);
-        btn->setCursor(Qt::PointingHandCursor);
-        btn->setStyleSheet(
-            "QPushButton {"
-            "   background-color: rgba(255, 255, 255, 50);"
-            "   color: white;"
-            "   border: none;"
-            "   padding: 10px;"
-            "   text-align: left;"
-            "   border-radius: 5px;"
-            "}"
-            "QPushButton:hover {"
-            "   background-color: rgba(255, 255, 255, 80);"
-            "}"
-        );
-        buttonsLayout->addWidget(btn);
-        m_buttons.append(btn);
-    }
-    
-    contentLayout->addLayout(buttonsLayout);
-    
-    // Чекбокс с подписью
-    m_checkBox = new QCheckBox("Enable feature", contentWidget);
-    m_checkBox->setCursor(Qt::PointingHandCursor);
-    m_checkBox->setStyleSheet(
-        "QCheckBox {"
-        "   color: white;"
-        "   font-size: 14px;"
-        "   spacing: 8px;"
-        "}"
-        "QCheckBox::indicator {"
-        "   width: 18px;"
-        "   height: 18px;"
-        "   border-radius: 4px;"
-        "   border: 2px solid rgba(255, 255, 255, 150);"
-        "   background-color: transparent;"
-        "}"
-        "QCheckBox::indicator:checked {"
-        "   background-color: rgba(100, 200, 100, 200);"
-        "}"
-    );
-    connect(m_checkBox, &QCheckBox::toggled, this, &SlidingMenu::checkBoxToggled);
-    contentLayout->addWidget(m_checkBox);
-    
-    // Разделитель перед меню
-    QFrame *separator2 = new QFrame(contentWidget);
-    separator2->setFrameShape(QFrame::HLine);
-    separator2->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
-    contentLayout->addWidget(separator2);
-    m_separator = separator2;
-    
-    // QMenu с возможностью создания подменю
-    m_menu = new QMenu(contentWidget);
-    m_menu->setTitle("Actions Menu");
-    m_menu->setStyleSheet(
-        "QMenu {"
-        "   background-color: rgba(50, 50, 50, 200);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 5px;"
-        "   padding: 5px;"
-        "}"
-        "QMenu::item {"
-        "   padding: 8px 20px;"
-        "   border-radius: 3px;"
-        "}"
-        "QMenu::item:selected {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "}"
-        "QMenu::separator {"
-        "   height: 1px;"
-        "   background: rgba(255, 255, 255, 50);"
-        "   margin: 5px;"
-        "}"
-    );
-    
-    // Добавляем действия в меню с подменю
-    QAction *action1 = m_menu->addAction("Action 1");
-    QAction *action2 = m_menu->addAction("Action 2");
-    
-    QMenu *subMenu = m_menu->addMenu("Submenu");
-    subMenu->addAction("Sub Action 1");
-    subMenu->addAction("Sub Action 2");
-    
-    QMenu *nestedSubMenu = subMenu->addMenu("Nested Submenu");
-    nestedSubMenu->addAction("Nested Action 1");
-    nestedSubMenu->addAction("Nested Action 2");
-    
-    m_menu->addSeparator();
-    m_menu->addAction("Action 3");
-    
-    // Кнопка для открытия меню
-    QPushButton *menuButton = new QPushButton("◁ Actions Menu ▷", contentWidget);
-    menuButton->setCursor(Qt::PointingHandCursor);
-    menuButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   color: white;"
-        "   border: none;"
-        "   padding: 10px;"
-        "   border-radius: 5px;"
-        "   text-align: left;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 80);"
-        "}"
-    );
-    connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
-        m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
-    });
-    contentLayout->addWidget(menuButton);
-    
-    contentLayout->addStretch();
+    m_contentLayout->addStretch();
     
     scrollArea->setWidget(contentWidget);
     mainLayout->addWidget(scrollArea, 1);
@@ -241,6 +123,162 @@ void SlidingMenu::applyStyles()
     );
 }
 
+QPushButton* SlidingMenu::createButton(const QString &text, QWidget *parent)
+{
+    QPushButton *btn = new QPushButton(text, parent);
+    btn->setCursor(Qt::PointingHandCursor);
+    btn->setStyleSheet(
+        "QPushButton {"
+        "   background-color: rgba(255, 255, 255, 50);"
+        "   color: white;"
+        "   border: none;"
+        "   padding: 10px;"
+        "   text-align: left;"
+        "   border-radius: 5px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: rgba(255, 255, 255, 80);"
+        "}"
+    );
+    return btn;
+}
+
+QPushButton* SlidingMenu::addButton(const QString &text)
+{
+    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
+    if (!contentWidget || !m_contentLayout) return nullptr;
+    
+    // Удаляем stretch если есть (перед добавлением нового элемента)
+    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
+    if (lastItem && lastItem->spacerItem()) {
+        m_contentLayout->removeItem(lastItem);
+        delete lastItem;
+    }
+    
+    QPushButton *btn = createButton(text, contentWidget);
+    m_contentLayout->addWidget(btn);
+    m_buttons.append(btn);
+    
+    m_contentLayout->addStretch();
+    
+    return btn;
+}
+
+QCheckBox* SlidingMenu::addCheckBox(const QString &text)
+{
+    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
+    if (!contentWidget || !m_contentLayout) return nullptr;
+    
+    // Удаляем stretch если есть
+    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
+    if (lastItem && lastItem->spacerItem()) {
+        m_contentLayout->removeItem(lastItem);
+        delete lastItem;
+    }
+    
+    m_checkBox = new QCheckBox(text, contentWidget);
+    m_checkBox->setCursor(Qt::PointingHandCursor);
+    m_checkBox->setStyleSheet(
+        "QCheckBox {"
+        "   color: white;"
+        "   font-size: 14px;"
+        "   spacing: 8px;"
+        "}"
+        "QCheckBox::indicator {"
+        "   width: 18px;"
+        "   height: 18px;"
+        "   border-radius: 4px;"
+        "   border: 2px solid rgba(255, 255, 255, 150);"
+        "   background-color: transparent;"
+        "}"
+        "QCheckBox::indicator:checked {"
+        "   background-color: rgba(100, 200, 100, 200);"
+        "}"
+    );
+    connect(m_checkBox, &QCheckBox::toggled, this, &SlidingMenu::checkBoxToggled);
+    m_contentLayout->addWidget(m_checkBox);
+    
+    m_contentLayout->addStretch();
+    
+    return m_checkBox;
+}
+
+QMenu* SlidingMenu::addMenu(const QString &title)
+{
+    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
+    if (!contentWidget || !m_contentLayout) return nullptr;
+    
+    // Удаляем stretch если есть
+    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
+    if (lastItem && lastItem->spacerItem()) {
+        m_contentLayout->removeItem(lastItem);
+        delete lastItem;
+    }
+    
+    // Разделитель перед меню
+    QFrame *separator2 = new QFrame(contentWidget);
+    separator2->setFrameShape(QFrame::HLine);
+    separator2->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
+    m_contentLayout->addWidget(separator2);
+    m_separator = separator2;
+    
+    // QMenu с возможностью создания подменю
+    m_menu = new QMenu(contentWidget);
+    m_menu->setTitle(title);
+    m_menu->setStyleSheet(
+        "QMenu {"
+        "   background-color: rgba(50, 50, 50, 200);"
+        "   color: white;"
+        "   border: 1px solid rgba(255, 255, 255, 50);"
+        "   border-radius: 5px;"
+        "   padding: 5px;"
+        "}"
+        "QMenu::item {"
+        "   padding: 8px 20px;"
+        "   border-radius: 3px;"
+        "}"
+        "QMenu::item:selected {"
+        "   background-color: rgba(255, 255, 255, 30);"
+        "}"
+        "QMenu::separator {"
+        "   height: 1px;"
+        "   background: rgba(255, 255, 255, 50);"
+        "   margin: 5px;"
+        "}"
+    );
+    
+    // Кнопка для открытия меню
+    QPushButton *menuButton = createButton(QString("◁ %1 ▷").arg(title), contentWidget);
+    connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
+        m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
+    });
+    m_contentLayout->addWidget(menuButton);
+    
+    m_contentLayout->addStretch();
+    
+    return m_menu;
+}
+
+void SlidingMenu::addSplitter()
+{
+    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
+    if (!contentWidget || !m_contentLayout) return;
+    
+    // Удаляем stretch если есть
+    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
+    if (lastItem && lastItem->spacerItem()) {
+        m_contentLayout->removeItem(lastItem);
+        delete lastItem;
+    }
+    
+    QFrame *separator = new QFrame(contentWidget);
+    separator->setFrameShape(QFrame::HLine);
+    separator->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
+    m_contentLayout->addWidget(separator);
+    
+    m_contentLayout->addStretch();
+}
+
 int SlidingMenu::menuOffset() const
 {
     return pos().x();
@@ -263,76 +301,6 @@ void SlidingMenu::setIcon(const QPixmap &icon)
     if (m_iconLabel) {
         m_iconLabel->setPixmap(icon.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     }
-}
-
-void SlidingMenu::addButtons(const QStringList &buttonTexts)
-{
-    // Удаляем существующие кнопки
-    for (QPushButton *btn : m_buttons) {
-        btn->deleteLater();
-    }
-    m_buttons.clear();
-    
-    // Находим layout для кнопок
-    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
-    if (!contentWidget) return;
-    
-    QVBoxLayout *contentLayout = qobject_cast<QVBoxLayout*>(contentWidget->layout());
-    if (!contentLayout) return;
-    
-    // Находим layout с кнопками (второй layout после первого разделителя)
-    QLayoutItem *item = contentLayout->itemAt(1);
-    if (!item) return;
-    
-    QVBoxLayout *buttonsLayout = qobject_cast<QVBoxLayout*>(item->layout());
-    if (!buttonsLayout) return;
-    
-    // Очищаем layout
-    QLayoutItem *child;
-    while ((child = buttonsLayout->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
-    }
-    
-    // Добавляем новые кнопки
-    for (const QString &text : buttonTexts) {
-        QPushButton *btn = new QPushButton(text, contentWidget);
-        btn->setCursor(Qt::PointingHandCursor);
-        btn->setStyleSheet(
-            "QPushButton {"
-            "   background-color: rgba(255, 255, 255, 50);"
-            "   color: white;"
-            "   border: none;"
-            "   padding: 10px;"
-            "   text-align: left;"
-            "   border-radius: 5px;"
-            "}"
-            "QPushButton:hover {"
-            "   background-color: rgba(255, 255, 255, 80);"
-            "}"
-        );
-        buttonsLayout->addWidget(btn);
-        m_buttons.append(btn);
-    }
-}
-
-void SlidingMenu::setCheckBoxText(const QString &text)
-{
-    if (m_checkBox) {
-        m_checkBox->setText(text);
-    }
-}
-
-void SlidingMenu::setCheckBoxChecked(bool checked)
-{
-    if (m_checkBox) {
-        m_checkBox->setChecked(checked);
-    }
-}
-
-void SlidingMenu::setMenu(QMenu *menu)
-{
-    m_menu = menu;
 }
 
 void SlidingMenu::showMenu()

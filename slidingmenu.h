@@ -29,10 +29,12 @@ public:
     // Установка содержимого меню
     void setTitle(const QString &title);
     void setIcon(const QPixmap &icon);
-    void addButtons(const QStringList &buttonTexts);
-    void setCheckBoxText(const QString &text);
-    void setCheckBoxChecked(bool checked);
-    void setMenu(QMenu *menu);
+    
+    // Методы для создания элементов меню (возвращают указатели на созданные объекты)
+    QPushButton* addButton(const QString &text);
+    QCheckBox* addCheckBox(const QString &text);
+    QMenu* addMenu(const QString &title);
+    void addSplitter();
     
     // Показать/скрыть меню
     void showMenu();
@@ -71,6 +73,9 @@ private:
     void setupAnimations();
     void applyStyles();
     void installParentEventFilter();
+    
+    // Вспомогательный метод для создания кнопки
+    QPushButton* createButton(const QString &text, QWidget *parent);
 
     // Направление скольжения
     SlideDirection m_direction;
@@ -84,6 +89,9 @@ private:
     QCheckBox *m_checkBox;
     QMenu *m_menu;
     QWidget *m_separator;
+    
+    // Layout для контента
+    QVBoxLayout *m_contentLayout;
     
     // Анимация
     QPropertyAnimation *m_animation;
