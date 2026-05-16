@@ -17,89 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     , m_frameless(false)
 {
     ui->setupUi(this);
-    
-    // Создаем контейнер для кнопок управления окном и чекбокса
-    QWidget *windowControlsWidget = new QWidget();
-    QHBoxLayout *controlsLayout = new QHBoxLayout(windowControlsWidget);
-    controlsLayout->setSpacing(5);
-    controlsLayout->setContentsMargins(0, 0, 0, 0);
-    
-    // Чекбокс для включения/выключения рамки
-    QCheckBox *framelessCheckBox = new QCheckBox("Без рамки");
-    framelessCheckBox->setChecked(false);
-    framelessCheckBox->setStyleSheet("QCheckBox { color: white; }");
-    connect(framelessCheckBox, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
-    
-    // Кнопка свернуть
-    QPushButton *minimizeBtn = new QPushButton("─");
-    minimizeBtn->setFixedSize(30, 30);
-    minimizeBtn->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 15px;"
-        "   font-size: 16px;"
-        "   font-weight: bold;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   border-color: rgba(255, 255, 255, 80);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}");
-    connect(minimizeBtn, &QPushButton::clicked, this, &MainWindow::minimizeWindow);
-    
-    // Кнопка развернуть/восстановить
-    QPushButton *maximizeBtn = new QPushButton("□");
-    maximizeBtn->setFixedSize(30, 30);
-    maximizeBtn->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 15px;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   border-color: rgba(255, 255, 255, 80);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}");
-    connect(maximizeBtn, &QPushButton::clicked, this, &MainWindow::maximizeRestoreWindow);
-    
-    // Кнопка закрыть
-    QPushButton *closeBtn = new QPushButton("✕");
-    closeBtn->setFixedSize(30, 30);
-    closeBtn->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 15px;"
-        "   font-size: 14px;"
-        "   font-weight: bold;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 50, 50, 200);"
-        "   border-color: rgba(255, 100, 100, 200);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 50, 50, 150);"
-        "}");
-    connect(closeBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
-    
-    controlsLayout->addWidget(framelessCheckBox);
-    controlsLayout->addStretch();
-    controlsLayout->addWidget(minimizeBtn);
-    controlsLayout->addWidget(maximizeBtn);
-    controlsLayout->addWidget(closeBtn);
-    
-    ui->m_menuBarLayout->addWidget(windowControlsWidget);
 
     setStyleSheet("QPushButton {"
                   "   background-color: rgba(255, 255, 255, 30);"
@@ -117,7 +34,20 @@ MainWindow::MainWindow(QWidget *parent)
                   "QPushButton:pressed {"
                   "   background-color: rgba(255, 255, 255, 20);"
                   "}");
+          
+    // Кнопка свернуть
+    ui->pbRollup->setText("─");
+    ui->pbRollup->setVisible(false);
+    ui->pbRollup->setStyleSheet("QPushButton {min-width: 16px;}");
+    connect(ui->pbRollup, &QPushButton::clicked, this, &MainWindow::minimizeWindow);
     
+    // Кнопка развернуть/восстановить
+    ui->pbUnwrap->setText("□");
+    ui->pbUnwrap->setVisible(false);
+    ui->pbUnwrap->setStyleSheet("QPushButton {min-width: 16px;}");
+    connect(ui->pbUnwrap, &QPushButton::clicked, this, &MainWindow::maximizeRestoreWindow);
+
+
     // Создаем кнопку меню в стиле GitHub "Open menu"
     ui->pbMenu->setToolTip("Открыть меню");
     ui->pbMenu->setCursor(Qt::PointingHandCursor);
@@ -152,6 +82,11 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Добавляем чекбокс
     QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Enable notifications");
+    // Чекбокс для включения/выключения рамки
+    QCheckBox *framelessCheckBox = m_slidingMenu->addCheckBox("Без рамки");
+    framelessCheckBox->setChecked(false);
+    framelessCheckBox->setStyleSheet("QCheckBox { color: white; }");
+    connect(framelessCheckBox, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
     
     // Добавляем меню с действиями
     QMenu *actionsMenu = m_slidingMenu->addMenu("Actions Menu");
@@ -295,8 +230,12 @@ void MainWindow::toggleFrameless(bool checked)
     m_frameless = checked;
     if (m_frameless) {
         setWindowFlags(Qt::FramelessWindowHint);
+        ui->pbRollup->setVisible(true);
+        ui->pbUnwrap->setVisible(true);
     } else {
         setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+        ui->pbRollup->setVisible(false);
+        ui->pbUnwrap->setVisible(false);
     }
     show();
 }
