@@ -15,20 +15,20 @@
 #include <QPainter>
 
 SlideMenu::SlideMenu(QWidget *parent)
-    : QFrame(parent, Qt::Popup | Qt::WindowStaysOnTopHint)
+    : QFrame(parent, Qt::Popup | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint)
     , m_animation(nullptr)
     , m_currentDirection(LeftToRight)
 {
     setupUi();
+    
+    // Настраиваем прозрачность окна
     setAttribute(Qt::WA_TranslucentBackground);
-    setAttribute(Qt::WA_NoSystemBackground, true);
+    setAttribute(Qt::WA_NoSystemBackground);
     setAutoFillBackground(false);
-    // Не используем setStyleSheet для фона, оставляем для дочерних элементов,
-    // но они получат прозрачность через setPalette.
-    QPalette pal = palette();
-    pal.setColor(QPalette::Window, Qt::transparent);
-    setPalette(pal);
-
+    
+    // Устанавливаем полупрозрачный фон через StyleSheet
+    setStyleSheet("QFrame { background-color: rgba(40, 40, 45, 80); border-radius: 8px; }");
+    
     setFixedWidth(300);
     hide();
     installEventFilter(this);
@@ -233,16 +233,8 @@ bool SlideMenu::eventFilter(QObject *obj, QEvent *event)
 void SlideMenu::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event);
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    // Полупрозрачный фон: цвет 40,40,45 с альфа 100 (0–255) для лучшей видимости элементов под меню
-    QColor bgColor(40, 40, 45, 100);
-    painter.setBrush(bgColor);
-    painter.setPen(Qt::NoPen);
-
-    // Закруглённые углы
-    painter.drawRoundedRect(rect(), 8, 8);
+    // Фон теперь рисуется через setStyleSheet, paintEvent не нужен для фона
+    QFrame::paintEvent(event);
 }
 
 void SlideMenu::onAnimationFinished()
