@@ -1,5 +1,1 @@
-(slidingmenu.cpp is a source file, so no changes needed to .gitignore)
-
-```gitignore
-
-```
+/build
