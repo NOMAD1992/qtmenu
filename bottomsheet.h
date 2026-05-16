@@ -7,62 +7,147 @@
 #include <QMouseEvent>
 #include <QLabel>
 
+/**
+ * @brief Класс нижней выдвижной шторки.
+ * 
+ * BottomSheet предоставляет функционал для создания нижней выдвижной панели,
+ * которая может перетаскиваться пользователем. Поддерживает размещение QListView
+ * на всю площадь шторки и настройку прозрачности фона.
+ */
 class BottomSheet : public QWidget
 {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Конструктор нижней шторки.
+     * @param parent Родительский виджет (по умолчанию nullptr).
+     */
     explicit BottomSheet(QWidget *parent = nullptr);
+    
+    /**
+     * @brief Деструктор нижней шторки.
+     */
     ~BottomSheet();
 
-    // Метод для установки QListView на всю шторку без отступов
+    /**
+     * @brief Устанавливает QListView на всю шторку без отступов.
+     * @param view Указатель на QListView для добавления.
+     */
     void addListView(QListView *view);
 
-    // Геттер для listView
+    /**
+     * @brief Возвращает указатель на listView.
+     * @return Указатель на QListView.
+     */
     QListView* listView() const { return m_listView; }
     
-    // Метод для обновления максимальной высоты (вызывается из MainWindow)
+    /**
+     * @brief Обновляет максимальную высоту шторки.
+     * @param maxHeight Максимальная высота в пикселях.
+     */
     void updateMaxHeight(int maxHeight);
     
-    // Метод для настройки прозрачности фона (0-255)
+    /**
+     * @brief Настраивает прозрачность фона.
+     * @param alpha Значение прозрачности от 0 до 255.
+     */
     void setOpacity(int alpha);
     
-    // Метод для установки текста на ручке перетаскивания
+    /**
+     * @brief Устанавливает текст на ручке перетаскивания.
+     * @param text Текст для отображения на ручке.
+     */
     void setHandleText(const QString &text);
 
 protected:
+    /**
+     * @brief Обработчик событий фильтрации объектов.
+     * @param obj Объект, от которого пришло событие.
+     * @param event Событие.
+     * @return true, если событие обработано, иначе false.
+     */
     bool eventFilter(QObject *obj, QEvent *event) override;
+    
+    /**
+     * @brief Обработчик события изменения размера.
+     * @param event Событие изменения размера.
+     */
     void resizeEvent(QResizeEvent *event) override;
+    
+    /**
+     * @brief Обработчик события показа виджета.
+     * @param event Событие показа.
+     */
     void showEvent(QShowEvent *event) override;
+    
+    /**
+     * @brief Обработчик события нажатия кнопки мыши.
+     * @param event Событие нажатия кнопки мыши.
+     */
     void mousePressEvent(QMouseEvent *event) override;
+    
+    /**
+     * @brief Обработчик события перемещения мыши.
+     * @param event Событие перемещения мыши.
+     */
     void mouseMoveEvent(QMouseEvent *event) override;
+    
+    /**
+     * @brief Обработчик события отпускания кнопки мыши.
+     * @param event Событие отпускания кнопки мыши.
+     */
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
+    /**
+     * @brief Настраивает элементы интерфейса.
+     */
     void setupUi();
+    
+    /**
+     * @brief Применяет стили к виджету.
+     */
     void applyStyles();
+    
+    /**
+     * @brief Устанавливает фильтр событий на родительский виджет.
+     */
     void installParentEventFilter();
+    
+    /**
+     * @brief Обновляет ширину шторки.
+     */
     void updateSheetWidth();
+    
+    /**
+     * @brief Обновляет высоту шторки.
+     * @param height Новая высота в пикселях.
+     */
     void updateSheetHeight(int height);
+    
+    /**
+     * @brief Пересчитывает максимальную высоту на основе родителя.
+     */
     void recalculateMaxHeight();
 
     // Элементы интерфейса
-    QWidget *m_handleWidget;      // Узкая полоска сверху для перетаскивания
-    QLabel *m_handleLabel;        // Надпись на ручке
-    QListView *m_listView;
-    QVBoxLayout *m_mainLayout;
+    QWidget *m_handleWidget;      ///< Узкая полоска сверху для перетаскивания.
+    QLabel *m_handleLabel;        ///< Надпись на ручке перетаскивания.
+    QListView *m_listView;        ///< Список в шторке.
+    QVBoxLayout *m_mainLayout;    ///< Основной layout.
 
-    bool m_isVisible;
-    int m_sheetHeight;
-    int m_minHeight;
-    int m_maxHeight;
-    int m_menubarHeight;  // Высота верхней панели меню
-    int m_opacity;        // Прозрачность фона (0-255)
+    bool m_isVisible;             ///< Флаг видимости шторки.
+    int m_sheetHeight;            ///< Текущая высота шторки.
+    int m_minHeight;              ///< Минимальная высота шторки.
+    int m_maxHeight;              ///< Максимальная высота шторки.
+    int m_menubarHeight;          ///< Высота верхней панели меню.
+    int m_opacity;                ///< Прозрачность фона (0-255).
     
     // Для перетаскивания
-    bool m_dragging;
-    int m_dragStartY;
-    int m_startHeight;
+    bool m_dragging;              ///< Флаг активного перетаскивания.
+    int m_dragStartY;             ///< Начальная позиция Y при перетаскивании.
+    int m_startHeight;            ///< Начальная высота при перетаскивании.
 };
 
 #endif // BOTTOMSHEET_H
