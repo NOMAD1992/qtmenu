@@ -22,23 +22,22 @@ MainWindow::MainWindow(QWidget *parent)
     m_menuButton->setToolTip("Открыть меню");
     m_menuButton->setCursor(Qt::PointingHandCursor);
     m_menuButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   padding: 8px 16px;"
-        "   border-radius: 6px;"
-        "   font-size: 14px;"
-        "   font-weight: 500;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   border-color: rgba(255, 255, 255, 80);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}"
-    );
+                "QPushButton {"
+                "   background-color: rgba(255, 255, 255, 30);"
+                "   color: white;"
+                "   border: 1px solid rgba(255, 255, 255, 50);"
+                "   padding: 2px 4px;"
+                "   border-radius: 2px;"
+                "   font-size: 12px;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgba(255, 255, 255, 50);"
+                "   border-color: rgba(255, 255, 255, 80);"
+                "}"
+                "QPushButton:pressed {"
+                "   background-color: rgba(255, 255, 255, 20);"
+                "}"
+                );
     connect(m_menuButton, &QPushButton::clicked, this, &MainWindow::toggleMenu);
     
     // Добавляем кнопку меню в верхнюю панель (слева)
@@ -46,26 +45,26 @@ MainWindow::MainWindow(QWidget *parent)
     ui->m_menuBarLayout->addStretch();
     
     // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
-    m_userMenuButton = new QPushButton("👤", this);
+    m_userMenuButton = new QPushButton("☰", this);
     m_userMenuButton->setToolTip("Профиль пользователя");
     m_userMenuButton->setCursor(Qt::PointingHandCursor);
-    m_userMenuButton->setFixedSize(40, 40);
     m_userMenuButton->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 6px;"
-        "   font-size: 18px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   border-color: rgba(255, 255, 255, 80);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}"
-    );
+                "QPushButton {"
+                "   background-color: rgba(255, 255, 255, 30);"
+                "   color: white;"
+                "   border: 1px solid rgba(255, 255, 255, 50);"
+                "   padding: 2px 4px;"
+                "   border-radius: 2px;"
+                "   font-size: 12px;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgba(255, 255, 255, 50);"
+                "   border-color: rgba(255, 255, 255, 80);"
+                "}"
+                "QPushButton:pressed {"
+                "   background-color: rgba(255, 255, 255, 20);"
+                "}"
+                );
     connect(m_userMenuButton, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
     
     // Добавляем кнопку пользователя в правую часть верхней панели
@@ -189,7 +188,7 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Добавляем тестовые сообщения
     QStringList messages;
-    messages << "Сообщение 1: Приложение запущено" 
+    messages << "Сообщение 1: Приложение запущено"
              << "Сообщение 2: Меню инициализировано"
              << "Сообщение 3: Шторка готова к работе";
     model->setStringList(messages);

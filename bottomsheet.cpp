@@ -3,6 +3,7 @@
 #include <QShowEvent>
 #include <QMouseEvent>
 #include <QFrame>
+#include <QDebug>
 
 BottomSheet::BottomSheet(QWidget *parent)
     : QWidget(parent)
@@ -12,10 +13,10 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_mainLayout(nullptr)
     , m_isVisible(true)  // Шторка всегда открыта по умолчанию
     , m_sheetHeight(200)
-    , m_minHeight(100)   // Минимальная высота
+    , m_minHeight(35)   // Минимальная высота
     , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
     , m_menubarHeight(0) // Высота menubar будет определена динамически
-    , m_opacity(200)     // Прозрачность по умолчанию (200 из 255)
+    , m_opacity(240)     // Прозрачность по умолчанию (200 из 255)
     , m_dragging(false)
     , m_dragStartY(0)
     , m_startHeight(0)
@@ -227,7 +228,7 @@ void BottomSheet::recalculateMaxHeight()
 {
     if (parentWidget()) {
         // Максимальная высота = высота окна минус высота menubar минус небольшой отступ
-        int availableHeight = parentWidget()->height() - m_menubarHeight - 20;
+        int availableHeight = parentWidget()->height() - m_menubarHeight;
         m_maxHeight = qMax(m_minHeight, availableHeight);
         
         // Если текущая высота больше новой максимальной, уменьшаем её
