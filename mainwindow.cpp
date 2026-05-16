@@ -6,6 +6,7 @@
 #include <QStringListModel>
 #include <QCheckBox>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,7 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_userMenu(nullptr)
     , m_bottomSheet(nullptr)
     , m_listView(nullptr)
-    , m_frameless(false)
+    , framelessCheckBox_(nullptr)
 {
     ui->setupUi(this);
 
@@ -40,13 +41,6 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pbRollup->setVisible(false);
     ui->pbRollup->setStyleSheet("QPushButton {min-width: 16px;}");
     connect(ui->pbRollup, &QPushButton::clicked, this, &MainWindow::minimizeWindow);
-    
-    // Кнопка развернуть/восстановить
-    ui->pbUnwrap->setText("□");
-    ui->pbUnwrap->setVisible(false);
-    ui->pbUnwrap->setStyleSheet("QPushButton {min-width: 16px;}");
-    connect(ui->pbUnwrap, &QPushButton::clicked, this, &MainWindow::maximizeRestoreWindow);
-
 
     // Создаем кнопку меню в стиле GitHub "Open menu"
     ui->pbMenu->setToolTip("Открыть меню");
@@ -83,10 +77,10 @@ MainWindow::MainWindow(QWidget *parent)
     // Добавляем чекбокс
     QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Enable notifications");
     // Чекбокс для включения/выключения рамки
-    QCheckBox *framelessCheckBox = m_slidingMenu->addCheckBox("Без рамки");
-    framelessCheckBox->setChecked(false);
-    framelessCheckBox->setStyleSheet("QCheckBox { color: white; }");
-    connect(framelessCheckBox, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
+    framelessCheckBox_ = m_slidingMenu->addCheckBox("F12 Полноэкранный режим");
+    framelessCheckBox_->setChecked(false);
+    framelessCheckBox_->setStyleSheet("QCheckBox { color: white; }");
+    connect(framelessCheckBox_, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
     
     // Добавляем меню с действиями
     QMenu *actionsMenu = m_slidingMenu->addMenu("Actions Menu");
@@ -166,9 +160,7 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Кнопка "Выход"
     QPushButton *exitBtn = m_userMenu->addButton("Выход", exitIcon);
-    connect(exitBtn, &QPushButton::clicked, []() {
-        qDebug() << "Exit clicked";
-    });
+    connect(exitBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
     
     // Создаем нижнюю полупрозрачную шторку (всегда открыта)
     m_bottomSheet = new BottomSheet(this);
@@ -227,17 +219,20 @@ void MainWindow::toggleUserMenu()
 
 void MainWindow::toggleFrameless(bool checked)
 {
-    m_frameless = checked;
-    if (m_frameless) {
+    if (checked) {
         setWindowFlags(Qt::FramelessWindowHint);
         ui->pbRollup->setVisible(true);
-        ui->pbUnwrap->setVisible(true);
     } else {
         setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
         ui->pbRollup->setVisible(false);
-        ui->pbUnwrap->setVisible(false);
     }
     show();
+
+    if (checked) {
+        showMaximized();
+    } else {
+        showNormal();
+    }
 }
 
 void MainWindow::minimizeWindow()
@@ -245,16 +240,16 @@ void MainWindow::minimizeWindow()
     showMinimized();
 }
 
-void MainWindow::maximizeRestoreWindow()
-{
-    if (isMaximized()) {
-        showNormal();
-    } else {
-        showMaximized();
-    }
-}
-
 void MainWindow::closeWindow()
 {
     close();
 }
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_F12) {
+        framelessCheckBox_->setChecked(!framelessCheckBox_->isChecked());
+    }
+    QMainWindow::keyPressEvent(event);
+}
+

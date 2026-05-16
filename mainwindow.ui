@@ -154,13 +154,6 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pbUnwrap">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QPushButton" name="pbUserMenu">
          <property name="text">
           <string>☰</string>

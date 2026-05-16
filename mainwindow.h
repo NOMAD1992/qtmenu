@@ -22,12 +22,14 @@ public:
     // Метод для добавления QListView в шторку
     void addListView(QListView *view);
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private slots:
     void toggleMenu();
     void toggleUserMenu();
     void toggleFrameless(bool checked);
     void minimizeWindow();
-    void maximizeRestoreWindow();
     void closeWindow();
 
 private:
@@ -36,7 +38,7 @@ private:
     UserMenu *m_userMenu;
     BottomSheet *m_bottomSheet;
     QListView *m_listView;
-    bool m_frameless;
+    QCheckBox *framelessCheckBox_;
 };
 
 #endif // MAINWINDOW_H
