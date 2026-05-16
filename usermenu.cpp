@@ -31,9 +31,6 @@ UserMenu::~UserMenu()
 
 void UserMenu::setupUi()
 {
-    // Устанавливаем фиксированную ширину, высота будет подстраиваться
-    setFixedWidth(m_menuWidth);
-    
     // Основной layout
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -76,6 +73,9 @@ QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QW
     btn->setCursor(Qt::PointingHandCursor);
     btn->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     btn->setMinimumHeight(32);
+    
+    // Закрывать меню при нажатии на кнопку
+    connect(btn, &QPushButton::clicked, this, &UserMenu::hideMenu);
     
     if (!icon.isNull()) {
         btn->setIcon(icon);
@@ -181,12 +181,41 @@ void UserMenu::onAnimationFinished()
 
 void UserMenu::updateMenuGeometry()
 {
-    // Пересчитываем высоту на основе содержимого
+    // Пересчитываем высоту и ширину на основе содержимого
     if (m_contentLayout) {
         int contentHeight = m_contentLayout->sizeHint().height() + 8; // + отступы
         setFixedHeight(qMin(contentHeight, 400)); // Максимум 400px
+        
+        // Вычисляем оптимальную ширину по самому длинному элементу
+        int optimalWidth = calculateOptimalWidth();
+        setFixedWidth(optimalWidth);
+        
         adjustSize();
     }
+}
+
+int UserMenu::calculateOptimalWidth() const
+{
+    int maxWidth = m_menuWidth; // Минимальная ширина из параметра конструктора
+    
+    // Проходим по всем виджетам в layout и находим максимальную ширину
+    if (m_contentLayout) {
+        for (int i = 0; i < m_contentLayout->count(); ++i) {
+            QLayoutItem *item = m_contentLayout->itemAt(i);
+            if (item && item->widget()) {
+                // Получаем предпочитаемую ширину виджета
+                int widgetWidth = item->widget()->sizeHint().width();
+                if (widgetWidth > maxWidth) {
+                    maxWidth = widgetWidth;
+                }
+            }
+        }
+    }
+    
+    // Добавляем отступы layout (левый и правый по 8px каждый)
+    maxWidth += 16;
+    
+    return maxWidth;
 }
 
 void UserMenu::showEvent(QShowEvent *event)

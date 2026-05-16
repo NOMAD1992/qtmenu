@@ -1,21 +1,38 @@
 ```
 # Build artifacts
 build/
+CMakeCache.txt
+
+# Compiled files
 *.o
 *.obj
+*.a
+*.so
+*.dll
+*.exe
 *.out
 
-# CMake
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
+# Dependencies
+node_modules/
+venv/
+.venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+target/
+.gradle/
 
-# Generated files
-*_autogen/
+# Logs and temp files
+*.log
+*.tmp
+*.swp
 
-# Executables
-*.exe
-*.dll
-*.so
-*.a
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
 ```
