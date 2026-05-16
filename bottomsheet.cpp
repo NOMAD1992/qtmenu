@@ -2,6 +2,7 @@
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QFrame>
 #include <QDebug>
 
@@ -50,6 +51,9 @@ void BottomSheet::setupUi()
     // Устанавливаем начальную высоту
     updateSheetWidth();
     setFixedHeight(m_sheetHeight);
+    
+    // Включаем фокус для виджета, чтобы он мог получать события клавиатуры
+    setFocusPolicy(Qt::StrongFocus);
     
     // Основной layout без отступов
     m_mainLayout = new QVBoxLayout(this);
@@ -165,6 +169,8 @@ void BottomSheet::resizeEvent(QResizeEvent *event)
 void BottomSheet::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);
+    // Устанавливаем фокус на шторку при показе, чтобы она могла получать события клавиатуры
+    setFocus();
 }
 
 void BottomSheet::mousePressEvent(QMouseEvent *event)
@@ -204,6 +210,27 @@ void BottomSheet::mouseReleaseEvent(QMouseEvent *event)
     } else {
         QWidget::mouseReleaseEvent(event);
     }
+}
+
+void BottomSheet::keyPressEvent(QKeyEvent *event)
+{
+    // Обработка комбинаций Alt+стрелка вверх/вниз для управления шторкой
+    if (event->modifiers() & Qt::AltModifier) {
+        if (event->key() == Qt::Key_Up) {
+            // Поднять шторку - установить максимальную высоту
+            updateSheetHeight(m_maxHeight);
+            event->accept();
+            return;
+        } else if (event->key() == Qt::Key_Down) {
+            // Опустить шторку - установить минимальную высоту
+            updateSheetHeight(m_minHeight);
+            event->accept();
+            return;
+        }
+    }
+    
+    // Передаем событие базовому классу для остальных клавиш
+    QWidget::keyPressEvent(event);
 }
 
 void BottomSheet::updateSheetWidth()
