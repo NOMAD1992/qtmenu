@@ -17,11 +17,13 @@ UserMenu::UserMenu(QWidget *parent, int menuWidth)
     setAttribute(Qt::WA_StyledBackground, true);
     
     // Убираем рамку окна и делаем его независимым окном верхнего уровня
-    // Без Qt::Popup - это обычное окно, которое нужно позиционировать вручную
-    setWindowFlags(Qt::Tool | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus);
+    // Без Qt::Popup и без Qt::Tool - обычное окно с прозрачностью и правильным позиционированием
+    setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowDoesNotAcceptFocus);
     
     // Важно: не закрывать окно при потере фокуса (поведение как у Popup)
+    // и обеспечить прозрачность фона
     setAttribute(Qt::WA_ShowWithoutActivating, true);
+    setAttribute(Qt::WA_TranslucentBackground, false); // Используем стиль для фона, а не прозрачность окна
     
     setupUi();
     setupAnimations();
@@ -147,6 +149,8 @@ void UserMenu::showMenu()
     // Убеждаемся, что геометрия обновлена перед показом
     updateMenuGeometry();
     
+    // Для обычного окна без Qt::Popup нужно явно показать его в нужной позиции
+    // и убедиться, что оно отображается поверх родительского окна
     show();
     raise();
     activateWindow();
