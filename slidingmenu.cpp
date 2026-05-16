@@ -4,6 +4,7 @@
 #include <QScrollArea>
 #include <QResizeEvent>
 #include <QShowEvent>
+#include <QHideEvent>
 
 SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidth)
     : QWidget(parent)
@@ -24,6 +25,7 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     setupUi();
     setupAnimations();
     applyStyles();
+    installParentEventFilter();
     
     // Начальная позиция (скрыто)
     if (m_direction == SlideDirection::FromLeft) {
@@ -394,6 +396,27 @@ void SlidingMenu::onAnimationFinished()
 void SlidingMenu::onCloseClicked()
 {
     hideMenu();
+}
+
+void SlidingMenu::installParentEventFilter()
+{
+    if (parentWidget()) {
+        parentWidget()->installEventFilter(this);
+    }
+}
+
+bool SlidingMenu::eventFilter(QObject *obj, QEvent *event)
+{
+    if (obj == parentWidget() && event->type() == QEvent::Resize) {
+        updateMenuHeight();
+    }
+    return QWidget::eventFilter(obj, event);
+}
+
+void SlidingMenu::hideEvent(QHideEvent *event)
+{
+    QWidget::hideEvent(event);
+    updateMenuHeight();
 }
 
 void SlidingMenu::resizeEvent(QResizeEvent *event)
