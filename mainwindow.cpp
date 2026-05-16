@@ -8,7 +8,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_slidingMenu(nullptr)
+    , m_userMenu(nullptr)
     , m_menuButton(nullptr)
+    , m_userMenuButton(nullptr)
 {
     ui->setupUi(this);
     
@@ -36,9 +38,35 @@ MainWindow::MainWindow(QWidget *parent)
     );
     connect(m_menuButton, &QPushButton::clicked, this, &MainWindow::toggleMenu);
     
-    // Добавляем кнопку меню в верхнюю панель
+    // Добавляем кнопку меню в верхнюю панель (слева)
     ui->m_menuBarLayout->addWidget(m_menuButton);
     ui->m_menuBarLayout->addStretch();
+    
+    // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
+    m_userMenuButton = new QPushButton("👤", this);
+    m_userMenuButton->setToolTip("Профиль пользователя");
+    m_userMenuButton->setCursor(Qt::PointingHandCursor);
+    m_userMenuButton->setFixedSize(40, 40);
+    m_userMenuButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: rgba(255, 255, 255, 30);"
+        "   color: white;"
+        "   border: 1px solid rgba(255, 255, 255, 50);"
+        "   border-radius: 6px;"
+        "   font-size: 18px;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: rgba(255, 255, 255, 50);"
+        "   border-color: rgba(255, 255, 255, 80);"
+        "}"
+        "QPushButton:pressed {"
+        "   background-color: rgba(255, 255, 255, 20);"
+        "}"
+    );
+    connect(m_userMenuButton, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
+    
+    // Добавляем кнопку пользователя в правую часть верхней панели
+    ui->m_menuBarLayout->addWidget(m_userMenuButton);
     
     // Создаем выезжающее меню слева направо
     m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);
@@ -111,6 +139,30 @@ MainWindow::MainWindow(QWidget *parent)
             qDebug() << "Settings clicked";
         });
     }
+    
+    // Создаем выпадающее меню пользователя справа
+    m_userMenu = new UserMenu(this, 180);
+    
+    // Добавляем иконки для кнопок пользователя
+    QPixmap usersIcon(16, 16);
+    usersIcon.fill(Qt::transparent);
+    QPixmap exitIcon(16, 16);
+    exitIcon.fill(Qt::transparent);
+    
+    // Кнопка "Пользователи"
+    QPushButton *usersBtn = m_userMenu->addButton("Пользователи", usersIcon);
+    connect(usersBtn, &QPushButton::clicked, []() {
+        qDebug() << "Users clicked";
+    });
+    
+    // Разделитель
+    m_userMenu->addSplitter();
+    
+    // Кнопка "Выход"
+    QPushButton *exitBtn = m_userMenu->addButton("Выход", exitIcon);
+    connect(exitBtn, &QPushButton::clicked, []() {
+        qDebug() << "Exit clicked";
+    });
 }
 
 MainWindow::~MainWindow()
@@ -124,6 +176,18 @@ void MainWindow::toggleMenu()
         m_slidingMenu->hideMenu();
     } else {
         m_slidingMenu->showMenu();
+    }
+}
+
+void MainWindow::toggleUserMenu()
+{
+    if (m_userMenu->isMenuVisible()) {
+        m_userMenu->hideMenu();
+    } else {
+        // Устанавливаем ссылку на кнопку-триггер
+        m_userMenu->move(m_userMenuButton->mapToGlobal(QPoint(0, m_userMenuButton->height() + 5)).x() - pos().x(),
+                         m_userMenuButton->mapToGlobal(QPoint(0, m_userMenuButton->height() + 5)).y() - pos().y());
+        m_userMenu->showMenu();
     }
 }
 

@@ -21,6 +21,8 @@ set(PROJECT_SOURCES
         mainwindow.ui
         slidingmenu.h
         slidingmenu.cpp
+        usermenu.h
+        usermenu.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
