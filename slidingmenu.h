@@ -5,10 +5,11 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QCheckBox>
-#include <QMenu>
 #include <QVBoxLayout>
 #include <QPropertyAnimation>
 #include <QResizeEvent>
+
+class SideMenuWidget;
 
 class SlidingMenu : public QWidget
 {
@@ -44,7 +45,7 @@ public:
     QLabel *iconLabel() const { return m_iconLabel; }
     QPushButton *closeButton() const { return m_closeButton; }
     QCheckBox *checkBox() const { return m_checkBox; }
-    QMenu *menu() const { return m_menu; }
+    SideMenuWidget *menu() const { return m_menu; }
     QList<QPushButton*> buttons() const { return m_buttons; }
 
 signals:
@@ -78,7 +79,7 @@ private:
     QPushButton *m_closeButton;
     QList<QPushButton*> m_buttons;
     QCheckBox *m_checkBox;
-    QMenu *m_menu;
+    SideMenuWidget *m_menu;
     QWidget *m_separator;
     
     // Анимация

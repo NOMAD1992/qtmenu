@@ -1,5 +1,5 @@
 #include "slidingmenu.h"
-#include "horizontalmenu.h"
+#include "sidemenuwidget.h"
 #include <QHBoxLayout>
 #include <QFrame>
 #include <QScrollArea>
@@ -155,61 +155,34 @@ void SlidingMenu::setupUi()
     contentLayout->addWidget(separator2);
     m_separator = separator2;
     
-    // QMenu с возможностью создания подменю (используем кастомный HorizontalMenu)
-    m_menu = new HorizontalMenu(contentWidget);
-    m_menu->setTitle("Actions Menu");
-    m_menu->setStyleSheet(
-        "QMenu {"
-        "   background-color: rgba(50, 50, 50, 200);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 5px;"
-        "   padding: 5px;"
-        "}"
-        "QMenu::item {"
-        "   padding: 8px 20px;"
-        "   border-radius: 3px;"
-        "}"
-        "QMenu::item:selected {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "}"
-        "QMenu::separator {"
-        "   height: 1px;"
-        "   background: rgba(255, 255, 255, 50);"
-        "   margin: 5px;"
-        "}"
-        "QMenu::right-arrow {"
-        "   image: none;"
-        "   width: 10px;"
-        "   height: 10px;"
-        "}"
-        "QMenu::item:right-arrow {"
-        "   padding-right: 25px;"
-        "}"
-    );
-    
-    // Устанавливаем направление появления подменю справа
-    m_menu->setLayoutDirection(Qt::LeftToRight);
+    // Кастомное меню SideMenuWidget с подменю, появляющимися справа
+    SideMenuWidget *sideMenu = new SideMenuWidget(contentWidget);
     
     // Добавляем действия в меню с подменю
-    QAction *action1 = m_menu->addAction("Action 1");
-    QAction *action2 = m_menu->addAction("Action 2");
+    MenuActionItem *action1 = sideMenu->addAction("Action 1");
+    MenuActionItem *action2 = sideMenu->addAction("Action 2");
     
-    // Используем HorizontalMenu для подменю чтобы они появлялись справа
-    HorizontalMenu *subMenu = new HorizontalMenu("Submenu", m_menu);
-    subMenu->setLayoutDirection(Qt::LeftToRight);
+    // Создаем подменю
+    SideMenuWidget *subMenu = new SideMenuWidget(contentWidget);
     subMenu->addAction("Sub Action 1");
     subMenu->addAction("Sub Action 2");
-    m_menu->addMenu(subMenu);
     
-    HorizontalMenu *nestedSubMenu = new HorizontalMenu("Nested Submenu", subMenu);
-    nestedSubMenu->setLayoutDirection(Qt::LeftToRight);
+    // Создаем вложенное подменю
+    SideMenuWidget *nestedSubMenu = new SideMenuWidget(contentWidget);
     nestedSubMenu->addAction("Nested Action 1");
     nestedSubMenu->addAction("Nested Action 2");
-    subMenu->addMenu(nestedSubMenu);
     
-    m_menu->addSeparator();
-    m_menu->addAction("Action 3");
+    // Устанавливаем подменю для элементов
+    action2->setSubMenu(subMenu);
+    
+    // Находим элемент "Sub Action 1" и устанавливаем ему вложенное подменю
+    QList<MenuActionItem*> subItems = subMenu->findChildren<MenuActionItem*>();
+    if (!subItems.isEmpty()) {
+        subItems[0]->setSubMenu(nestedSubMenu);
+    }
+    
+    sideMenu->addSeparator();
+    sideMenu->addAction("Action 3");
     
     // Кнопка для открытия меню
     QPushButton *menuButton = new QPushButton("▼ Actions Menu", contentWidget);
@@ -227,8 +200,9 @@ void SlidingMenu::setupUi()
         "   background-color: rgba(255, 255, 255, 80);"
         "}"
     );
-    connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
-        m_menu->exec(menuButton->mapToGlobal(QPoint(0, menuButton->height())));
+    connect(menuButton, &QPushButton::clicked, [this, sideMenu, menuButton]() {
+        QPoint globalPos = menuButton->mapToGlobal(QPoint(0, menuButton->height()));
+        sideMenu->showAt(globalPos);
     });
     contentLayout->addWidget(menuButton);
     
@@ -351,7 +325,8 @@ void SlidingMenu::setCheckBoxChecked(bool checked)
 
 void SlidingMenu::setMenu(QMenu *menu)
 {
-    m_menu = menu;
+    Q_UNUSED(menu);
+    // Этот метод больше не используется с новым SideMenuWidget
 }
 
 void SlidingMenu::showMenu()
