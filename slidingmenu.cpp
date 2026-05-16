@@ -209,7 +209,7 @@ void SlidingMenu::setupUi()
         "}"
     );
     connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
-        m_menu->exec(menuButton->mapToGlobal(QPoint(0, menuButton->height())));
+        m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });
     contentLayout->addWidget(menuButton);
     
