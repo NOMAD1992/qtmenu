@@ -31,8 +31,6 @@ private:
     SlidingMenu *m_slidingMenu;
     UserMenu *m_userMenu;
     BottomSheet *m_bottomSheet;
-    QPushButton *m_menuButton;
-    QPushButton *m_userMenuButton;
     QListView *m_listView;
 };
 

@@ -11,64 +11,38 @@ MainWindow::MainWindow(QWidget *parent)
     , m_slidingMenu(nullptr)
     , m_userMenu(nullptr)
     , m_bottomSheet(nullptr)
-    , m_menuButton(nullptr)
-    , m_userMenuButton(nullptr)
     , m_listView(nullptr)
 {
     ui->setupUi(this);
+
+    setStyleSheet("QPushButton {"
+                  "   background-color: rgba(255, 255, 255, 30);"
+                  "   color: white;"
+                  "   border: 1px solid rgba(255, 255, 255, 50);"
+                  "   padding: 2px 4px;"
+                  "   border-radius: 2px;"
+                  "   font-size: 12px;"
+                  "   min-width: 80px;"
+                  "}"
+                  "QPushButton:hover {"
+                  "   background-color: rgba(255, 255, 255, 50);"
+                  "   border-color: rgba(255, 255, 255, 80);"
+                  "}"
+                  "QPushButton:pressed {"
+                  "   background-color: rgba(255, 255, 255, 20);"
+                  "}");
     
     // Создаем кнопку меню в стиле GitHub "Open menu"
-    m_menuButton = new QPushButton("☰", this);
-    m_menuButton->setToolTip("Открыть меню");
-    m_menuButton->setCursor(Qt::PointingHandCursor);
-    m_menuButton->setStyleSheet(
-                "QPushButton {"
-                "   background-color: rgba(255, 255, 255, 30);"
-                "   color: white;"
-                "   border: 1px solid rgba(255, 255, 255, 50);"
-                "   padding: 2px 4px;"
-                "   border-radius: 2px;"
-                "   font-size: 12px;"
-                "}"
-                "QPushButton:hover {"
-                "   background-color: rgba(255, 255, 255, 50);"
-                "   border-color: rgba(255, 255, 255, 80);"
-                "}"
-                "QPushButton:pressed {"
-                "   background-color: rgba(255, 255, 255, 20);"
-                "}"
-                );
-    connect(m_menuButton, &QPushButton::clicked, this, &MainWindow::toggleMenu);
-    
-    // Добавляем кнопку меню в верхнюю панель (слева)
-    ui->m_menuBarLayout->addWidget(m_menuButton);
-    ui->m_menuBarLayout->addStretch();
+    ui->pbMenu->setToolTip("Открыть меню");
+    ui->pbMenu->setCursor(Qt::PointingHandCursor);
+    ui->pbMenu->setStyleSheet("QPushButton {min-width: 20px;}");
+    connect(ui->pbMenu, &QPushButton::clicked, this, &MainWindow::toggleMenu);
     
     // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
-    m_userMenuButton = new QPushButton("☰", this);
-    m_userMenuButton->setToolTip("Профиль пользователя");
-    m_userMenuButton->setCursor(Qt::PointingHandCursor);
-    m_userMenuButton->setStyleSheet(
-                "QPushButton {"
-                "   background-color: rgba(255, 255, 255, 30);"
-                "   color: white;"
-                "   border: 1px solid rgba(255, 255, 255, 50);"
-                "   padding: 2px 4px;"
-                "   border-radius: 2px;"
-                "   font-size: 12px;"
-                "}"
-                "QPushButton:hover {"
-                "   background-color: rgba(255, 255, 255, 50);"
-                "   border-color: rgba(255, 255, 255, 80);"
-                "}"
-                "QPushButton:pressed {"
-                "   background-color: rgba(255, 255, 255, 20);"
-                "}"
-                );
-    connect(m_userMenuButton, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
-    
-    // Добавляем кнопку пользователя в правую часть верхней панели
-    ui->m_menuBarLayout->addWidget(m_userMenuButton);
+    ui->pbUserMenu->setToolTip("Профиль пользователя");
+    ui->pbUserMenu->setCursor(Qt::PointingHandCursor);
+    ui->pbUserMenu->setStyleSheet("QPushButton {min-width: 20px;}");
+    connect(ui->pbUserMenu, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
     
     // Создаем выезжающее меню слева направо
     m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);
@@ -221,7 +195,7 @@ void MainWindow::toggleUserMenu()
         m_userMenu->hideMenu();
     } else {
         // Вычисляем позицию: правый верхний угол меню должен быть там, где правый нижний угол кнопки
-        QPoint buttonBottomRight = m_userMenuButton->mapToGlobal(m_userMenuButton->rect().bottomRight());
+        QPoint buttonBottomRight = ui->pbUserMenu->mapToGlobal(ui->pbUserMenu->rect().bottomRight());
         int menuX = buttonBottomRight.x() - m_userMenu->width();
         int menuY = buttonBottomRight.y();
         
