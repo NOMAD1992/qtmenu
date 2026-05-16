@@ -139,7 +139,10 @@ void UserMenu::setMenuOffset(int offset)
 
 void UserMenu::showMenu()
 {
-    if (m_isVisible) return;
+    if (m_isVisible) {
+        hideMenu();
+        return;
+    }
     
     show();
     raise();
@@ -157,8 +160,6 @@ void UserMenu::showMenu()
 void UserMenu::hideMenu()
 {
     if (!m_isVisible) return;
-    
-    m_isVisible = false;
     
     // Анимация исчезновения
     m_animation->setStartValue(1.0);
@@ -213,6 +214,7 @@ bool UserMenu::eventFilter(QObject *obj, QEvent *event)
     if (event->type() == QEvent::MouseButtonPress && isVisible()) {
         QWidget *clickedWidget = QApplication::widgetAt(QCursor::pos());
         if (clickedWidget && !isAncestorOf(clickedWidget) && clickedWidget != this) {
+            m_isVisible = false;
             hideMenu();
             return true;
         }

@@ -1,1 +1,16 @@
-Nothing should be ignored based on the provided file changes, as they only contain source code files (.cpp) without any build artifacts, dependencies, or temporary files.
+```
+# Build artifacts
+build/
+*.o
+*.obj
+*.out
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+
+# Generated files
+*_autogen/
+```
