@@ -193,7 +193,7 @@ void SlidingMenu::setupUi()
     m_menu->addAction("Action 3");
     
     // Кнопка для открытия меню
-    QPushButton *menuButton = new QPushButton("▼ Actions Menu", contentWidget);
+    QPushButton *menuButton = new QPushButton("◁ Actions Menu ▷", contentWidget);
     menuButton->setCursor(Qt::PointingHandCursor);
     menuButton->setStyleSheet(
         "QPushButton {"
@@ -209,7 +209,7 @@ void SlidingMenu::setupUi()
         "}"
     );
     connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
-        m_menu->exec(menuButton->mapToGlobal(QPoint(0, menuButton->height())));
+        m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });
     contentLayout->addWidget(menuButton);
     
@@ -235,7 +235,7 @@ void SlidingMenu::applyStyles()
     // Фон в стиле GitHub - полностью непрозрачный
     setStyleSheet(
         "SlidingMenu {"
-        "   background-color: #24292f;"
+        "   background-color: rgba(0, 0, 0, 240);"
         "   border: none;"
         "}"
     );
