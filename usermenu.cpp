@@ -62,7 +62,7 @@ void UserMenu::applyStyles()
         "UserMenu {"
         "   background-color: rgba(0, 0, 0, 240);"
         "   border: 1px solid rgba(255, 255, 255, 60);"
-        "   border-radius: 8px;"
+        "   border-radius: 2px;"
         "}"
     );
 }
