@@ -236,8 +236,8 @@ void SlideMenu::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    // Полупрозрачный фон: цвет 40,40,45 с альфа 180 (0–255)
-    QColor bgColor(40, 40, 45, 180);
+    // Полупрозрачный фон: цвет 40,40,45 с альфа 100 (0–255) для лучшей видимости элементов под меню
+    QColor bgColor(40, 40, 45, 100);
     painter.setBrush(bgColor);
     painter.setPen(Qt::NoPen);
 
