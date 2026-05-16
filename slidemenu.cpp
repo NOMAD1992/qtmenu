@@ -128,31 +128,33 @@ void SlideMenu::slideIn(SlideDirection direction)
     if (m_isVisible) return;
     
     m_direction = direction;
-    adjustPosition();
     
-    // Показываем виджет перед анимацией
+    // Сначала рассчитываем конечную позицию
+    adjustPosition();
+    QRect endGeometry = geometry();
+    
+    // Вычисляем начальную позицию (за пределами видимой области)
+    QRect startGeometry = endGeometry;
+    switch(direction) {
+    case SlideInFromRight:
+        startGeometry.moveLeft(endGeometry.x() + endGeometry.width());
+        break;
+    case SlideInFromLeft:
+        startGeometry.moveLeft(endGeometry.x() - endGeometry.width());
+        break;
+    case SlideInFromTop:
+        startGeometry.moveTop(endGeometry.y() - endGeometry.height());
+        break;
+    case SlideInFromBottom:
+        startGeometry.moveTop(endGeometry.y() + endGeometry.height());
+        break;
+    }
+    
+    // Устанавливаем начальную позицию и показываем виджет
+    setGeometry(startGeometry);
     show();
     raise();
     activateWindow();
-    
-    QRect startGeometry = geometry();
-    QRect endGeometry = geometry();
-    
-    // Вычисляем начальную позицию в зависимости от направления
-    switch(direction) {
-    case SlideInFromRight:
-        startGeometry.moveLeft(parentWidget()->width());
-        break;
-    case SlideInFromLeft:
-        startGeometry.moveLeft(-width());
-        break;
-    case SlideInFromTop:
-        startGeometry.moveTop(parentWidget()->height());
-        break;
-    case SlideInFromBottom:
-        startGeometry.moveTop(-height());
-        break;
-    }
     
     // Настраиваем анимацию позиции
     m_posAnimation->setStartValue(startGeometry);
@@ -247,8 +249,8 @@ void SlideMenu::paintEvent(QPaintEvent* event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     
-    // Рисуем полупрозрачный фон с альфа-каналом 90
-    QColor bgColor(30, 30, 35, 90);
+    // Рисуем полупрозрачный фон с альфа-каналом 60 для лучшей видимости элементов под меню
+    QColor bgColor(30, 30, 35, 60);
     
     // Скругленные углы
     QPainterPath path;
