@@ -3,14 +3,18 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QDebug>
+#include <QStringListModel>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
     , m_slidingMenu(nullptr)
     , m_userMenu(nullptr)
+    , m_bottomSheet(nullptr)
     , m_menuButton(nullptr)
     , m_userMenuButton(nullptr)
+    , m_bottomSheetButton(nullptr)
+    , m_listView(nullptr)
 {
     ui->setupUi(this);
     
@@ -40,6 +44,32 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Добавляем кнопку меню в верхнюю панель (слева)
     ui->m_menuBarLayout->addWidget(m_menuButton);
+    
+    // Создаем кнопку для шторки сообщений
+    m_bottomSheetButton = new QPushButton("📋 Сообщения", this);
+    m_bottomSheetButton->setToolTip("Показать/скрыть сообщения");
+    m_bottomSheetButton->setCursor(Qt::PointingHandCursor);
+    m_bottomSheetButton->setStyleSheet(
+        "QPushButton {"
+        "   background-color: rgba(255, 255, 255, 30);"
+        "   color: white;"
+        "   border: 1px solid rgba(255, 255, 255, 50);"
+        "   padding: 8px 16px;"
+        "   border-radius: 6px;"
+        "   font-size: 14px;"
+        "   font-weight: 500;"
+        "}"
+        "QPushButton:hover {"
+        "   background-color: rgba(255, 255, 255, 50);"
+        "   border-color: rgba(255, 255, 255, 80);"
+        "}"
+        "QPushButton:pressed {"
+        "   background-color: rgba(255, 255, 255, 20);"
+        "}"
+    );
+    connect(m_bottomSheetButton, &QPushButton::clicked, this, &MainWindow::toggleBottomSheet);
+    
+    ui->m_menuBarLayout->addWidget(m_bottomSheetButton);
     ui->m_menuBarLayout->addStretch();
     
     // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
@@ -172,11 +202,36 @@ MainWindow::MainWindow(QWidget *parent)
     connect(exitBtn, &QPushButton::clicked, []() {
         qDebug() << "Exit clicked";
     });
+    
+    // Создаем нижнюю полупрозрачную шторку
+    m_bottomSheet = new BottomSheet(this);
+    
+    // Создаем QListView для отображения сообщений вместо QDebug
+    m_listView = new QListView(this);
+    QStringListModel *model = new QStringListModel(this);
+    m_listView->setModel(model);
+    
+    // Добавляем listView в шторку
+    addListView(m_listView);
+    
+    // Добавляем тестовые сообщения
+    QStringList messages;
+    messages << "Сообщение 1: Приложение запущено" 
+             << "Сообщение 2: Меню инициализировано"
+             << "Сообщение 3: Шторка готова к работе";
+    model->setStringList(messages);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::addListView(QListView *view)
+{
+    if (m_bottomSheet) {
+        m_bottomSheet->addListView(view);
+    }
 }
 
 void MainWindow::toggleMenu()
@@ -200,6 +255,15 @@ void MainWindow::toggleUserMenu()
         
         m_userMenu->move(menuX, menuY);
         m_userMenu->showMenu();
+    }
+}
+
+void MainWindow::toggleBottomSheet()
+{
+    if (m_bottomSheet->isSheetVisible()) {
+        m_bottomSheet->hideSheet();
+    } else {
+        m_bottomSheet->showSheet();
     }
 }
 

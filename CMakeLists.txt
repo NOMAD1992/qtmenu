@@ -23,6 +23,8 @@ set(PROJECT_SOURCES
         slidingmenu.cpp
         usermenu.h
         usermenu.cpp
+        bottomsheet.h
+        bottomsheet.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
