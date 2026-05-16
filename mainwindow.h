@@ -11,35 +11,81 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+/**
+ * @brief Основной класс главного окна приложения.
+ * 
+ * MainWindow управляет основным интерфейсом приложения, включая выдвижные меню,
+ * пользовательское меню и нижнюю шторку с списком.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    /**
+     * @brief Конструктор главного окна.
+     * @param parent Родительский виджет (по умолчанию nullptr).
+     */
     MainWindow(QWidget *parent = nullptr);
+    
+    /**
+     * @brief Деструктор главного окна.
+     */
     ~MainWindow();
 
-    // Метод для добавления QListView в шторку
+    /**
+     * @brief Добавляет QListView в нижнюю шторку.
+     * @param view Указатель на QListView для добавления.
+     */
     void addListView(QListView *view);
 
 protected:
+    /**
+     * @brief Обработчик событий нажатия клавиш.
+     * @param event Событие нажатия клавиши.
+     */
     void keyPressEvent(QKeyEvent *event) override;
 
 private slots:
+    /**
+     * @brief Переключает видимость выдвижного меню.
+     */
     void toggleMenu();
+    
+    /**
+     * @brief Переключает видимость пользовательского меню.
+     */
     void toggleUserMenu();
+    
+    /**
+     * @brief Переключает режим безрамочного окна.
+     * @param checked Состояние чекбокса (true - безрамочный режим включен).
+     */
     void toggleFrameless(bool checked);
+    
+    /**
+     * @brief Сворачивает окно приложения.
+     */
     void minimizeWindow();
+    
+    /**
+     * @brief Закрывает окно приложения.
+     */
     void closeWindow();
+    
+    /**
+     * @brief Изменяет разрешение экрана при выборе действия из меню.
+     * @param action Действие, содержащее информацию о разрешении.
+     */
     void changeResolution(QAction *action);
 
 private:
-    Ui::MainWindow *ui;
-    SlidingMenu *m_slidingMenu;
-    UserMenu *m_userMenu;
-    BottomSheet *m_bottomSheet;
-    QListView *m_listView;
-    QCheckBox *framelessCheckBox_;
+    Ui::MainWindow *ui;           ///< Указатель на интерфейс пользователя.
+    SlidingMenu *m_slidingMenu;   ///< Указатель на выдвижное меню.
+    UserMenu *m_userMenu;         ///< Указатель на пользовательское меню.
+    BottomSheet *m_bottomSheet;   ///< Указатель на нижнюю шторку.
+    QListView *m_listView;        ///< Указатель на список в шторке.
+    QCheckBox *framelessCheckBox_; ///< Указатель на чекбокс безрамочного режима.
 };
 
 #endif // MAINWINDOW_H
