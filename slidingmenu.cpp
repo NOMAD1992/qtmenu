@@ -226,10 +226,10 @@ void SlidingMenu::setupAnimations()
 
 void SlidingMenu::applyStyles()
 {    
-    // Фон в стиле GitHub - полностью непрозрачный
+    // Фон в стиле GitHub - 90% прозрачности (альфа-канал 230 из 255)
     setStyleSheet(
         "SlidingMenu {"
-        "   background-color: #24292f;"
+        "   background-color: rgba(36, 41, 47, 230);"
         "   border: none;"
         "}"
     );
