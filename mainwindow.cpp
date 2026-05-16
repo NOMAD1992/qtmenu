@@ -6,6 +6,7 @@
 #include <QStringListModel>
 #include <QCheckBox>
 #include <QHBoxLayout>
+#include <QKeyEvent>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -166,9 +167,7 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Кнопка "Выход"
     QPushButton *exitBtn = m_userMenu->addButton("Выход", exitIcon);
-    connect(exitBtn, &QPushButton::clicked, []() {
-        qDebug() << "Exit clicked";
-    });
+    connect(exitBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
     
     // Создаем нижнюю полупрозрачную шторку (всегда открыта)
     m_bottomSheet = new BottomSheet(this);
@@ -257,4 +256,32 @@ void MainWindow::maximizeRestoreWindow()
 void MainWindow::closeWindow()
 {
     close();
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_F12) {
+        toggleFullScreen();
+    }
+    QMainWindow::keyPressEvent(event);
+}
+
+void MainWindow::toggleFullScreen()
+{
+    if (isFullScreen()) {
+        showNormal();
+        // Выход из полноэкранного режима: выключаем "Без рамки"
+        m_frameless = false;
+        setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+        ui->pbRollup->setVisible(false);
+        ui->pbUnwrap->setVisible(false);
+    } else {
+        showFullScreen();
+        // Вход в полноэкранный режим: включаем "Без рамки"
+        m_frameless = true;
+        setWindowFlags(Qt::FramelessWindowHint);
+        ui->pbRollup->setVisible(true);
+        ui->pbUnwrap->setVisible(true);
+    }
+    show();
 }

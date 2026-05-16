@@ -22,6 +22,9 @@ public:
     // Метод для добавления QListView в шторку
     void addListView(QListView *view);
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
 private slots:
     void toggleMenu();
     void toggleUserMenu();
@@ -29,6 +32,7 @@ private slots:
     void minimizeWindow();
     void maximizeRestoreWindow();
     void closeWindow();
+    void toggleFullScreen();
 
 private:
     Ui::MainWindow *ui;
