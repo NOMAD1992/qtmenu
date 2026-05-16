@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include <QPushButton>
 #include <QLabel>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -48,14 +49,67 @@ MainWindow::MainWindow(QWidget *parent)
     // Здесь можно загрузить реальную иконку
     // m_slidingMenu->setIcon(QPixmap(":/path/to/icon.png"));
     
-    // Настраиваем чекбокс
-    m_slidingMenu->setCheckBoxText("Enable notifications");
-    m_slidingMenu->setCheckBoxChecked(false);
+    // Создаем элементы меню через новые методы
+    // Добавляем кнопки
+    QPushButton *dashboardBtn = m_slidingMenu->addButton("Dashboard");
+    QPushButton *repositoriesBtn = m_slidingMenu->addButton("Repositories");
+    QPushButton *projectsBtn = m_slidingMenu->addButton("Projects");
+    QPushButton *settingsBtn = m_slidingMenu->addButton("Settings");
     
-    // Можно добавить свои кнопки
-    QStringList buttons;
-    buttons << "Dashboard" << "Repositories" << "Projects" << "Settings";
-    m_slidingMenu->addButtons(buttons);
+    // Добавляем разделитель
+    m_slidingMenu->addSplitter();
+    
+    // Добавляем чекбокс
+    QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Enable notifications");
+    
+    // Добавляем меню с действиями
+    QMenu *actionsMenu = m_slidingMenu->addMenu("Actions Menu");
+    
+    // Настраиваем созданное меню (добавляем пункты и подменю)
+    if (actionsMenu) {
+        QAction *action1 = actionsMenu->addAction("Action 1");
+        QAction *action2 = actionsMenu->addAction("Action 2");
+        
+        QMenu *subMenu = actionsMenu->addMenu("Submenu");
+        subMenu->addAction("Sub Action 1");
+        subMenu->addAction("Sub Action 2");
+        
+        QMenu *nestedSubMenu = subMenu->addMenu("Nested Submenu");
+        nestedSubMenu->addAction("Nested Action 1");
+        nestedSubMenu->addAction("Nested Action 2");
+        
+        actionsMenu->addSeparator();
+        actionsMenu->addAction("Action 3");
+    }
+    
+    // Можно подключиться к сигналам созданных элементов
+    if (notificationsCheckBox) {
+        connect(notificationsCheckBox, &QCheckBox::toggled, [](bool checked) {
+            qDebug() << "Notifications:" << (checked ? "enabled" : "disabled");
+        });
+    }
+    
+    // Пример подключения к кнопкам
+    if (dashboardBtn) {
+        connect(dashboardBtn, &QPushButton::clicked, []() {
+            qDebug() << "Dashboard clicked";
+        });
+    }
+    if (repositoriesBtn) {
+        connect(repositoriesBtn, &QPushButton::clicked, []() {
+            qDebug() << "Repositories clicked";
+        });
+    }
+    if (projectsBtn) {
+        connect(projectsBtn, &QPushButton::clicked, []() {
+            qDebug() << "Projects clicked";
+        });
+    }
+    if (settingsBtn) {
+        connect(settingsBtn, &QPushButton::clicked, []() {
+            qDebug() << "Settings clicked";
+        });
+    }
 }
 
 MainWindow::~MainWindow()
