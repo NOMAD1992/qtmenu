@@ -17,11 +17,10 @@ UserMenu::UserMenu(QWidget *parent, int menuWidth)
     // Включаем поддержку прозрачного фона для корректной работы rgba в stylesheet
     setAttribute(Qt::WA_TranslucentBackground);
     
-    // Убираем рамку окна, но сохраняем возможность показа в нужном месте
-    // Qt::Popup - окно ведет себя как всплывающее меню (автоматически закрывается при клике вне)
+    // Убираем рамку окна и тень, но не используем Qt::Popup чтобы сохранить прозрачность
     // Qt::FramelessWindowHint - убирает рамку окна
     // Qt::NoDropShadowWindowHint - отключает тень (может мешать прозрачности)
-    setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::Tool);
     
     setupUi();
     setupAnimations();
@@ -232,4 +231,32 @@ void UserMenu::hideEvent(QHideEvent *event)
 {
     m_isVisible = false;
     QWidget::hideEvent(event);
+}
+
+void UserMenu::focusOutEvent(QFocusEvent *event)
+{
+    // Закрываем меню при потере фокуса (клик вне меню)
+    // Проверяем, что фокус перешел не на дочерний виджет этого меню
+    if (event->reason() == Qt::MouseFocusReason) {
+        QWidget *newFocusWidget = QApplication::focusWidget();
+        if (newFocusWidget && newFocusWidget->isAncestorOf(this)) {
+            // Фокус внутри меню - не закрываем
+            return;
+        }
+        // Проверяем, является ли новый фокус потомком этого меню
+        bool focusInsideMenu = false;
+        QWidget *current = newFocusWidget;
+        while (current) {
+            if (current == this) {
+                focusInsideMenu = true;
+                break;
+            }
+            current = current->parentWidget();
+        }
+        
+        if (!focusInsideMenu) {
+            hideMenu();
+        }
+    }
+    QWidget::focusOutEvent(event);
 }

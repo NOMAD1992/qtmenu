@@ -7,6 +7,7 @@
 #include <QPropertyAnimation>
 #include <QLabel>
 #include <QFrame>
+#include <QEvent>
 
 /**
  * @brief Класс пользовательского меню с анимацией.
@@ -85,6 +86,12 @@ protected:
      * @param event Событие скрытия.
      */
     void hideEvent(QHideEvent *event) override;
+    
+    /**
+     * @brief Обработчик события потери фокуса.
+     * @param event Событие фокуса.
+     */
+    void focusOutEvent(QFocusEvent *event) override;
 
 private slots:
     /**

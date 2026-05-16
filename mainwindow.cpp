@@ -238,8 +238,13 @@ void MainWindow::toggleUserMenu()
         int menuX = buttonBottomRight.x() - m_userMenu->width();
         int menuY = buttonBottomRight.y();
         
+        // Устанавливаем позицию перед показом окна
         m_userMenu->move(menuX, menuY);
         m_userMenu->showMenu();
+        
+        // Устанавливаем фокус на меню чтобы оно могло ловить события клавиатуры
+        m_userMenu->activateWindow();
+        m_userMenu->setFocus();
     }
 }
 
