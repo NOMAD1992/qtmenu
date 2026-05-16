@@ -25,7 +25,6 @@ public:
 private slots:
     void toggleMenu();
     void toggleUserMenu();
-    void toggleBottomSheet();
 
 private:
     Ui::MainWindow *ui;
@@ -34,7 +33,6 @@ private:
     BottomSheet *m_bottomSheet;
     QPushButton *m_menuButton;
     QPushButton *m_userMenuButton;
-    QPushButton *m_bottomSheetButton;
     QListView *m_listView;
 };
 

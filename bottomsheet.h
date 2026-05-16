@@ -3,13 +3,12 @@
 
 #include <QWidget>
 #include <QListView>
-#include <QPropertyAnimation>
 #include <QVBoxLayout>
+#include <QMouseEvent>
 
 class BottomSheet : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(int sheetOffset READ sheetOffset WRITE setSheetOffset)
 
 public:
     explicit BottomSheet(QWidget *parent = nullptr);
@@ -18,45 +17,37 @@ public:
     // Метод для установки QListView на всю шторку без отступов
     void addListView(QListView *view);
 
-    // Показать/скрыть шторку
-    void showSheet();
-    void hideSheet();
-    bool isSheetVisible() const;
-
     // Геттер для listView
     QListView* listView() const { return m_listView; }
-
-signals:
-    void sheetShown();
-    void sheetHidden();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
-
-private slots:
-    void onAnimationFinished();
-    void updateSheetWidth();
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
-    int sheetOffset() const;
-    void setSheetOffset(int offset);
-
     void setupUi();
-    void setupAnimations();
     void applyStyles();
     void installParentEventFilter();
+    void updateSheetHeight(int height);
 
     // Элементы интерфейса
+    QWidget *m_handleWidget;      // Узкая полоска сверху для перетаскивания
     QListView *m_listView;
     QVBoxLayout *m_mainLayout;
 
-    // Анимация
-    QPropertyAnimation *m_animation;
     bool m_isVisible;
     int m_sheetHeight;
+    int m_minHeight;
+    int m_maxHeight;
+    
+    // Для перетаскивания
+    bool m_dragging;
+    int m_dragStartY;
+    int m_startHeight;
 };
 
 #endif // BOTTOMSHEET_H
