@@ -6,5 +6,6 @@
         <file>img/relogin.jpg</file>
         <file>img/screen_resolution.png</file>
         <file>img/users.png</file>
+        <file>img/user.jpg</file>
     </qresource>
 </RCC>

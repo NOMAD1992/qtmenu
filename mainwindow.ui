@@ -156,7 +156,17 @@
        <item>
         <widget class="QPushButton" name="pbUserMenu">
          <property name="text">
-          <string>☰</string>
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="res.qrc">
+           <normaloff>:/img/user.jpg</normaloff>:/img/user.jpg</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -495,6 +505,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>

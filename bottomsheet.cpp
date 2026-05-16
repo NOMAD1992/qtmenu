@@ -6,6 +6,8 @@
 #include <QFrame>
 #include <QDebug>
 
+#define STEP_HEIGHT_OFFSET 50 // Шаг изменения высоты в пикселях
+
 BottomSheet::BottomSheet(QWidget *parent)
     : QWidget(parent)
     , m_handleWidget(nullptr)
@@ -216,17 +218,16 @@ void BottomSheet::keyPressEvent(QKeyEvent *event)
 {
     // Обработка комбинаций Alt+стрелка вверх/вниз для управления шторкой
     if (event->modifiers() & Qt::AltModifier) {
-        const int stepHeight = 100;  // Шаг изменения высоты в пикселях
         
         if (event->key() == Qt::Key_Up) {
             // Поднять шторку - увеличить высоту на 100px
-            int newHeight = qMin(m_sheetHeight + stepHeight, m_maxHeight);
+            int newHeight = qMin(m_sheetHeight + STEP_HEIGHT_OFFSET, m_maxHeight);
             updateSheetHeight(newHeight);
             event->accept();
             return;
         } else if (event->key() == Qt::Key_Down) {
             // Опустить шторку - уменьшить высоту на 100px
-            int newHeight = qMax(m_sheetHeight - stepHeight, m_minHeight);
+            int newHeight = qMax(m_sheetHeight - STEP_HEIGHT_OFFSET, m_minHeight);
             updateSheetHeight(newHeight);
             event->accept();
             return;

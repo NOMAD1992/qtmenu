@@ -60,7 +60,7 @@ void UserMenu::applyStyles()
     // Фон в стиле GitHub - темный с закругленными углами
     setStyleSheet(
         "UserMenu {"
-        "   background-color: rgba(30, 30, 30, 250);"
+        "   background-color: rgba(0, 0, 0, 240);"
         "   border: 1px solid rgba(255, 255, 255, 60);"
         "   border-radius: 8px;"
         "}"
