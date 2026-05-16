@@ -5,6 +5,7 @@
 #include <QShowEvent>
 #include <QHideEvent>
 #include <QApplication>
+#include <QDebug>
 
 UserMenu::UserMenu(QWidget *parent, int menuWidth)
     : QWidget(parent)
@@ -138,12 +139,7 @@ void UserMenu::setMenuOffset(int offset)
 }
 
 void UserMenu::showMenu()
-{
-    if (m_isVisible) {
-        hideMenu();
-        return;
-    }
-    
+{   
     show();
     raise();
     activateWindow();
@@ -160,6 +156,7 @@ void UserMenu::showMenu()
 void UserMenu::hideMenu()
 {
     if (!m_isVisible) return;
+    m_isVisible = false;
     
     // Анимация исчезновения
     m_animation->setStartValue(1.0);
@@ -192,11 +189,6 @@ void UserMenu::updateMenuGeometry()
     }
 }
 
-void UserMenu::resizeEvent(QResizeEvent *event)
-{
-    QWidget::resizeEvent(event);
-}
-
 void UserMenu::showEvent(QShowEvent *event)
 {
     QWidget::showEvent(event);
@@ -205,21 +197,6 @@ void UserMenu::showEvent(QShowEvent *event)
 
 void UserMenu::hideEvent(QHideEvent *event)
 {
+    m_isVisible = false;
     QWidget::hideEvent(event);
-}
-
-bool UserMenu::eventFilter(QObject *obj, QEvent *event)
-{
-    // Закрываем меню при клике вне его
-    if (event->type() == QEvent::MouseButtonPress && isVisible()) {
-        QWidget *clickedWidget = QApplication::widgetAt(QCursor::pos());
-        if (clickedWidget && !isAncestorOf(clickedWidget) && clickedWidget != this) {
-            m_isVisible = false;
-            hideMenu();
-            // Возвращаем false, чтобы событие клика прошло дальше к другим виджетам
-            return false;
-        }
-    }
-    
-    return QWidget::eventFilter(obj, event);
 }

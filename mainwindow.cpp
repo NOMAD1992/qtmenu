@@ -154,6 +154,15 @@ MainWindow::MainWindow(QWidget *parent)
     connect(usersBtn, &QPushButton::clicked, []() {
         qDebug() << "Users clicked";
     });
+
+    // Разделитель
+    m_userMenu->addSplitter();
+
+    // Кнопка "Релогин"
+    QPushButton *reloginBtn = m_userMenu->addButton("Сменить пользователя", usersIcon);
+    connect(reloginBtn, &QPushButton::clicked, []() {
+        qDebug() << "User relogin";
+    });
     
     // Разделитель
     m_userMenu->addSplitter();

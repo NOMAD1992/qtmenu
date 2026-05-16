@@ -31,8 +31,6 @@ signals:
     void menuHidden();
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
-    void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void hideEvent(QHideEvent *event) override;
 
