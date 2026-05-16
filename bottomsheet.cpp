@@ -216,14 +216,18 @@ void BottomSheet::keyPressEvent(QKeyEvent *event)
 {
     // Обработка комбинаций Alt+стрелка вверх/вниз для управления шторкой
     if (event->modifiers() & Qt::AltModifier) {
+        const int stepHeight = 100;  // Шаг изменения высоты в пикселях
+        
         if (event->key() == Qt::Key_Up) {
-            // Поднять шторку - установить максимальную высоту
-            updateSheetHeight(m_maxHeight);
+            // Поднять шторку - увеличить высоту на 100px
+            int newHeight = qMin(m_sheetHeight + stepHeight, m_maxHeight);
+            updateSheetHeight(newHeight);
             event->accept();
             return;
         } else if (event->key() == Qt::Key_Down) {
-            // Опустить шторку - установить минимальную высоту
-            updateSheetHeight(m_minHeight);
+            // Опустить шторку - уменьшить высоту на 100px
+            int newHeight = qMax(m_sheetHeight - stepHeight, m_minHeight);
+            updateSheetHeight(newHeight);
             event->accept();
             return;
         }
