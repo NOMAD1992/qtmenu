@@ -25,6 +25,10 @@ public:
 private slots:
     void toggleMenu();
     void toggleUserMenu();
+    void toggleFrameless(bool checked);
+    void minimizeWindow();
+    void maximizeRestoreWindow();
+    void closeWindow();
 
 private:
     Ui::MainWindow *ui;
@@ -32,6 +36,7 @@ private:
     UserMenu *m_userMenu;
     BottomSheet *m_bottomSheet;
     QListView *m_listView;
+    bool m_frameless;
 };
 
 #endif // MAINWINDOW_H

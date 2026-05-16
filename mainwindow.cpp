@@ -4,6 +4,8 @@
 #include <QLabel>
 #include <QDebug>
 #include <QStringListModel>
+#include <QCheckBox>
+#include <QHBoxLayout>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -12,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_userMenu(nullptr)
     , m_bottomSheet(nullptr)
     , m_listView(nullptr)
+    , m_frameless(false)
 {
     ui->setupUi(this);
 
@@ -31,7 +34,20 @@ MainWindow::MainWindow(QWidget *parent)
                   "QPushButton:pressed {"
                   "   background-color: rgba(255, 255, 255, 20);"
                   "}");
+          
+    // Кнопка свернуть
+    ui->pbRollup->setText("─");
+    ui->pbRollup->setVisible(false);
+    ui->pbRollup->setStyleSheet("QPushButton {min-width: 16px;}");
+    connect(ui->pbRollup, &QPushButton::clicked, this, &MainWindow::minimizeWindow);
     
+    // Кнопка развернуть/восстановить
+    ui->pbUnwrap->setText("□");
+    ui->pbUnwrap->setVisible(false);
+    ui->pbUnwrap->setStyleSheet("QPushButton {min-width: 16px;}");
+    connect(ui->pbUnwrap, &QPushButton::clicked, this, &MainWindow::maximizeRestoreWindow);
+
+
     // Создаем кнопку меню в стиле GitHub "Open menu"
     ui->pbMenu->setToolTip("Открыть меню");
     ui->pbMenu->setCursor(Qt::PointingHandCursor);
@@ -66,6 +82,11 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Добавляем чекбокс
     QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Enable notifications");
+    // Чекбокс для включения/выключения рамки
+    QCheckBox *framelessCheckBox = m_slidingMenu->addCheckBox("Без рамки");
+    framelessCheckBox->setChecked(false);
+    framelessCheckBox->setStyleSheet("QCheckBox { color: white; }");
+    connect(framelessCheckBox, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
     
     // Добавляем меню с действиями
     QMenu *actionsMenu = m_slidingMenu->addMenu("Actions Menu");
@@ -204,3 +225,36 @@ void MainWindow::toggleUserMenu()
     }
 }
 
+void MainWindow::toggleFrameless(bool checked)
+{
+    m_frameless = checked;
+    if (m_frameless) {
+        setWindowFlags(Qt::FramelessWindowHint);
+        ui->pbRollup->setVisible(true);
+        ui->pbUnwrap->setVisible(true);
+    } else {
+        setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
+        ui->pbRollup->setVisible(false);
+        ui->pbUnwrap->setVisible(false);
+    }
+    show();
+}
+
+void MainWindow::minimizeWindow()
+{
+    showMinimized();
+}
+
+void MainWindow::maximizeRestoreWindow()
+{
+    if (isMaximized()) {
+        showNormal();
+    } else {
+        showMaximized();
+    }
+}
+
+void MainWindow::closeWindow()
+{
+    close();
+}
