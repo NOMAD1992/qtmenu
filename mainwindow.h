@@ -31,6 +31,7 @@ private slots:
     void toggleFrameless(bool checked);
     void minimizeWindow();
     void closeWindow();
+    void changeResolution(QAction *action);
 
 private:
     Ui::MainWindow *ui;

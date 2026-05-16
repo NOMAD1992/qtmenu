@@ -7,6 +7,8 @@
 #include <QCheckBox>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QActionGroup>
+#include <QScreen>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -100,6 +102,36 @@ MainWindow::MainWindow(QWidget *parent)
         
         actionsMenu->addSeparator();
         actionsMenu->addAction("Action 3");
+    }
+    
+    // Добавляем меню "Разрешение" с подменю для смены разрешения окна
+    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение");
+    
+    if (resolutionMenu) {
+        // Создаем группу действий для взаимоисключающего выбора
+        QActionGroup *resolutionGroup = new QActionGroup(this);
+        resolutionGroup->setExclusive(true);
+        
+        // Список разрешений
+        QList<QSize> resolutions = {
+            QSize(1920, 1080),
+            QSize(1536, 864),
+            QSize(1366, 768),
+            QSize(1280, 720),
+            QSize(1440, 900),
+            QSize(1024, 768)
+        };
+        
+        for (const QSize &res : resolutions) {
+            QString actionText = QString("%1×%2").arg(res.width()).arg(res.height());
+            QAction *action = resolutionMenu->addAction(actionText);
+            action->setCheckable(true);
+            action->setData(QVariant::fromValue(res));
+            resolutionGroup->addAction(action);
+            connect(action, &QAction::triggered, this, [this, action]() {
+                changeResolution(action);
+            });
+        }
     }
     
     // Можно подключиться к сигналам созданных элементов
@@ -243,6 +275,25 @@ void MainWindow::minimizeWindow()
 void MainWindow::closeWindow()
 {
     close();
+}
+
+void MainWindow::changeResolution(QAction *action)
+{
+    if (!action) return;
+    
+    QSize resolution = action->data().toSize();
+    if (resolution.isValid()) {
+        resize(resolution);
+        
+        // Центрируем окно на экране
+        QScreen *screen = QApplication::primaryScreen();
+        if (screen) {
+            QRect screenGeometry = screen->availableGeometry();
+            int x = (screenGeometry.width() - resolution.width()) / 2 + screenGeometry.x();
+            int y = (screenGeometry.height() - resolution.height()) / 2 + screenGeometry.y();
+            move(x, y);
+        }
+    }
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
