@@ -176,7 +176,15 @@ void SlidingMenu::setupUi()
         "   background: rgba(255, 255, 255, 50);"
         "   margin: 5px;"
         "}"
+        "QMenu::right-arrow {"
+        "   image: none;"
+        "   width: 10px;"
+        "   height: 10px;"
+        "}"
     );
+    
+    // Устанавливаем направление появления подменю справа
+    m_menu->setLayoutDirection(Qt::LeftToRight);
     
     // Добавляем действия в меню с подменю
     QAction *action1 = m_menu->addAction("Action 1");
