@@ -1,1 +1,15 @@
-(slidingmenu.cpp is a source file, so no files in the changes need to be ignored)
+```
+# Build artifacts
+build/
+CMakeCache.txt
+CMakeFiles/
+
+# Compiled files
+*.o
+*.obj
+*.bin
+*.out
+
+# Logs
+*.log
+```

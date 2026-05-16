@@ -59,6 +59,7 @@ private slots:
     void onAnimationFinished();
     void onCloseClicked();
     void updateMenuHeight();
+    void repositionSubMenu();
 
 private:
     int menuOffset() const;
