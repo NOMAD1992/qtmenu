@@ -5,7 +5,7 @@
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QHideEvent>
-
+// ◁
 SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidth)
     : QWidget(parent)
     , m_direction(direction)
@@ -248,7 +248,7 @@ QMenu* SlidingMenu::addMenu(const QString &title)
     );
     
     // Кнопка для открытия меню
-    QPushButton *menuButton = createButton(QString("◁ %1 ▷").arg(title), contentWidget);
+    QPushButton *menuButton = createButton(QString("%1 ▷").arg(title), contentWidget);
     connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
         m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });
