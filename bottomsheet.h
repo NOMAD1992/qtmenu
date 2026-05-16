@@ -5,6 +5,7 @@
 #include <QListView>
 #include <QVBoxLayout>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QLabel>
 
 /**
@@ -98,6 +99,12 @@ protected:
      * @param event Событие отпускания кнопки мыши.
      */
     void mouseReleaseEvent(QMouseEvent *event) override;
+    
+    /**
+     * @brief Обработчик события нажатия клавиши.
+     * @param event Событие нажатия клавиши.
+     */
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     /**
