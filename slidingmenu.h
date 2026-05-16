@@ -34,6 +34,16 @@ public:
     void setCheckBoxChecked(bool checked);
     void setMenu(QMenu *menu);
     
+    // Добавление произвольных виджетов (универсальный API)
+    void addWidget(QWidget *widget, int stretch = 0);
+    void addButton(QPushButton *button);
+    void addLayout(QLayout *layout, int stretch = 0);
+    void addSeparator();
+    void clearContent();
+    
+    // Получить доступ к layout контента для прямой манипуляции
+    QVBoxLayout* contentLayout() const;
+    
     // Показать/скрыть меню
     void showMenu();
     void hideMenu();
@@ -84,6 +94,7 @@ private:
     QCheckBox *m_checkBox;
     QMenu *m_menu;
     QWidget *m_separator;
+    QVBoxLayout *m_contentLayout;  // Layout для контента (для внешнего доступа)
     
     // Анимация
     QPropertyAnimation *m_animation;

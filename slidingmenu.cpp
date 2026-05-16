@@ -16,6 +16,7 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     , m_checkBox(nullptr)
     , m_menu(nullptr)
     , m_separator(nullptr)
+    , m_contentLayout(nullptr)
     , m_animation(nullptr)
     , m_isVisible(false)
 {
@@ -84,20 +85,20 @@ void SlidingMenu::setupUi()
     scrollArea->setStyleSheet("border: none; background-color: transparent;");
     
     QWidget *contentWidget = new QWidget();
-    QVBoxLayout *contentLayout = new QVBoxLayout(contentWidget);
-    contentLayout->setContentsMargins(15, 10, 15, 10);
-    contentLayout->setSpacing(15);
+    m_contentLayout = new QVBoxLayout(contentWidget);
+    m_contentLayout->setContentsMargins(15, 10, 15, 10);
+    m_contentLayout->setSpacing(15);
     
     // Разделитель после заголовка
     QFrame *separator1 = new QFrame(contentWidget);
     separator1->setFrameShape(QFrame::HLine);
     separator1->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
-    contentLayout->addWidget(separator1);
+    m_contentLayout->addWidget(separator1);
     
     // Контейнер для кнопок
     QVBoxLayout *buttonsLayout = new QVBoxLayout();
     buttonsLayout->setSpacing(8);
-    contentLayout->addLayout(buttonsLayout);
+    m_contentLayout->addLayout(buttonsLayout);
     
     // Создаем 3 кнопки по умолчанию
     for (int i = 0; i < 3; ++i) {
@@ -120,7 +121,7 @@ void SlidingMenu::setupUi()
         m_buttons.append(btn);
     }
     
-    contentLayout->addLayout(buttonsLayout);
+    m_contentLayout->addLayout(buttonsLayout);
     
     // Чекбокс с подписью
     m_checkBox = new QCheckBox("Enable feature", contentWidget);
@@ -143,13 +144,13 @@ void SlidingMenu::setupUi()
         "}"
     );
     connect(m_checkBox, &QCheckBox::toggled, this, &SlidingMenu::checkBoxToggled);
-    contentLayout->addWidget(m_checkBox);
+    m_contentLayout->addWidget(m_checkBox);
     
     // Разделитель перед меню
     QFrame *separator2 = new QFrame(contentWidget);
     separator2->setFrameShape(QFrame::HLine);
     separator2->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
-    contentLayout->addWidget(separator2);
+    m_contentLayout->addWidget(separator2);
     m_separator = separator2;
     
     // QMenu с возможностью создания подменю
@@ -211,9 +212,9 @@ void SlidingMenu::setupUi()
     connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
         m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });
-    contentLayout->addWidget(menuButton);
+    m_contentLayout->addWidget(menuButton);
     
-    contentLayout->addStretch();
+    m_contentLayout->addStretch();
     
     scrollArea->setWidget(contentWidget);
     mainLayout->addWidget(scrollArea, 1);
@@ -273,30 +274,24 @@ void SlidingMenu::addButtons(const QStringList &buttonTexts)
     }
     m_buttons.clear();
     
-    // Находим layout для кнопок
-    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
-    if (!contentWidget) return;
+    if (!m_contentLayout) return;
     
-    QVBoxLayout *contentLayout = qobject_cast<QVBoxLayout*>(contentWidget->layout());
-    if (!contentLayout) return;
-    
-    // Находим layout с кнопками (второй layout после первого разделителя)
-    QLayoutItem *item = contentLayout->itemAt(1);
-    if (!item) return;
-    
-    QVBoxLayout *buttonsLayout = qobject_cast<QVBoxLayout*>(item->layout());
-    if (!buttonsLayout) return;
-    
-    // Очищаем layout
-    QLayoutItem *child;
-    while ((child = buttonsLayout->takeAt(0)) != nullptr) {
-        delete child->widget();
-        delete child;
+    // Находим layout с кнопками и очищаем его
+    QLayoutItem *item = m_contentLayout->itemAt(1);
+    if (item && item->layout()) {
+        QVBoxLayout *buttonsLayout = qobject_cast<QVBoxLayout*>(item->layout());
+        if (buttonsLayout) {
+            QLayoutItem *child;
+            while ((child = buttonsLayout->takeAt(0)) != nullptr) {
+                delete child->widget();
+                delete child;
+            }
+        }
     }
     
     // Добавляем новые кнопки
     for (const QString &text : buttonTexts) {
-        QPushButton *btn = new QPushButton(text, contentWidget);
+        QPushButton *btn = new QPushButton(text, findChild<QScrollArea*>()->widget());
         btn->setCursor(Qt::PointingHandCursor);
         btn->setStyleSheet(
             "QPushButton {"
@@ -311,7 +306,19 @@ void SlidingMenu::addButtons(const QStringList &buttonTexts)
             "   background-color: rgba(255, 255, 255, 80);"
             "}"
         );
-        buttonsLayout->addWidget(btn);
+        
+        // Вставляем кнопки в существующий buttonsLayout или добавляем напрямую
+        QLayoutItem *buttonsItem = m_contentLayout->itemAt(1);
+        if (buttonsItem && buttonsItem->layout()) {
+            QVBoxLayout *buttonsLayout = qobject_cast<QVBoxLayout*>(buttonsItem->layout());
+            if (buttonsLayout) {
+                buttonsLayout->addWidget(btn);
+            } else {
+                m_contentLayout->insertWidget(1, btn);
+            }
+        } else {
+            m_contentLayout->insertWidget(1, btn);
+        }
         m_buttons.append(btn);
     }
 }
@@ -333,6 +340,87 @@ void SlidingMenu::setCheckBoxChecked(bool checked)
 void SlidingMenu::setMenu(QMenu *menu)
 {
     m_menu = menu;
+}
+
+// Универсальные методы для добавления произвольных виджетов
+
+void SlidingMenu::addWidget(QWidget *widget, int stretch)
+{
+    if (m_contentLayout && widget) {
+        m_contentLayout->addWidget(widget, stretch);
+        widget->setParent(findChild<QScrollArea*>()->widget());
+    }
+}
+
+void SlidingMenu::addButton(QPushButton *button)
+{
+    if (m_contentLayout && button) {
+        // Применяем стандартный стиль кнопок меню
+        button->setCursor(Qt::PointingHandCursor);
+        if (button->styleSheet().isEmpty()) {
+            button->setStyleSheet(
+                "QPushButton {"
+                "   background-color: rgba(255, 255, 255, 50);"
+                "   color: white;"
+                "   border: none;"
+                "   padding: 10px;"
+                "   text-align: left;"
+                "   border-radius: 5px;"
+                "}"
+                "QPushButton:hover {"
+                "   background-color: rgba(255, 255, 255, 80);"
+                "}"
+            );
+        }
+        m_contentLayout->addWidget(button);
+        m_buttons.append(button);
+    }
+}
+
+void SlidingMenu::addLayout(QLayout *layout, int stretch)
+{
+    if (m_contentLayout && layout) {
+        m_contentLayout->addLayout(layout, stretch);
+    }
+}
+
+void SlidingMenu::addSeparator()
+{
+    if (m_contentLayout) {
+        QFrame *separator = new QFrame(findChild<QScrollArea*>()->widget());
+        separator->setFrameShape(QFrame::HLine);
+        separator->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
+        m_contentLayout->addWidget(separator);
+    }
+}
+
+void SlidingMenu::clearContent()
+{
+    if (!m_contentLayout) return;
+    
+    // Очищаем все виджеты из layout, кроме кнопок в buttonsLayout
+    QLayoutItem *item;
+    while ((item = m_contentLayout->takeAt(0)) != nullptr) {
+        if (item->widget()) {
+            item->widget()->deleteLater();
+        } else if (item->layout()) {
+            QLayoutItem *child;
+            while ((child = item->layout()->takeAt(0)) != nullptr) {
+                if (child->widget()) {
+                    child->widget()->deleteLater();
+                }
+                delete child;
+            }
+            delete item->layout();
+        }
+        delete item;
+    }
+    m_buttons.clear();
+}
+
+QVBoxLayout* SlidingMenu::contentLayout() const
+{
+    return m_contentLayout;
 }
 
 void SlidingMenu::showMenu()
