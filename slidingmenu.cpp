@@ -1,4 +1,5 @@
 #include "slidingmenu.h"
+#include "horizontalmenu.h"
 #include <QHBoxLayout>
 #include <QFrame>
 #include <QScrollArea>
@@ -154,8 +155,8 @@ void SlidingMenu::setupUi()
     contentLayout->addWidget(separator2);
     m_separator = separator2;
     
-    // QMenu с возможностью создания подменю
-    m_menu = new QMenu(contentWidget);
+    // QMenu с возможностью создания подменю (используем кастомный HorizontalMenu)
+    m_menu = new HorizontalMenu(contentWidget);
     m_menu->setTitle("Actions Menu");
     m_menu->setStyleSheet(
         "QMenu {"
@@ -194,13 +195,14 @@ void SlidingMenu::setupUi()
     QAction *action1 = m_menu->addAction("Action 1");
     QAction *action2 = m_menu->addAction("Action 2");
     
-    QMenu *subMenu = new QMenu("Submenu", m_menu);
+    // Используем HorizontalMenu для подменю чтобы они появлялись справа
+    HorizontalMenu *subMenu = new HorizontalMenu("Submenu", m_menu);
     subMenu->setLayoutDirection(Qt::LeftToRight);
     subMenu->addAction("Sub Action 1");
     subMenu->addAction("Sub Action 2");
     m_menu->addMenu(subMenu);
     
-    QMenu *nestedSubMenu = new QMenu("Nested Submenu", subMenu);
+    HorizontalMenu *nestedSubMenu = new HorizontalMenu("Nested Submenu", subMenu);
     nestedSubMenu->setLayoutDirection(Qt::LeftToRight);
     nestedSubMenu->addAction("Nested Action 1");
     nestedSubMenu->addAction("Nested Action 2");
@@ -421,15 +423,6 @@ bool SlidingMenu::eventFilter(QObject *obj, QEvent *event)
         updateMenuHeight();
     }
     
-    // Обрабатываем события показа подменю для позиционирования справа
-    if (obj == m_menu && event->type() == QEvent::Show) {
-        QMenu *subMenu = qobject_cast<QMenu*>(obj);
-        if (subMenu && subMenu != m_menu) {
-            // Это подменю - позиционируем его справа от родительского пункта
-            repositionSubMenu();
-        }
-    }
-    
     return QWidget::eventFilter(obj, event);
 }
 
@@ -443,31 +436,5 @@ void SlidingMenu::updateMenuHeight()
     // Обновляем позицию по Y для меню справа
     if (m_direction == SlideDirection::FromRight && m_isVisible) {
         move(parentWidget()->width() - m_menuWidth, 0);
-    }
-}
-
-void SlidingMenu::repositionSubMenu()
-{
-    // Находим все активные подменю и позиционируем их справа
-    QList<QMenu*> menus = findChildren<QMenu*>();
-    for (QMenu *menu : menus) {
-        if (menu != m_menu && menu->isVisible()) {
-            QAction *parentAction = menu->parentWidget() ? 
-                qobject_cast<QMenu*>(menu->parentWidget())->activeAction() : nullptr;
-            
-            if (parentAction) {
-                QMenu *parentMenu = qobject_cast<QMenu*>(menu->parentWidget());
-                if (parentMenu) {
-                    QPoint parentPos = parentMenu->pos();
-                    QRect actionRect = parentMenu->actionGeometry(parentAction);
-                    
-                    // Позиционируем подменю справа от родительского пункта
-                    int newX = parentPos.x() + parentMenu->width();
-                    int newY = parentPos.y() + actionRect.y();
-                    
-                    menu->move(newX, newY);
-                }
-            }
-        }
     }
 }

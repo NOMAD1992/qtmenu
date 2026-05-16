@@ -1,1 +1,1 @@
-Nothing should be ignored since only source code files (.cpp and .h) were added without any build artifacts, dependencies, or temporary files.
+(slidingmenu.cpp and slidingmenu.h are source code files, and there are no build artifacts, dependencies, or temporary files in the changes)
