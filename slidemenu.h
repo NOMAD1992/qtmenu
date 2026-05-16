@@ -1,69 +1,77 @@
 #ifndef SLIDEMENU_H
 #define SLIDEMENU_H
 
-#include <QFrame>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QPushButton>
+#include <QLabel>
+#include <QCheckBox>
+#include <QMenu>
+#include <QAction>
 #include <QPropertyAnimation>
-#include <functional>
+#include <QParallelAnimationGroup>
+#include <QGraphicsOpacityEffect>
 
-class QVBoxLayout;
-class QHBoxLayout;
-class QLabel;
-class QPushButton;
-class QCheckBox;
-class QMenu;
-
-class SlideMenu : public QFrame
+class SlideMenu : public QWidget
 {
     Q_OBJECT
-    Q_PROPERTY(QPoint pos READ pos WRITE move)
 
 public:
-    enum Direction { LeftToRight, RightToLeft };
+    enum SlideDirection {
+        SlideInFromRight,
+        SlideInFromLeft,
+        SlideInFromTop,
+        SlideInFromBottom
+    };
 
     explicit SlideMenu(QWidget *parent = nullptr);
     ~SlideMenu();
 
-    void addSeparator();
-    void addLabel(const QString &text);
-    void addButton(const QString &text, const std::function<void()> &callback = nullptr);
-    void addCheckbox(const QString &text);
-    void addMenuButton(const QString &text, QMenu *menu);
-    void setIconLabel(const QIcon &icon);
+    void slideIn(SlideDirection direction = SlideInFromRight);
+    void hideAnimated();
+    void setAutoHide(bool autoHide);
+    bool isMenuVisible() const;
 
-    // Основной метод показа с анимацией
-    void showWithDirection(const QPoint &anchorTopLeft, Direction dir);
-    void hideWithAnimation();
-
-    Direction currentDirection() const { return m_currentDirection; }
+    // Методы для добавления элементов
+    void addLabel(const QString& text);
+    void addButton(const QString& text);
+    void addCheckBox(const QString& text);
+    QMenu* addMenu(const QString& title);
 
 signals:
-    void closed();
+    void hidden();
+    void menuActionTriggered(QAction* action);
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
+    void mousePressEvent(QMouseEvent* event) override;
+    void resizeEvent(QResizeEvent* event) override;
 
 private slots:
-    void onCloseClicked();
-    void onAnimationFinished();
+    void onMenuActionTriggered(QAction* action);
 
 private:
-    QVBoxLayout *m_mainLayout;
-    QHBoxLayout *m_topLayout;
-    QLabel *m_iconLabel;
-    QPushButton *m_closeButton;
-    QPropertyAnimation *m_animation;
-    QPoint m_startPos;
-    QPoint m_endPos;
-    Direction m_currentDirection;
+    void setupUI();
+    void setupAnimations();
+    void adjustPosition();
+    void createAnimations();
 
-    void setupUi();
-    void installShadow();
-    void startAnimation(bool show);
-
-    // QObject interface
-public:
-    bool eventFilter(QObject *obj, QEvent *event);
-
-    // QWidget interface
-protected:
-    void paintEvent(QPaintEvent *event);
+    SlideDirection m_direction;
+    bool m_autoHide;
+    bool m_isVisible;
+    int m_animationDuration;
+    
+    QWidget* m_contentWidget;
+    QVBoxLayout* m_mainLayout;
+    QVBoxLayout* m_contentLayout;
+    
+    QPushButton* m_closeButton;
+    
+    QPropertyAnimation* m_posAnimation;
+    QPropertyAnimation* m_opacityAnimation;
+    QParallelAnimationGroup* m_animationGroup;
+    
+    QGraphicsOpacityEffect* m_opacityEffect;
 };
 
 #endif // SLIDEMENU_H
