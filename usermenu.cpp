@@ -14,9 +14,13 @@ UserMenu::UserMenu(QWidget *parent, int menuWidth)
     , m_animation(nullptr)
     , m_isVisible(false)
 {
-    setAttribute(Qt::WA_StyledBackground, true);
+    // Включаем поддержку прозрачного фона для корректной работы rgba в stylesheet
+    setAttribute(Qt::WA_TranslucentBackground);
     
-    // Убираем рамку окна
+    // Убираем рамку окна, но сохраняем возможность показа в нужном месте
+    // Qt::Popup - окно ведет себя как всплывающее меню (автоматически закрывается при клике вне)
+    // Qt::FramelessWindowHint - убирает рамку окна
+    // Qt::NoDropShadowWindowHint - отключает тень (может мешать прозрачности)
     setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint);
     
     setupUi();
