@@ -222,10 +222,13 @@ void SlidingMenu::setupAnimations()
     m_animation->setEasingCurve(QEasingCurve::OutCubic);
     connect(m_animation, &QPropertyAnimation::finished, this, &SlidingMenu::onAnimationFinished);
     
-    // Эффект прозрачности
+    // Эффект прозрачности - устанавливаем начальную непрозрачность 1.0
     m_opacityEffect = new QGraphicsOpacityEffect(this);
-    m_opacityEffect->setOpacity(0.0);
+    m_opacityEffect->setOpacity(1.0);
     setGraphicsEffect(m_opacityEffect);
+    
+    // Устанавливаем атрибут для корректной работы прозрачности
+    setAttribute(Qt::WA_TranslucentBackground);
 }
 
 void SlidingMenu::applyStyles()
@@ -353,10 +356,10 @@ void SlidingMenu::showMenu()
     m_animation->setEndValue(endPos);
     m_animation->start();
     
-    // Анимация прозрачности
-    QGraphicsOpacityEffect *effect = qobject_cast<QGraphicsOpacityEffect*>(graphicsEffect());
-    if (effect) {
-        QPropertyAnimation *opacityAnim = new QPropertyAnimation(effect, "opacity", this);
+    // Анимация прозрачности - всегда начинаем с 0.0 до 1.0
+    if (m_opacityEffect) {
+        m_opacityEffect->setOpacity(0.0);
+        QPropertyAnimation *opacityAnim = new QPropertyAnimation(m_opacityEffect, "opacity", this);
         opacityAnim->setDuration(300);
         opacityAnim->setStartValue(0.0);
         opacityAnim->setEndValue(1.0);
@@ -384,10 +387,9 @@ void SlidingMenu::hideMenu()
     m_animation->setEndValue(endPos);
     m_animation->start();
     
-    // Анимация прозрачности
-    QGraphicsOpacityEffect *effect = qobject_cast<QGraphicsOpacityEffect*>(graphicsEffect());
-    if (effect) {
-        QPropertyAnimation *opacityAnim = new QPropertyAnimation(effect, "opacity", this);
+    // Анимация прозрачности - от 1.0 до 0.0
+    if (m_opacityEffect) {
+        QPropertyAnimation *opacityAnim = new QPropertyAnimation(m_opacityEffect, "opacity", this);
         opacityAnim->setDuration(300);
         opacityAnim->setStartValue(1.0);
         opacityAnim->setEndValue(0.0);

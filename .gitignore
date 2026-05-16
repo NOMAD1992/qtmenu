@@ -1,5 +1,31 @@
-(slidingmenu.cpp is a source file, so no ignores needed)
+```
+# Build artifacts
+build/
+*.o
+*.obj
+*.out
 
-```gitignore
+# CMake files
+CMakeFiles/
+CMakeCache.txt
+cmake_install.manifest
+Makefile
 
+# Generated files
+*_autogen/
+
+# Logs and temp files
+*.log
+*.tmp
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
 ```
