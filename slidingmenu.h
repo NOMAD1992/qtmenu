@@ -8,7 +8,6 @@
 #include <QMenu>
 #include <QVBoxLayout>
 #include <QPropertyAnimation>
-#include <QGraphicsOpacityEffect>
 
 class SlidingMenu : public QWidget
 {
@@ -79,7 +78,6 @@ private:
     
     // Анимация
     QPropertyAnimation *m_animation;
-    QGraphicsOpacityEffect *m_opacityEffect;
     bool m_isVisible;
 };
 

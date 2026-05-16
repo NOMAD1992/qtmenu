@@ -14,7 +14,6 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     , m_menu(nullptr)
     , m_separator(nullptr)
     , m_animation(nullptr)
-    , m_opacityEffect(nullptr)
     , m_isVisible(false)
 {
     setupUi();
@@ -32,7 +31,6 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
 SlidingMenu::~SlidingMenu()
 {
     delete m_animation;
-    delete m_opacityEffect;
 }
 
 void SlidingMenu::setupUi()
@@ -221,19 +219,14 @@ void SlidingMenu::setupAnimations()
     m_animation->setDuration(300);
     m_animation->setEasingCurve(QEasingCurve::OutCubic);
     connect(m_animation, &QPropertyAnimation::finished, this, &SlidingMenu::onAnimationFinished);
-    
-    // Эффект прозрачности
-    m_opacityEffect = new QGraphicsOpacityEffect(this);
-    m_opacityEffect->setOpacity(1.0);
-    setGraphicsEffect(m_opacityEffect);
 }
 
 void SlidingMenu::applyStyles()
 {
-    // Полупрозрачный фон в стиле GitHub
+    // Фон в стиле GitHub
     setStyleSheet(
         "SlidingMenu {"
-        "   background-color: rgba(36, 41, 47, 200);"
+        "   background-color: rgb(36, 41, 47);"
         "   border: none;"
         "}"
     );
@@ -353,17 +346,6 @@ void SlidingMenu::showMenu()
     m_animation->setEndValue(endPos);
     m_animation->start();
     
-    // Анимация прозрачности - всегда начинаем с 0.0 до 1.0
-    if (m_opacityEffect) {
-        m_opacityEffect->setOpacity(0.0);
-        QPropertyAnimation *opacityAnim = new QPropertyAnimation(m_opacityEffect, "opacity", this);
-        opacityAnim->setDuration(300);
-        opacityAnim->setStartValue(0.0);
-        opacityAnim->setEndValue(1.0);
-        opacityAnim->start();
-        connect(opacityAnim, &QPropertyAnimation::finished, opacityAnim, &QPropertyAnimation::deleteLater);
-    }
-    
     m_isVisible = true;
 }
 
@@ -383,18 +365,6 @@ void SlidingMenu::hideMenu()
     m_animation->setStartValue(startPos);
     m_animation->setEndValue(endPos);
     m_animation->start();
-    
-    // Анимация прозрачности - от 1.0 до 0.0
-    if (m_opacityEffect) {
-        QPropertyAnimation *opacityAnim = new QPropertyAnimation(m_opacityEffect, "opacity", this);
-        opacityAnim->setDuration(300);
-        opacityAnim->setStartValue(1.0);
-        opacityAnim->setEndValue(0.0);
-        opacityAnim->start();
-        connect(opacityAnim, &QPropertyAnimation::finished, [opacityAnim, this]() {
-            opacityAnim->deleteLater();
-        });
-    }
     
     m_isVisible = false;
 }
