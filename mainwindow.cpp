@@ -13,7 +13,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     
     // Создаем кнопку меню в стиле GitHub "Open menu"
-    m_menuButton = new QPushButton("☰ Open menu", this);
+    m_menuButton = new QPushButton("☰", this);
+    m_menuButton->setToolTip("Открыть меню");
     m_menuButton->setCursor(Qt::PointingHandCursor);
     m_menuButton->setStyleSheet(
         "QPushButton {"
@@ -41,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     
     // Создаем выезжающее меню слева направо
     m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);
-    m_slidingMenu->setTitle("GitHub Style Menu");
+    m_slidingMenu->setTitle("Главное меню");
     
     // Устанавливаем иконку (можно заменить на свою)
     QPixmap icon(32, 32);
