@@ -184,9 +184,12 @@ void MainWindow::toggleUserMenu()
     if (m_userMenu->isMenuVisible()) {
         m_userMenu->hideMenu();
     } else {
-        // Устанавливаем ссылку на кнопку-триггер
-        m_userMenu->move(m_userMenuButton->mapToGlobal(QPoint(0, m_userMenuButton->height() + 5)).x() - pos().x(),
-                         m_userMenuButton->mapToGlobal(QPoint(0, m_userMenuButton->height() + 5)).y() - pos().y());
+        // Вычисляем позицию: правый верхний угол меню должен быть там, где правый нижний угол кнопки
+        QPoint buttonBottomRight = m_userMenuButton->mapToGlobal(m_userMenuButton->rect().bottomRight());
+        int menuX = buttonBottomRight.x() - m_userMenu->width();
+        int menuY = buttonBottomRight.y();
+        
+        m_userMenu->move(menuX, menuY);
         m_userMenu->showMenu();
     }
 }

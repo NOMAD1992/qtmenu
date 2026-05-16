@@ -158,12 +158,12 @@ void UserMenu::hideMenu()
 {
     if (!m_isVisible) return;
     
+    m_isVisible = false;
+    
     // Анимация исчезновения
     m_animation->setStartValue(1.0);
     m_animation->setEndValue(0.0);
     m_animation->start();
-    
-    m_isVisible = false;
 }
 
 bool UserMenu::isMenuVisible() const
@@ -214,6 +214,7 @@ bool UserMenu::eventFilter(QObject *obj, QEvent *event)
         QWidget *clickedWidget = QApplication::widgetAt(QCursor::pos());
         if (clickedWidget && !isAncestorOf(clickedWidget) && clickedWidget != this) {
             hideMenu();
+            return true;
         }
     }
     
