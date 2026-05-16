@@ -16,6 +16,11 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     , m_animation(nullptr)
     , m_isVisible(false)
 {
+    // Убираем любую прозрачность на уровне виджета
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAttribute(Qt::WA_NoSystemBackground, false);
+    setAutoFillBackground(true);
+    
     setupUi();
     setupAnimations();
     applyStyles();
@@ -223,10 +228,14 @@ void SlidingMenu::setupAnimations()
 
 void SlidingMenu::applyStyles()
 {
-    // Фон в стиле GitHub
+    // Убираем любую прозрачность
+    setAttribute(Qt::WA_OpaquePaintEvent);
+    setAutoFillBackground(true);
+    
+    // Фон в стиле GitHub - полностью непрозрачный
     setStyleSheet(
         "SlidingMenu {"
-        "   background-color: rgb(36, 41, 47);"
+        "   background-color: #24292f;"
         "   border: none;"
         "}"
     );
