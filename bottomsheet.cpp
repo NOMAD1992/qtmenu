@@ -2,6 +2,7 @@
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QMouseEvent>
+#include <QFrame>
 
 BottomSheet::BottomSheet(QWidget *parent)
     : QWidget(parent)
@@ -11,7 +12,8 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_isVisible(true)  // Шторка всегда открыта по умолчанию
     , m_sheetHeight(200)
     , m_minHeight(100)   // Минимальная высота
-    , m_maxHeight(400)   // Максимальная высота
+    , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
+    , m_menubarHeight(0) // Высота menubar будет определена динамически
     , m_dragging(false)
     , m_dragStartY(0)
     , m_startHeight(0)
@@ -22,8 +24,16 @@ BottomSheet::BottomSheet(QWidget *parent)
     applyStyles();
     installParentEventFilter();
     
-    // Позиционируем шторку внизу родителя
+    // Определяем высоту fMenuBar и пересчитываем максимальную высоту шторки
     if (parent) {
+        // Ищем fMenuBar в родителе (QFrame с именем fMenuBar)
+        QFrame *menuBarFrame = parent->findChild<QFrame*>("fMenuBar");
+        if (menuBarFrame) {
+            m_menubarHeight = menuBarFrame->height();
+        }
+        recalculateMaxHeight();
+        
+        // Позиционируем шторку внизу родителя
         move(0, parent->height() - m_sheetHeight);
     }
 }
@@ -123,6 +133,8 @@ bool BottomSheet::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == parentWidget() && event->type() == QEvent::Resize) {
         updateSheetWidth();
+        // Пересчитываем максимальную высоту при изменении размера окна
+        recalculateMaxHeight();
         // Перепозиционируем шторку при изменении размера родителя
         move(0, parentWidget()->height() - m_sheetHeight);
     }
@@ -194,4 +206,23 @@ void BottomSheet::updateSheetHeight(int height)
     if (parentWidget()) {
         move(x(), parentWidget()->height() - m_sheetHeight);
     }
+}
+
+void BottomSheet::recalculateMaxHeight()
+{
+    if (parentWidget()) {
+        // Максимальная высота = высота окна минус высота menubar минус небольшой отступ
+        int availableHeight = parentWidget()->height() - m_menubarHeight - 20;
+        m_maxHeight = qMax(m_minHeight, availableHeight);
+        
+        // Если текущая высота больше новой максимальной, уменьшаем её
+        if (m_sheetHeight > m_maxHeight) {
+            updateSheetHeight(m_maxHeight);
+        }
+    }
+}
+
+void BottomSheet::updateMaxHeight(int maxHeight)
+{
+    m_maxHeight = qMax(m_minHeight, maxHeight);
 }

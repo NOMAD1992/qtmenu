@@ -19,6 +19,9 @@ public:
 
     // Геттер для listView
     QListView* listView() const { return m_listView; }
+    
+    // Метод для обновления максимальной высоты (вызывается из MainWindow)
+    void updateMaxHeight(int maxHeight);
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
@@ -34,6 +37,7 @@ private:
     void installParentEventFilter();
     void updateSheetWidth();
     void updateSheetHeight(int height);
+    void recalculateMaxHeight();
 
     // Элементы интерфейса
     QWidget *m_handleWidget;      // Узкая полоска сверху для перетаскивания
@@ -44,6 +48,7 @@ private:
     int m_sheetHeight;
     int m_minHeight;
     int m_maxHeight;
+    int m_menubarHeight;  // Высота верхней панели меню
     
     // Для перетаскивания
     bool m_dragging;
