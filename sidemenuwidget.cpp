@@ -2,6 +2,8 @@
 #include <QPainter>
 #include <QApplication>
 #include <QScreen>
+#include <QGuiApplication>
+#include <QFrame>
 
 // --- MenuActionItem Implementation ---
 
@@ -41,12 +43,17 @@ void MenuActionItem::enterEvent(QEvent *event) {
         
         // Проверяем, есть ли место справа
         QScreen *screen = QApplication::screenAt(QCursor::pos());
-        int screenWidth = screen ? screen->availableGeometry().right() : QApplication::desktop()->availableGeometry().right();
+        QRect screenGeometry;
+        if (screen) {
+            screenGeometry = screen->availableGeometry();
+        } else {
+            screenGeometry = QGuiApplication::primaryScreen()->availableGeometry();
+        }
         
         int subMenuX = parentGlobalPos.x() + menuWidth;
         
         // Если справа нет места, открываем слева
-        if (subMenuX + m_subMenu->sizeHint().width() > screenWidth) {
+        if (subMenuX + m_subMenu->sizeHint().width() > screenGeometry.right()) {
             subMenuX = parentGlobalPos.x() - m_subMenu->sizeHint().width();
         }
         
@@ -84,6 +91,13 @@ void MenuActionItem::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
 }
 
+void MenuActionItem::mousePressEvent(QMouseEvent *event) {
+    if (event->button() == Qt::LeftButton) {
+        emit clicked();
+    }
+    QWidget::mousePressEvent(event);
+}
+
 // --- SideMenuWidget Implementation ---
 
 SideMenuWidget::SideMenuWidget(QWidget *parent)
@@ -112,7 +126,7 @@ MenuActionItem* SideMenuWidget::addAction(const QString &text) {
     m_layout->addWidget(item);
     
     connect(item, &MenuActionItem::clicked, this, [this, item]() {
-        if (!item->m_subMenu) {
+        if (!item->subMenu()) {
             emit actionTriggered(item->text());
             hideAll();
         }
@@ -139,8 +153,8 @@ void SideMenuWidget::showAt(const QPoint &globalPos) {
 void SideMenuWidget::hideAll() {
     // Рекурсивно скрываем все подменю
     for (auto *item : m_items) {
-        if (item->m_subMenu) {
-            item->m_subMenu->hideAll();
+        if (item->subMenu()) {
+            item->subMenu()->hideAll();
         }
     }
     hide();

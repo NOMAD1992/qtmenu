@@ -16,11 +16,16 @@ public:
     void setSubMenu(SideMenuWidget *menu);
     void setActive(bool active);
     QString text() const { return m_label->text(); }
+    SideMenuWidget* subMenu() const { return m_subMenu; } // Геттер для доступа к подменю
+
+signals:
+    void clicked(); // Сигнал клика
 
 protected:
     void enterEvent(QEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     QLabel *m_label;
