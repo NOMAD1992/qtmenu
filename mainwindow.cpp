@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     , m_toastNotification(nullptr)
     , m_toastTimer(nullptr)
     , m_toastCounter(0)
+    , m_standardIconsWidget(nullptr)
 {
     ui->setupUi(this);
     
@@ -64,6 +65,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pbUserMenu->setToolTip("Профиль пользователя");
     ui->pbUserMenu->setCursor(Qt::PointingHandCursor);
     connect(ui->pbUserMenu, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
+    
+    // Создаем виджет стандартных иконок и добавляем его в vlIcons
+    m_standardIconsWidget = new StandardIconsWidget(this);
+    ui->vlIcons->addWidget(m_standardIconsWidget);
     
     // Создаем выезжающее меню слева направо
     m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);

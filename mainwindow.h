@@ -8,6 +8,7 @@
 #include "usermenu.h"
 #include "bottomsheet.h"
 #include "toastnotification.h"
+#include "standardiconswidget.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -96,6 +97,7 @@ private:
     ToastNotification *m_toastNotification; ///< Указатель на систему уведомлений.
     QTimer *m_toastTimer;         ///< Таймер для показа тестовых уведомлений.
     int m_toastCounter;           ///< Счётчик для генерации разных сообщений.
+    StandardIconsWidget *m_standardIconsWidget; ///< Указатель на виджет стандартных иконок.
 };
 
 #endif // MAINWINDOW_H
