@@ -370,8 +370,8 @@ ToastNotification::ToastNotification(QWidget *parent)
     , m_displayDuration(3000)
     , m_maxNotifications(3)
     , m_spacing(10)
-    , m_rightMargin(20)
-    , m_bottomMargin(20)
+    , m_rightMargin(5)
+    , m_bottomMargin(5)
 {
 }
 
