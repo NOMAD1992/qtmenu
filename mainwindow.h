@@ -86,6 +86,26 @@ private slots:
      * @brief Показывает тестовое уведомление.
      */
     void showTestToast();
+    
+    /**
+     * @brief Слот обработки нажатия на информационное уведомление.
+     */
+    void onInformationClicked();
+    
+    /**
+     * @brief Слот обработки нажатия на уведомление-предупреждение.
+     */
+    void onWarningClicked();
+    
+    /**
+     * @brief Слот обработки нажатия на уведомление об ошибке.
+     */
+    void onErrorClicked();
+    
+    /**
+     * @brief Слот обработки нажатия на уведомление о новом сообщении чата.
+     */
+    void onNewChatMessageClicked();
 
 private:
     Ui::MainWindow *ui;           ///< Указатель на интерфейс пользователя.

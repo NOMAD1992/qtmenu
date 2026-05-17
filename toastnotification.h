@@ -81,6 +81,27 @@ public:
      */
     int getMinimumHeight() const;
 
+signals:
+    /**
+     * @brief Сигнал при нажатии на информационное уведомление.
+     */
+    void informationClicked();
+    
+    /**
+     * @brief Сигнал при нажатии на уведомление-предупреждение.
+     */
+    void warningClicked();
+    
+    /**
+     * @brief Сигнал при нажатии на уведомление об ошибке.
+     */
+    void errorClicked();
+    
+    /**
+     * @brief Сигнал при нажатии на уведомление о новом сообщении чата.
+     */
+    void newChatMessageClicked();
+
 protected:
     /**
      * @brief Обработчик события входа мыши.
@@ -99,6 +120,12 @@ protected:
      * @param event Событие отрисовки.
      */
     void paintEvent(QPaintEvent *event) override;
+    
+    /**
+     * @brief Обработчик события нажатия кнопки мыши.
+     * @param event Событие нажатия кнопки мыши.
+     */
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     /**
@@ -126,6 +153,11 @@ private:
      * @brief Слот завершения анимации скрытия.
      */
     void onAnimationFinished();
+    
+    /**
+     * @brief Испускает сигнал в зависимости от типа уведомления.
+     */
+    void emitClickSignal();
 
     QLabel *m_titleLabel;       ///< Метка заголовка
     QLabel *m_messageLabel;     ///< Метка сообщения
@@ -214,6 +246,27 @@ public:
      */
     void setBottomMargin(const int &value);
 
+signals:
+    /**
+     * @brief Сигнал при нажатии на информационное уведомление.
+     */
+    void informationClicked();
+    
+    /**
+     * @brief Сигнал при нажатии на уведомление-предупреждение.
+     */
+    void warningClicked();
+    
+    /**
+     * @brief Сигнал при нажатии на уведомление об ошибке.
+     */
+    void errorClicked();
+    
+    /**
+     * @brief Сигнал при нажатии на уведомление о новом сообщении чата.
+     */
+    void newChatMessageClicked();
+
 private slots:
     /**
      * @brief Обработка очереди уведомлений.
@@ -224,6 +277,26 @@ private slots:
      * @brief Обновление позиций всех уведомлений.
      */
     void updatePositions();
+    
+    /**
+     * @brief Слот обработки нажатия на информационное уведомление.
+     */
+    void onInformationClicked();
+    
+    /**
+     * @brief Слот обработки нажатия на уведомление-предупреждение.
+     */
+    void onWarningClicked();
+    
+    /**
+     * @brief Слот обработки нажатия на уведомление об ошибке.
+     */
+    void onErrorClicked();
+    
+    /**
+     * @brief Слот обработки нажатия на уведомление о новом сообщении чата.
+     */
+    void onNewChatMessageClicked();
 
 private:
     /**

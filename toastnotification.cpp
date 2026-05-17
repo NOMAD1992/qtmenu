@@ -187,6 +187,30 @@ void ToastWidget::onAnimationFinished()
     deleteLater();
 }
 
+void ToastWidget::emitClickSignal()
+{
+    // Испускаем сигнал в зависимости от типа уведомления
+    int statusValue = property("status").toInt();
+    
+    switch (static_cast<ToastStatus>(statusValue)) {
+        case ToastStatus::Information:
+            emit informationClicked();
+            break;
+        case ToastStatus::Warning:
+            emit warningClicked();
+            break;
+        case ToastStatus::Error:
+            emit errorClicked();
+            break;
+        case ToastStatus::NewChatMessage:
+            emit newChatMessageClicked();
+            break;
+        default:
+            emit informationClicked();
+            break;
+    }
+}
+
 void ToastWidget::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
@@ -260,6 +284,7 @@ void ToastWidget::setupUi()
     m_titleLabel->setObjectName("toastTitleLabel");
     m_titleLabel->setFont(QFont("Segoe UI", 11, QFont::Bold));
     m_titleLabel->setWordWrap(true);
+    m_titleLabel->setCursor(Qt::PointingHandCursor);
     headerLayout->addWidget(m_titleLabel);
     
     headerLayout->addStretch();
@@ -283,6 +308,7 @@ void ToastWidget::setupUi()
     m_messageLabel->setFont(QFont("Segoe UI", 10));
     m_messageLabel->setWordWrap(true);
     m_messageLabel->setMaximumWidth(MIN_WIDTH - 40); // Ширина уведомления MIN_WIDTH минус отступы
+    m_messageLabel->setCursor(Qt::PointingHandCursor);
     mainLayout->addWidget(m_messageLabel);
     
     setLayout(mainLayout);
@@ -292,6 +318,18 @@ void ToastWidget::setupUi()
     setFixedWidth(MIN_WIDTH);
     // Устанавливаем минимальную высоту MIN_HEIGHT
     setMinimumHeight(MIN_HEIGHT);
+    
+    // Подключаем сигнал о клике на заголовок и сообщение для испускания сигнала в зависимости от типа
+    connect(m_titleLabel, &QLabel::linkActivated, this, [this]() { emitClickSignal(); });
+    connect(m_messageLabel, &QLabel::linkActivated, this, [this]() { emitClickSignal(); });
+}
+
+void ToastWidget::mousePressEvent(QMouseEvent *event)
+{
+    if (event->button() == Qt::LeftButton) {
+        emitClickSignal();
+    }
+    QWidget::mousePressEvent(event);
 }
 
 void ToastWidget::applyStyles()
@@ -465,6 +503,12 @@ void ToastNotification::showToast(const QString &title,
     toast->show();
     showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
     
+    // Подключаем сигналы уведомления к сигналам менеджера
+    connect(toast, &ToastWidget::informationClicked, this, &ToastNotification::informationClicked);
+    connect(toast, &ToastWidget::warningClicked, this, &ToastNotification::warningClicked);
+    connect(toast, &ToastWidget::errorClicked, this, &ToastNotification::errorClicked);
+    connect(toast, &ToastWidget::newChatMessageClicked, this, &ToastNotification::newChatMessageClicked);
+    
     // Подключаемся к сигналу закрытия для обновления позиций
     connect(toast, &QWidget::destroyed, this, [this]() {
         updatePositions();
@@ -510,6 +554,12 @@ void ToastNotification::showToast(const QString &title,
     
     toast->show();
     showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    
+    // Подключаем сигналы уведомления к сигналам менеджера
+    connect(toast, &ToastWidget::informationClicked, this, &ToastNotification::informationClicked);
+    connect(toast, &ToastWidget::warningClicked, this, &ToastNotification::warningClicked);
+    connect(toast, &ToastWidget::errorClicked, this, &ToastNotification::errorClicked);
+    connect(toast, &ToastWidget::newChatMessageClicked, this, &ToastNotification::newChatMessageClicked);
     
     // Подключаемся к сигналу закрытия для обновления позиций
     connect(toast, &QWidget::destroyed, this, [this]() {
@@ -618,4 +668,28 @@ QPoint ToastNotification::calculatePosition(int index)
     int y = parentRect.height() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
     
     return m_parentWidget->mapToGlobal(QPoint(x, y));
+}
+
+// ============================================
+// Реализация слотов ToastNotification
+// ============================================
+
+void ToastNotification::onInformationClicked()
+{
+    qDebug() << "ToastNotification: Information notification clicked";
+}
+
+void ToastNotification::onWarningClicked()
+{
+    qDebug() << "ToastNotification: Warning notification clicked";
+}
+
+void ToastNotification::onErrorClicked()
+{
+    qDebug() << "ToastNotification: Error notification clicked";
+}
+
+void ToastNotification::onNewChatMessageClicked()
+{
+    qDebug() << "ToastNotification: New chat message notification clicked";
 }
