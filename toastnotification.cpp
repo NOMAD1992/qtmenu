@@ -3,10 +3,67 @@
 #include <QScreen>
 #include <QGraphicsOpacityEffect>
 #include <QtMath>
+#include <QPainter>
+#include <QStyleOption>
+#include <QPainterPath>
 
 // ============================================
 // Реализация ToastWidget
 // ============================================
+
+// Класс для отрисовки иконки статуса
+class StatusIconLabel : public QLabel
+{
+public:
+    StatusIconLabel(ToastStatus status, QWidget *parent = nullptr) 
+        : QLabel(parent), m_status(status) {}
+
+protected:
+    void paintEvent(QPaintEvent *event) override
+    {
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+        
+        int size = qMin(width(), height());
+        int radius = size / 2;
+        
+        // Цвет иконки в зависимости от статуса
+        QColor iconColor;
+        QChar iconChar;
+        switch (m_status) {
+            case ToastStatus::Warning:
+                iconColor = QColor(255, 215, 0);  // Желтый
+                iconChar = QChar(0x26A0);  // Символ предупреждения ⚠
+                break;
+            case ToastStatus::Error:
+                iconColor = QColor(255, 68, 68);  // Красный
+                iconChar = QChar(0x2716);  // Крестик ✖
+                break;
+            case ToastStatus::NewChatMessage:
+                iconColor = QColor(255, 255, 255);  // Белый
+                iconChar = QChar(0x1F4AC);  // Пузырь сообщения 💬
+                break;
+            default: // Information
+                iconColor = QColor(68, 136, 255);  // Синий
+                iconChar = QChar(0x2139);  // Символ информации ℹ
+                break;
+        }
+        
+        // Рисуем круглый фон
+        painter.setBrush(iconColor);
+        painter.setPen(Qt::NoPen);
+        painter.drawEllipse(QPoint(size/2, size/2), radius, radius);
+        
+        // Рисуем символ
+        painter.setPen(QColor(30, 30, 30));
+        QFont font("Segoe UI Symbol", size * 0.6, QFont::Bold);
+        painter.setFont(font);
+        painter.drawText(rect(), Qt::AlignCenter, QString(iconChar));
+    }
+
+private:
+    ToastStatus m_status;
+};
 
 ToastWidget::ToastWidget(const QString &title, 
                          const QString &message, 
@@ -21,6 +78,9 @@ ToastWidget::ToastWidget(const QString &title,
     , m_displayDuration(3000)
     , m_isHovered(false)
 {
+    // Устанавливаем статус как свойство для использования в стилях
+    setProperty("status", static_cast<int>(status));
+    
     setupUi();
     applyStyles();
     
@@ -28,8 +88,8 @@ ToastWidget::ToastWidget(const QString &title,
     m_titleLabel->setText(title);
     m_messageLabel->setText(message);
     
-    // Настраиваем атрибуты окна
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool | Qt::WindowStaysOnTopHint);
+    // Настраиваем атрибуты окна - убираем WindowStaysOnTopHint для отображения в окне приложения
+    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_ShowWithoutActivating);
     
@@ -106,16 +166,64 @@ void ToastWidget::onAnimationFinished()
     deleteLater();
 }
 
+void ToastWidget::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    
+    // Получаем цвета фона из свойств
+    QColor headerBgColor = property("headerBgColor").value<QColor>();
+    QColor bodyBgColor = property("bodyBgColor").value<QColor>();
+    
+    if (!headerBgColor.isValid())
+        headerBgColor = QColor(0, 0, 0, 180);
+    if (!bodyBgColor.isValid())
+        bodyBgColor = QColor(80, 80, 80, 200);
+    
+    int height = this->height();
+    int headerHeight = m_titleLabel ? m_titleLabel->height() + 16 : height / 3;
+    
+    // Рисуем заголовок с полупрозрачным черным фоном (закругленный сверху)
+    QPainterPath headerPath;
+    headerPath.moveTo(0, 12);
+    headerPath.arcTo(QRectF(0, 0, 24, 24), 180, -90);
+    headerPath.lineTo(width() - 12, 0);
+    headerPath.arcTo(QRectF(width() - 24, 0, 24, 24), 90, -90);
+    headerPath.lineTo(width(), headerHeight - 6);
+    headerPath.lineTo(0, headerHeight - 6);
+    headerPath.closeSubpath();
+    painter.fillPath(headerPath, headerBgColor);
+    
+    // Рисуем тело с полупрозрачным серым фоном (закругленный снизу)
+    QPainterPath bodyPath;
+    bodyPath.moveTo(0, headerHeight - 6);
+    bodyPath.lineTo(width(), headerHeight - 6);
+    bodyPath.lineTo(width(), height - 12);
+    bodyPath.arcTo(QRectF(width() - 24, height - 24, 24, 24), 0, -90);
+    bodyPath.lineTo(12, height);
+    bodyPath.arcTo(QRectF(0, height - 24, 24, 24), 270, -90);
+    bodyPath.closeSubpath();
+    painter.fillPath(bodyPath, bodyBgColor);
+    
+    QWidget::paintEvent(event);
+}
+
 void ToastWidget::setupUi()
 {
     // Основной layout
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(12, 8, 8, 8);
-    mainLayout->setSpacing(6);
+    mainLayout->setSpacing(0); // Убираем отступ между заголовком и телом, так как будет разделитель
     
-    // Заголовок с кнопкой закрытия
+    // Заголовок с иконкой и кнопкой закрытия
     QHBoxLayout *headerLayout = new QHBoxLayout();
     headerLayout->setSpacing(8);
+    
+    // Иконка статуса
+    StatusIconLabel *iconLabel = new StatusIconLabel(
+        static_cast<ToastStatus>(property("status").toInt()), this);
+    iconLabel->setFixedSize(24, 24);
+    headerLayout->addWidget(iconLabel);
     
     m_titleLabel = new QLabel(this);
     m_titleLabel->setObjectName("toastTitleLabel");
@@ -130,52 +238,100 @@ void ToastWidget::setupUi()
     
     mainLayout->addLayout(headerLayout);
     
+    // Разделительная полоса между заголовком и телом
+    QFrame *separator = new QFrame(this);
+    separator->setFrameShape(QFrame::HLine);
+    separator->setFrameShadow(QFrame::Plain);
+    separator->setObjectName("toastSeparator");
+    separator->setFixedHeight(1);
+    mainLayout->addWidget(separator);
+    
     // Тело с сообщением
     m_messageLabel = new QLabel(this);
     m_messageLabel->setObjectName("toastMessageLabel");
     m_messageLabel->setFont(QFont("Segoe UI", 10));
     m_messageLabel->setWordWrap(true);
-    m_messageLabel->setMaximumWidth(350);
+    m_messageLabel->setMaximumWidth(900); // Увеличиваем ширину в 3 раза (было 350)
     mainLayout->addWidget(m_messageLabel);
     
     setLayout(mainLayout);
     adjustSize();
     
-    // Минимальная высота
-    setMinimumHeight(70);
+    // Увеличиваем минимальную высоту в 2 раза (было 70, стало 140)
+    setMinimumHeight(140);
 }
 
 void ToastWidget::applyStyles()
 {
-    QString baseStyle = R"(
+    // Определяем цвета в зависимости от статуса
+    QString titleColor;
+    QColor headerBgColor;
+    QColor bodyBgColor;
+    
+    switch (property("status").toInt()) {
+        case static_cast<int>(ToastStatus::Warning):
+            titleColor = "#FFD700";  // Желтый для предупреждения
+            headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
+            bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
+            break;
+        case static_cast<int>(ToastStatus::Error):
+            titleColor = "#FF4444";  // Красный для ошибки
+            headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
+            bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
+            break;
+        case static_cast<int>(ToastStatus::NewChatMessage):
+            titleColor = "#FFFFFF";  // Белый для сообщений чата
+            headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
+            bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
+            break;
+        default: // Information
+            titleColor = "#4488FF";  // Синий для информации
+            headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
+            bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
+            break;
+    }
+    
+    // Сохраняем цвета как свойства для использования в paintEvent
+    setProperty("headerBgColor", headerBgColor);
+    setProperty("bodyBgColor", bodyBgColor);
+    
+    QString baseStyle = QString(R"(
         QWidget {
-            background-color: rgba(40, 40, 40, 250);
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 40);
+            background-color: transparent;
+            border-radius: 12px;
         }
         
         QLabel#toastTitleLabel {
-            color: #ffffff;
-            padding: 2px;
+            color: %1;
+            padding: 4px 6px;
+            border: none;
+            background: transparent;
         }
         
         QLabel#toastMessageLabel {
-            color: rgba(255, 255, 255, 200);
-            padding: 2px;
+            color: rgba(255, 255, 255, 220);
+            padding: 8px 6px;
+            border: none;
+            background: transparent;
+        }
+        
+        QFrame#toastSeparator {
+            background-color: rgba(255, 255, 255, 60);
+            margin: 0px 8px;
         }
         
         QPushButton#toastCloseButton {
             background-color: transparent;
             border: none;
             color: rgba(255, 255, 255, 150);
-            font-size: 16px;
+            font-size: 18px;
             font-weight: bold;
-            min-width: 20px;
-            max-width: 20px;
-            min-height: 20px;
-            max-height: 20px;
+            min-width: 24px;
+            max-width: 24px;
+            min-height: 24px;
+            max-height: 24px;
             padding: 0px;
-            border-radius: 10px;
+            border-radius: 12px;
         }
         
         QPushButton#toastCloseButton:hover {
@@ -186,41 +342,9 @@ void ToastWidget::applyStyles()
         QPushButton#toastCloseButton:pressed {
             background-color: rgba(255, 255, 255, 50);
         }
-    )";
+    )").arg(titleColor);
     
-    // Цвета в зависимости от статуса
-    QString statusColor;
-    QString borderColor;
-    switch (property("status").toInt()) {
-        case static_cast<int>(ToastStatus::Warning):
-            statusColor = "#FFA726";  // Оранжевый
-            borderColor = "rgba(255, 167, 38, 150)";
-            break;
-        case static_cast<int>(ToastStatus::Error):
-            statusColor = "#EF5350";  // Красный
-            borderColor = "rgba(239, 83, 80, 150)";
-            break;
-        case static_cast<int>(ToastStatus::NewChatMessage):
-            statusColor = "#42A5F5";  // Синий
-            borderColor = "rgba(66, 165, 245, 150)";
-            break;
-        default: // Information
-            statusColor = "#66BB6A";  // Зеленый
-            borderColor = "rgba(102, 187, 106, 150)";
-            break;
-    }
-    
-    QString statusStyle = QString(R"(
-        QWidget {
-            border: 2px solid %1;
-        }
-        
-        QLabel#toastTitleLabel {
-            color: %2;
-        }
-    )").arg(borderColor).arg(statusColor);
-    
-    setStyleSheet(baseStyle + statusStyle);
+    setStyleSheet(baseStyle);
     m_closeButton->setObjectName("toastCloseButton");
 }
 
@@ -389,14 +513,12 @@ QPoint ToastNotification::calculatePosition(int index)
         return QPoint(x, y);
     }
     
-    // Используем геометрию родительского виджета
-    QRect parentRect = m_parentWidget->frameGeometry();
-    QScreen *screen = m_parentWidget->screen();
-    QRect screenGeometry = screen ? screen->availableGeometry() : parentRect;
+    // Используем геометрию родительского виджета для позиционирования внутри окна
+    QRect parentRect = m_parentWidget->geometry();
     
-    // Позиция в глобальных координатах
-    int x = screenGeometry.right() - m_rightMargin - 400;
-    int y = screenGeometry.bottom() - m_bottomMargin - (index * 100);
+    // Позиция относительно родительского виджета (в его координатах)
+    int x = parentRect.width() - m_rightMargin - 400;
+    int y = parentRect.height() - m_bottomMargin - (index * 150); // Увеличиваем отступ между уведомлениями
     
-    return QPoint(x, y);
+    return m_parentWidget->mapToGlobal(QPoint(x, y));
 }

@@ -83,6 +83,12 @@ protected:
      * @param event Событие выхода мыши.
      */
     void leaveEvent(QEvent *event) override;
+    
+    /**
+     * @brief Обработчик события отрисовки для рисования фона.
+     * @param event Событие отрисовки.
+     */
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     /**
