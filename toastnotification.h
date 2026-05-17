@@ -8,9 +8,7 @@
 #include <QHBoxLayout>
 #include <QPropertyAnimation>
 #include <QTimer>
-#include <QQueue>
 #include <QList>
-#include <QPair>
 
 // Размеры уведомлений
 #define MIN_WIDTH 300

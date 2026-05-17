@@ -564,11 +564,6 @@ void ToastNotification::closeAll()
         toast->deleteLater();
     }
     m_activeToasts.clear();
-    
-    // Очищаем очередь
-    while (!m_queue.isEmpty()) {
-        m_queue.dequeue();
-    }
 }
 
 void ToastNotification::setBottomMargin(const int &value)
@@ -583,49 +578,6 @@ void ToastNotification::processQueue()
         if (!m_activeToasts.at(i)->isVisible()) {
             m_activeToasts.removeAt(i);
         }
-    }
-    
-    // Добавляем новые уведомления из очереди, если есть место
-    while (m_activeToasts.size() < m_maxNotifications && !m_queue.isEmpty()) {
-        auto notification = m_queue.dequeue();
-        
-        ToastWidget *toast = new ToastWidget(
-            notification.first,                      // title
-            notification.second.first,               // message
-            notification.second.second,              // status
-            m_parentWidget
-        );
-        
-        // Устанавливаем длительность отображения
-        toast->setDisplayDuration(m_displayDuration);
-        
-        // Вычисляем позицию
-        int index = m_activeToasts.size();
-        QPoint pos = calculatePosition(index);
-        toast->move(pos);
-        
-        // Показываем с анимацией появления
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(toast);
-        toast->setGraphicsEffect(effect);
-        
-        QPropertyAnimation *showAnimation = new QPropertyAnimation(effect, "opacity");
-        showAnimation->setDuration(300);
-        showAnimation->setStartValue(0.0);
-        showAnimation->setEndValue(1.0);
-        
-        toast->show();
-        showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-        
-        // Подключаемся к сигналу закрытия для обновления позиций
-        connect(toast, &QWidget::destroyed, this, [this]() {
-            updatePositions();
-            processQueue();
-        });
-        
-        m_activeToasts.append(toast);
-        
-        // Запускаем таймер исчезновения
-        toast->startDismissTimer();
     }
 }
 
