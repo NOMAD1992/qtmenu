@@ -474,8 +474,8 @@ void ToastNotification::showToast(const QString &title,
             break;
     }
     
-    // Создаем уведомление с выбранной иконкой
-    ToastWidget *toast = new ToastWidget(title, message, icon, m_parentWidget);
+    // Создаем уведомление с выбранным статусом и иконкой
+    ToastWidget *toast = new ToastWidget(title, message, status, m_parentWidget);
     
     // Устанавливаем длительность отображения
     toast->setDisplayDuration(m_displayDuration);
