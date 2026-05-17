@@ -48,7 +48,11 @@ QPushButton#pbRollup {
 /* Фон SlidingMenu */
 SlidingMenu {
     background-color: rgba(0, 0, 0, 240);
-    border: none;
+    border: 1px solid black;
+    border-top-left-radius: 0;
+    border-top-right-radius: 15px;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 12px;
 }
 
 /* Заголовок меню */
