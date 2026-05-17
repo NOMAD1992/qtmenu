@@ -25,6 +25,8 @@ set(PROJECT_SOURCES
         usermenu.cpp
         bottomsheet.h
         bottomsheet.cpp
+        toastnotification.h
+        toastnotification.cpp
         res.qrc
 )
 
