@@ -8,9 +8,9 @@
 *.out
 
 # Dependencies
+node_modules/
 venv/
 .venv/
-node_modules/
 __pycache__/
 .mypy_cache/
 .pytest_cache/
@@ -62,3 +62,7 @@ htmlcov/
 *.Z
 *.lz
 *.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst

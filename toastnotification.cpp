@@ -16,8 +16,16 @@
 class StatusIconLabel : public QLabel
 {
 public:
+    // Конструктор с использованием QIcon
+    StatusIconLabel(const QIcon &icon, QWidget *parent = nullptr) 
+        : QLabel(parent), m_icon(icon), m_status(ToastStatus::Information) {}
+    
+    // Конструктор с использованием ToastStatus (для обратной совместимости)
     StatusIconLabel(ToastStatus status, QWidget *parent = nullptr) 
-        : QLabel(parent), m_status(status) {}
+        : QLabel(parent), m_status(status) {
+        // Инициализируем иконку на основе статуса
+        updateIconFromStatus();
+    }
 
 protected:
     void paintEvent(QPaintEvent *event) override
@@ -26,43 +34,22 @@ protected:
         painter.setRenderHint(QPainter::Antialiasing);
         
         int size = qMin(width(), height());
-        int radius = size / 2;
         
-        // Цвет иконки в зависимости от статуса
-        QColor iconColor;
-        QChar iconChar;
-        switch (m_status) {
-            case ToastStatus::Warning:
-                iconColor = QColor(255, 215, 0);  // Желтый
-                iconChar = QChar(0x26A0);  // Символ предупреждения ⚠
-                break;
-            case ToastStatus::Error:
-                iconColor = QColor(255, 68, 68);  // Красный
-                iconChar = QChar(0x2716);  // Крестик ✖
-                break;
-            case ToastStatus::NewChatMessage:
-                iconColor = QColor(255, 255, 255);  // Белый
-                iconChar = QChar(0x1F4AC);  // Пузырь сообщения 💬
-                break;
-            default: // Information
-                iconColor = QColor(68, 136, 255);  // Синий
-                iconChar = QChar(0x2139);  // Символ информации ℹ
-                break;
+        // Рисуем QIcon без фона - на всю доступную область
+        if (!m_icon.isNull()) {
+            QRect iconRect(size * 0.1, size * 0.1, size * 0.8, size * 0.8);
+            m_icon.paint(&painter, iconRect, Qt::AlignCenter, QIcon::Normal, QIcon::On);
         }
-        
-        // Рисуем круглый фон
-        painter.setBrush(iconColor);
-        painter.setPen(Qt::NoPen);
-        painter.drawEllipse(QPoint(size/2, size/2), radius, radius);
-        
-        // Рисуем символ
-        painter.setPen(QColor(30, 30, 30));
-        QFont font("Segoe UI Symbol", size * 0.6, QFont::Bold);
-        painter.setFont(font);
-        painter.drawText(rect(), Qt::AlignCenter, QString(iconChar));
     }
 
 private:
+    void updateIconFromStatus()
+    {
+        // Здесь можно задать иконки по умолчанию для каждого статуса
+        // Пока оставляем пустым, иконки будут переданы явно
+    }
+
+    QIcon m_icon;
     ToastStatus m_status;
 };
 
@@ -90,6 +77,50 @@ ToastWidget::ToastWidget(const QString &title,
     m_messageLabel->setText(message);
     
     // Настраиваем атрибуты окна - убираем WindowStaysOnTopHint для отображения в окне приложения
+    setWindowFlags(Qt::FramelessWindowHint | Qt::BypassWindowManagerHint);
+    setAttribute(Qt::WA_TranslucentBackground);
+    setAttribute(Qt::WA_ShowWithoutActivating);
+    
+    // Создаем таймер
+    m_dismissTimer = new QTimer(this);
+    m_dismissTimer->setSingleShot(true);
+    connect(m_dismissTimer, &QTimer::timeout, this, &ToastWidget::dismiss);
+    
+    // Создаем анимацию скрытия
+    m_hideAnimation = new QPropertyAnimation(this, "windowOpacity");
+    m_hideAnimation->setDuration(300);
+    m_hideAnimation->setStartValue(1.0);
+    m_hideAnimation->setEndValue(0.0);
+    connect(m_hideAnimation, &QPropertyAnimation::finished, 
+            this, &ToastWidget::onAnimationFinished);
+}
+
+// Конструктор с использованием QIcon
+ToastWidget::ToastWidget(const QString &title, 
+                         const QString &message, 
+                         const QIcon &icon,
+                         QWidget *parent)
+    : QWidget(parent)
+    , m_titleLabel(nullptr)
+    , m_messageLabel(nullptr)
+    , m_closeButton(nullptr)
+    , m_dismissTimer(nullptr)
+    , m_hideAnimation(nullptr)
+    , m_displayDuration(3000)
+    , m_isHovered(false)
+{
+    // Устанавливаем статус Information по умолчанию
+    setProperty("status", static_cast<int>(ToastStatus::Information));
+    setProperty("customIcon", icon);
+    
+    setupUi();
+    applyStyles();
+    
+    // Устанавливаем заголовок и сообщение
+    m_titleLabel->setText(title);
+    m_messageLabel->setText(message);
+    
+    // Настраиваем атрибуты окна
     setWindowFlags(Qt::FramelessWindowHint | Qt::BypassWindowManagerHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_ShowWithoutActivating);
@@ -209,10 +240,20 @@ void ToastWidget::setupUi()
     QHBoxLayout *headerLayout = new QHBoxLayout();
     headerLayout->setSpacing(8);
     
-    // Иконка статуса
-    StatusIconLabel *iconLabel = new StatusIconLabel(
-        static_cast<ToastStatus>(property("status").toInt()), this);
-    iconLabel->setFixedSize(24, 24);
+    // Иконка статуса - проверяем наличие пользовательской иконки
+    StatusIconLabel *iconLabel = nullptr;
+    QIcon customIcon = property("customIcon").value<QIcon>();
+    
+    if (!customIcon.isNull()) {
+        // Используем пользовательскую иконку
+        iconLabel = new StatusIconLabel(customIcon, this);
+    } else {
+        // Используем иконку по умолчанию на основе статуса
+        iconLabel = new StatusIconLabel(
+            static_cast<ToastStatus>(property("status").toInt()), this);
+    }
+    
+    iconLabel->setFixedSize(32, 32);
     headerLayout->addWidget(iconLabel);
     
     m_titleLabel = new QLabel(this);
@@ -374,11 +415,112 @@ void ToastNotification::showToast(const QString &title,
                                   const QString &message, 
                                   ToastStatus status)
 {
-    // Добавляем в очередь
-    m_queue.enqueue(qMakePair(title, qMakePair(message, status)));
+    // Выбираем иконку в зависимости от статуса
+    QIcon icon;
+    switch (status) {
+        case ToastStatus::Error:
+            icon = QIcon::fromTheme("dialog-error");
+            break;
+        case ToastStatus::Warning:
+            icon = QIcon::fromTheme("dialog-warning");
+            break;
+        case ToastStatus::Information:
+            icon = QIcon::fromTheme("dialog-information");
+            break;
+        case ToastStatus::NewChatMessage:
+            icon = QIcon::fromTheme("mail-send");
+            break;
+        default:
+            icon = QIcon::fromTheme("dialog-information");
+            break;
+    }
     
-    // Обрабатываем очередь
-    processQueue();
+    // Создаем уведомление с выбранной иконкой
+    ToastWidget *toast = new ToastWidget(title, message, icon, m_parentWidget);
+    
+    // Устанавливаем длительность отображения
+    toast->setDisplayDuration(m_displayDuration);
+    
+    // Проверяем, не превышено ли максимальное количество уведомлений
+    if (m_activeToasts.size() >= m_maxNotifications) {
+        // Если лимит достигнут, не показываем новое уведомление
+        toast->deleteLater();
+        return;
+    }
+    
+    // Вычисляем позицию
+    int index = m_activeToasts.size();
+    QPoint pos = calculatePosition(index);
+    toast->move(pos);
+    
+    // Показываем с анимацией появления
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(toast);
+    toast->setGraphicsEffect(effect);
+    
+    QPropertyAnimation *showAnimation = new QPropertyAnimation(effect, "opacity");
+    showAnimation->setDuration(300);
+    showAnimation->setStartValue(0.0);
+    showAnimation->setEndValue(1.0);
+    
+    toast->show();
+    showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    
+    // Подключаемся к сигналу закрытия для обновления позиций
+    connect(toast, &QWidget::destroyed, this, [this]() {
+        updatePositions();
+        processQueue();
+    });
+    
+    m_activeToasts.append(toast);
+    
+    // Запускаем таймер исчезновения
+    toast->startDismissTimer();
+}
+
+void ToastNotification::showToast(const QString &title, 
+                                  const QString &message, 
+                                  const QIcon &icon)
+{
+    // Создаем уведомление с пользовательской иконкой
+    ToastWidget *toast = new ToastWidget(title, message, icon, m_parentWidget);
+    
+    // Устанавливаем длительность отображения
+    toast->setDisplayDuration(m_displayDuration);
+    
+    // Проверяем, не превышено ли максимальное количество уведомлений
+    if (m_activeToasts.size() >= m_maxNotifications) {
+        // Если лимит достигнут, не показываем новое уведомление
+        toast->deleteLater();
+        return;
+    }
+    
+    // Вычисляем позицию
+    int index = m_activeToasts.size();
+    QPoint pos = calculatePosition(index);
+    toast->move(pos);
+    
+    // Показываем с анимацией появления
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(toast);
+    toast->setGraphicsEffect(effect);
+    
+    QPropertyAnimation *showAnimation = new QPropertyAnimation(effect, "opacity");
+    showAnimation->setDuration(300);
+    showAnimation->setStartValue(0.0);
+    showAnimation->setEndValue(1.0);
+    
+    toast->show();
+    showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    
+    // Подключаемся к сигналу закрытия для обновления позиций
+    connect(toast, &QWidget::destroyed, this, [this]() {
+        updatePositions();
+        processQueue();
+    });
+    
+    m_activeToasts.append(toast);
+    
+    // Запускаем таймер исчезновения
+    toast->startDismissTimer();
 }
 
 void ToastNotification::setDisplayDuration(int milliseconds)
@@ -413,11 +555,6 @@ void ToastNotification::closeAll()
         toast->deleteLater();
     }
     m_activeToasts.clear();
-    
-    // Очищаем очередь
-    while (!m_queue.isEmpty()) {
-        m_queue.dequeue();
-    }
 }
 
 void ToastNotification::setBottomMargin(const int &value)
@@ -432,49 +569,6 @@ void ToastNotification::processQueue()
         if (!m_activeToasts.at(i)->isVisible()) {
             m_activeToasts.removeAt(i);
         }
-    }
-    
-    // Добавляем новые уведомления из очереди, если есть место
-    while (m_activeToasts.size() < m_maxNotifications && !m_queue.isEmpty()) {
-        auto notification = m_queue.dequeue();
-        
-        ToastWidget *toast = new ToastWidget(
-            notification.first,                      // title
-            notification.second.first,               // message
-            notification.second.second,              // status
-            m_parentWidget
-        );
-        
-        // Устанавливаем длительность отображения
-        toast->setDisplayDuration(m_displayDuration);
-        
-        // Вычисляем позицию
-        int index = m_activeToasts.size();
-        QPoint pos = calculatePosition(index);
-        toast->move(pos);
-        
-        // Показываем с анимацией появления
-        QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(toast);
-        toast->setGraphicsEffect(effect);
-        
-        QPropertyAnimation *showAnimation = new QPropertyAnimation(effect, "opacity");
-        showAnimation->setDuration(300);
-        showAnimation->setStartValue(0.0);
-        showAnimation->setEndValue(1.0);
-        
-        toast->show();
-        showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
-        
-        // Подключаемся к сигналу закрытия для обновления позиций
-        connect(toast, &QWidget::destroyed, this, [this]() {
-            updatePositions();
-            processQueue();
-        });
-        
-        m_activeToasts.append(toast);
-        
-        // Запускаем таймер исчезновения
-        toast->startDismissTimer();
     }
 }
 

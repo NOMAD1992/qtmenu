@@ -8,9 +8,7 @@
 #include <QHBoxLayout>
 #include <QPropertyAnimation>
 #include <QTimer>
-#include <QQueue>
 #include <QList>
-#include <QPair>
 
 // Размеры уведомлений
 #define MIN_WIDTH 300
@@ -47,6 +45,18 @@ public:
     explicit ToastWidget(const QString &title, 
                          const QString &message, 
                          ToastStatus status,
+                         QWidget *parent = nullptr);
+    
+    /**
+     * @brief Конструктор уведомления с пользовательской иконкой.
+     * @param title Заголовок уведомления.
+     * @param message Текст сообщения.
+     * @param icon Пользовательская иконка.
+     * @param parent Родительский виджет.
+     */
+    explicit ToastWidget(const QString &title, 
+                         const QString &message, 
+                         const QIcon &icon,
                          QWidget *parent = nullptr);
     
     /**
@@ -160,6 +170,16 @@ public:
                    ToastStatus status);
 
     /**
+     * @brief Показывает уведомление с пользовательской иконкой.
+     * @param title Заголовок уведомления.
+     * @param message Текст сообщения.
+     * @param icon Пользовательская иконка.
+     */
+    void showToast(const QString &title, 
+                   const QString &message, 
+                   const QIcon &icon);
+
+    /**
      * @brief Устанавливает время отображения уведомлений.
      * @param milliseconds Время в миллисекундах (по умолчанию 3000).
      */
@@ -215,7 +235,6 @@ private:
 
     QWidget *m_parentWidget;              ///< Родительский виджет
     QList<ToastWidget*> m_activeToasts;   ///< Список активных уведомлений
-    QQueue<QPair<QString, QPair<QString, ToastStatus>>> m_queue; ///< Очередь ожидающих уведомлений
     
     int m_displayDuration;                ///< Время отображения в мс
     int m_maxNotifications;               ///< Максимум одновременных уведомлений
