@@ -12,8 +12,7 @@ venv/
 .venv/
 node_modules/
 __pycache__/
-.mypy_cache/
-.pytest_cache/
+*.egg-info/
 dist/
 build/
 target/
@@ -33,6 +32,8 @@ target/
 # Editors
 .vscode/
 .idea/
+*.swp
+*.swo
 
 # System files
 .DS_Store

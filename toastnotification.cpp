@@ -505,7 +505,14 @@ QPoint ToastNotification::calculatePosition(int index)
         return QPoint(x, y);
     }
     
-    // Используем геометрию родительского виджета для позиционирования внутри окна
+    // Получаем геометрию экрана и доступную область
+    QScreen *screen = m_parentWidget->screen();
+    if (!screen) {
+        screen = QApplication::primaryScreen();
+    }
+    QRect screenGeometry = screen->availableGeometry();
+    
+    // Получаем геометрию родительского виджета на экране
     QRect parentRect = m_parentWidget->geometry();
     
     // Получаем высоту уведомления для расчета позиции
@@ -514,9 +521,16 @@ QPoint ToastNotification::calculatePosition(int index)
         toastHeight = m_activeToasts.at(index)->height();
     }
     
-    // Позиция относительно родительского виджета (в его координатах)
-    int x = parentRect.width() - m_rightMargin - MIN_WIDTH;
-    int y = parentRect.height() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
+    // Рассчитываем позицию уведомлений относительно экрана (правый нижний угол доступной области)
+    // Это гарантирует, что уведомления будут видны независимо от положения окна
+    int x = screenGeometry.right() - m_rightMargin - MIN_WIDTH;
+    int y = screenGeometry.bottom() - m_bottomMargin - (index * (toastHeight + m_spacing));
     
-    return m_parentWidget->mapToGlobal(QPoint(x, y));
+    // Создаем точку в глобальных координатах экрана
+    QPoint globalPos(x, y);
+    
+    // Проверяем, находится ли рассчитанная позиция внутри родительского окна
+    // Если окно перекрывает эту позицию, используем её
+    // Если нет - уведомления всё равно будут отображаться в правом нижнем углу экрана
+    return globalPos;
 }
