@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QStyleOption>
 #include <QPainterPath>
+#include <QDebug>
 
 // ============================================
 // Реализация ToastWidget
@@ -128,16 +129,6 @@ int ToastWidget::getMinimumHeight() const
     return minimumHeight();
 }
 
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-void ToastWidget::enterEvent(QEnterEvent *event)
-{
-    m_isHovered = true;
-    if (m_dismissTimer) {
-        m_dismissTimer->stop();
-    }
-    QWidget::enterEvent(event);
-}
-#else
 void ToastWidget::enterEvent(QEvent *event)
 {
     m_isHovered = true;
@@ -146,7 +137,6 @@ void ToastWidget::enterEvent(QEvent *event)
     }
     QWidget::enterEvent(event);
 }
-#endif
 
 void ToastWidget::leaveEvent(QEvent *event)
 {

@@ -76,11 +76,7 @@ protected:
      * @brief Обработчик события входа мыши.
      * @param event Событие входа мыши.
      */
-#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-    void enterEvent(QEnterEvent *event) override;
-#else
     void enterEvent(QEvent *event) override;
-#endif
     
     /**
      * @brief Обработчик события выхода мыши.
