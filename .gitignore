@@ -1,5 +1,7 @@
 ```
-# CMake build artifacts
-CMakeCache.txt
-CMakeFiles/
+# Compiled and build artifacts
+*.o
+*.obj
+*.out
+build/
 ```

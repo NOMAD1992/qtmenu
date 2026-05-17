@@ -70,6 +70,27 @@ ToastWidget::ToastWidget(const QString &title,
     // Устанавливаем статус как свойство для использования в стилях
     setProperty("status", static_cast<int>(status));
     
+    // Выбираем иконку в зависимости от статуса
+    QIcon icon;
+    switch (status) {
+        case ToastStatus::Error:
+            icon = QIcon::fromTheme("dialog-error");
+            break;
+        case ToastStatus::Warning:
+            icon = QIcon::fromTheme("dialog-warning");
+            break;
+        case ToastStatus::Information:
+            icon = QIcon::fromTheme("dialog-information");
+            break;
+        case ToastStatus::NewChatMessage:
+            icon = QIcon::fromTheme("mail-send");
+            break;
+        default:
+            icon = QIcon::fromTheme("dialog-information");
+            break;
+    }
+    setProperty("customIcon", icon);
+    
     setupUi();
     applyStyles();
     
@@ -329,6 +350,7 @@ void ToastWidget::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
         emitClickSignal();
+        dismiss(); // Закрываем уведомление сразу после клика
     }
     QWidget::mousePressEvent(event);
 }
