@@ -58,7 +58,7 @@ SlidingMenu QLabel#iconLabel {
 
 /* Кнопка закрытия */
 SlidingMenu QPushButton#closeButton {
-    min-width: 20px;
+    /* Стили переопределены выше в секции кнопок меню */
 }
 
 /* Кнопки в меню */
@@ -69,10 +69,22 @@ SlidingMenu QPushButton {
     padding: 10px;
     text-align: left;
     border-radius: 5px;
+    min-height: 40px;
 }
 
 SlidingMenu QPushButton:hover {
     background-color: rgba(255, 255, 255, 80);
+}
+
+/* Кнопка закрытия - особые стили */
+SlidingMenu QPushButton#closeButton {
+    min-width: 30px;
+    min-height: 30px;
+    max-width: 30px;
+    max-height: 30px;
+    padding: 0;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 /* Чекбоксы в меню */
@@ -99,11 +111,16 @@ SlidingMenu QFrame {
     background-color: rgba(255, 255, 255, 100);
     min-height: 1px;
     max-height: 1px;
+    margin: 5px 0;
 }
 
 /* Область прокрутки */
 SlidingMenu QScrollArea {
     border: none;
+    background-color: transparent;
+}
+
+SlidingMenu QScrollArea QWidget {
     background-color: transparent;
 }
 
