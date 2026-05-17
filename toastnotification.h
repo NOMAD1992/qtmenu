@@ -50,6 +50,18 @@ public:
                          QWidget *parent = nullptr);
     
     /**
+     * @brief Конструктор уведомления с пользовательской иконкой.
+     * @param title Заголовок уведомления.
+     * @param message Текст сообщения.
+     * @param icon Пользовательская иконка.
+     * @param parent Родительский виджет.
+     */
+    explicit ToastWidget(const QString &title, 
+                         const QString &message, 
+                         const QIcon &icon,
+                         QWidget *parent = nullptr);
+    
+    /**
      * @brief Деструктор уведомления.
      */
     ~ToastWidget();
@@ -158,6 +170,16 @@ public:
     void showToast(const QString &title, 
                    const QString &message, 
                    ToastStatus status);
+
+    /**
+     * @brief Показывает уведомление с пользовательской иконкой.
+     * @param title Заголовок уведомления.
+     * @param message Текст сообщения.
+     * @param icon Пользовательская иконка.
+     */
+    void showToast(const QString &title, 
+                   const QString &message, 
+                   const QIcon &icon);
 
     /**
      * @brief Устанавливает время отображения уведомлений.
