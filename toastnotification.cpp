@@ -428,7 +428,7 @@ void ToastNotification::showToast(const QString &title,
             icon = QIcon::fromTheme("dialog-information");
             break;
         case ToastStatus::NewChatMessage:
-            icon = QIcon::fromTheme("mail-message-new");
+            icon = QIcon::fromTheme("mail-send");
             break;
         default:
             icon = QIcon::fromTheme("dialog-information");
