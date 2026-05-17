@@ -57,14 +57,8 @@ void UserMenu::setupAnimations()
 
 void UserMenu::applyStyles()
 {    
-    // Фон в стиле GitHub - темный с закругленными углами
-    setStyleSheet(
-        "UserMenu {"
-        "   background-color: rgba(0, 0, 0, 240);"
-        "   border: 1px solid rgba(255, 255, 255, 60);"
-        "   border-radius: 2px;"
-        "}"
-    );
+    // Стили теперь загружаются из styles.qss в MainWindow
+    // Эта функция может оставаться пустой или использоваться для специфичных стилей
 }
 
 QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QWidget *parent)
@@ -82,23 +76,6 @@ QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QW
         btn->setIconSize(QSize(24, 24));
     }
     
-    btn->setStyleSheet(
-        "QPushButton {"
-        "   background-color: transparent;"
-        "   color: white;"
-        "   border: none;"
-        "   padding: 2px 4px;"
-        "   text-align: left;"
-        "   border-radius: 4px;"
-        "   font-size: 13px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "}"
-        "QPushButton:pressed {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}"
-    );
     return btn;
 }
 
@@ -121,7 +98,6 @@ void UserMenu::addSplitter()
     
     QFrame *separator = new QFrame(this);
     separator->setFrameShape(QFrame::HLine);
-    separator->setStyleSheet("background-color: rgba(255, 255, 255, 80); min-height: 1px; max-height: 1px; margin: 4px 0;");
     m_contentLayout->addWidget(separator);
     
     // Подстраиваем высоту под содержимое

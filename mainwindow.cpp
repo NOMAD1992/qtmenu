@@ -9,6 +9,8 @@
 #include <QKeyEvent>
 #include <QActionGroup>
 #include <QScreen>
+#include <QFile>
+#include <QTextStream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,40 +22,31 @@ MainWindow::MainWindow(QWidget *parent)
     , framelessCheckBox_(nullptr)
 {
     ui->setupUi(this);
-
-    setStyleSheet("QPushButton {"
-                  "   background-color: rgba(255, 255, 255, 30);"
-                  "   color: white;"
-                  "   border: 1px solid rgba(255, 255, 255, 50);"
-                  "   padding: 2px 4px;"
-                  "   border-radius: 2px;"
-                  "   font-size: 12px;"
-                  "   min-width: 80px;"
-                  "}"
-                  "QPushButton:hover {"
-                  "   background-color: rgba(255, 255, 255, 50);"
-                  "   border-color: rgba(255, 255, 255, 80);"
-                  "}"
-                  "QPushButton:pressed {"
-                  "   background-color: rgba(255, 255, 255, 20);"
-                  "}");
+    
+    // Загружаем стили из файла styles.qss
+    QFile styleFile(":/styles.qss");
+    if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(&styleFile);
+        QString stylesheet = stream.readAll();
+        setStyleSheet(stylesheet);
+        styleFile.close();
+    } else {
+        qDebug() << "Не удалось загрузить файл стилей styles.qss";
+    }
           
     // Кнопка свернуть
     ui->pbRollup->setText("─");
     ui->pbRollup->setVisible(false);
-    ui->pbRollup->setStyleSheet("QPushButton {min-width: 16px;}");
     connect(ui->pbRollup, &QPushButton::clicked, this, &MainWindow::minimizeWindow);
 
     // Создаем кнопку меню в стиле GitHub "Open menu"
     ui->pbMenu->setToolTip("Открыть меню");
     ui->pbMenu->setCursor(Qt::PointingHandCursor);
-    ui->pbMenu->setStyleSheet("QPushButton {min-width: 20px;}");
     connect(ui->pbMenu, &QPushButton::clicked, this, &MainWindow::toggleMenu);
     
     // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
     ui->pbUserMenu->setToolTip("Профиль пользователя");
     ui->pbUserMenu->setCursor(Qt::PointingHandCursor);
-    ui->pbUserMenu->setStyleSheet("QPushButton {min-width: 20px;}");
     connect(ui->pbUserMenu, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
     
     // Создаем выезжающее меню слева направо
