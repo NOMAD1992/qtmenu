@@ -128,7 +128,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     
     // Добавляем меню "Разрешение" с подменю для смены разрешения окна
-    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение", QIcon::fromTheme("preferences-desktop-display"));
+    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение", QIcon::fromTheme("view-fullscreen"));
     
     if (resolutionMenu) {
         // Создаем группу действий для взаимоисключающего выбора
