@@ -4,22 +4,23 @@
 
 /* Стили для QPushButton в MainWindow */
 QPushButton {
-    background-color: rgba(255, 255, 255, 30);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 50);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3a3a3a, stop:1 #1a1a1a);
+    color: #eee;
+    border: 1px solid #555;
     padding: 2px 4px;
-    border-radius: 2px;
+    border-radius: 5px;
     font-size: 12px;
     min-width: 80px;
 }
 
 QPushButton:hover {
-    background-color: rgba(255, 255, 255, 50);
-    border-color: rgba(255, 255, 255, 80);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #4a4a4a, stop:1 #2a2a2a);
+    border-color: #777;
 }
 
 QPushButton:pressed {
-    background-color: rgba(255, 255, 255, 20);
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #2a2a2a, stop:1 #0a0a0a);
+    border-color: #888;
 }
 
 /* Минимальные стили для кнопок меню */
@@ -56,20 +57,14 @@ SlidingMenu QLabel#iconLabel {
     background-color: transparent;
 }
 
-/* Кнопка закрытия */
-SlidingMenu QPushButton#closeButton {
-    /* Стили переопределены выше в секции кнопок меню */
-}
-
 /* Кнопки в меню */
 SlidingMenu QPushButton {
     background-color: rgba(255, 255, 255, 50);
     color: white;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 200);
     padding: 10px;
     text-align: left;
     border-radius: 5px;
-    min-height: 40px;
 }
 
 SlidingMenu QPushButton:hover {
@@ -78,15 +73,14 @@ SlidingMenu QPushButton:hover {
 
 /* Кнопка закрытия - особые стили */
 SlidingMenu QPushButton#closeButton {
-    min-width: 30px;
-    min-height: 30px;
-    max-width: 30px;
-    max-height: 30px;
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
     padding: 0;
     font-size: 16px;
     font-weight: bold;
-    qproperty-icon: url(:/img/exit.png);
-    qproperty-iconSize: 20px 20px;
+    text-align: center;                     /* Горизонтальное центрирование */
 }
 
 /* Чекбоксы в меню */

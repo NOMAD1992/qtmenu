@@ -69,7 +69,7 @@ void SlidingMenu::setupUi()
     topLayout->addWidget(m_titleLabel, 1);
     
     // Кнопка закрытия (справа вверху)
-    m_closeButton = new QPushButton("✕", this);
+    m_closeButton = new QPushButton("X", this);
     m_closeButton->setObjectName("closeButton");
     m_closeButton->setCursor(Qt::PointingHandCursor);
     connect(m_closeButton, &QPushButton::clicked, this, &SlidingMenu::onCloseClicked);

@@ -1,1 +1,2 @@
-Nothing should be ignored since only a source file (.qss) was modified and no build artifacts, dependencies, or temp files were present in the changes.
+/build
+/CMakeLists.txt.user
