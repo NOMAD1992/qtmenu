@@ -34,33 +34,10 @@ protected:
         painter.setRenderHint(QPainter::Antialiasing);
         
         int size = qMin(width(), height());
-        int radius = size / 2;
         
-        // Цвет фона иконки в зависимости от статуса
-        QColor iconBgColor;
-        switch (m_status) {
-            case ToastStatus::Warning:
-                iconBgColor = QColor(255, 215, 0);  // Желтый
-                break;
-            case ToastStatus::Error:
-                iconBgColor = QColor(255, 68, 68);  // Красный
-                break;
-            case ToastStatus::NewChatMessage:
-                iconBgColor = QColor(255, 255, 255);  // Белый
-                break;
-            default: // Information
-                iconBgColor = QColor(68, 136, 255);  // Синий
-                break;
-        }
-        
-        // Рисуем круглый фон
-        painter.setBrush(iconBgColor);
-        painter.setPen(Qt::NoPen);
-        painter.drawEllipse(QPoint(size/2, size/2), radius, radius);
-        
-        // Рисуем QIcon
+        // Рисуем QIcon без фона - на всю доступную область
         if (!m_icon.isNull()) {
-            QRect iconRect(size * 0.25, size * 0.25, size * 0.5, size * 0.5);
+            QRect iconRect(size * 0.1, size * 0.1, size * 0.8, size * 0.8);
             m_icon.paint(&painter, iconRect, Qt::AlignCenter, QIcon::Normal, QIcon::On);
         }
     }
@@ -276,7 +253,7 @@ void ToastWidget::setupUi()
             static_cast<ToastStatus>(property("status").toInt()), this);
     }
     
-    iconLabel->setFixedSize(24, 24);
+    iconLabel->setFixedSize(32, 32);
     headerLayout->addWidget(iconLabel);
     
     m_titleLabel = new QLabel(this);
@@ -464,6 +441,13 @@ void ToastNotification::showToast(const QString &title,
     // Устанавливаем длительность отображения
     toast->setDisplayDuration(m_displayDuration);
     
+    // Проверяем, не превышено ли максимальное количество уведомлений
+    if (m_activeToasts.size() >= m_maxNotifications) {
+        // Если лимит достигнут, не показываем новое уведомление
+        toast->deleteLater();
+        return;
+    }
+    
     // Вычисляем позицию
     int index = m_activeToasts.size();
     QPoint pos = calculatePosition(index);
@@ -502,6 +486,13 @@ void ToastNotification::showToast(const QString &title,
     
     // Устанавливаем длительность отображения
     toast->setDisplayDuration(m_displayDuration);
+    
+    // Проверяем, не превышено ли максимальное количество уведомлений
+    if (m_activeToasts.size() >= m_maxNotifications) {
+        // Если лимит достигнут, не показываем новое уведомление
+        toast->deleteLater();
+        return;
+    }
     
     // Вычисляем позицию
     int index = m_activeToasts.size();
