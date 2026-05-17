@@ -258,9 +258,11 @@ void MainWindow::toggleFrameless(bool checked)
     if (checked) {
         setWindowFlags(Qt::FramelessWindowHint);
         ui->pbRollup->setVisible(true);
+        m_toastNotification->setBottomMargin(5);
     } else {
         setWindowFlags(Qt::Window | Qt::WindowTitleHint | Qt::WindowSystemMenuHint | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
         ui->pbRollup->setVisible(false);
+        m_toastNotification->setBottomMargin(36);
     }
     show();
 

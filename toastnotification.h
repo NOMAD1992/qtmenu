@@ -187,6 +187,12 @@ public:
      * @brief Закрывает все активные уведомления.
      */
     void closeAll();
+    /**
+     * @brief setBottomMargin установка отступа снизу в зависимотсти от вкл/выкл.
+     * системные рамки у главного окна
+     * @param value значение в px
+     */
+    void setBottomMargin(const int &value);
 
 private slots:
     /**

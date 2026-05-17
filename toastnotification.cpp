@@ -361,7 +361,7 @@ ToastNotification::ToastNotification(QWidget *parent)
     , m_maxNotifications(3)
     , m_spacing(10)
     , m_rightMargin(5)
-    , m_bottomMargin(5)
+    , m_bottomMargin(40)
 {
 }
 
@@ -418,6 +418,11 @@ void ToastNotification::closeAll()
     while (!m_queue.isEmpty()) {
         m_queue.dequeue();
     }
+}
+
+void ToastNotification::setBottomMargin(const int &value)
+{
+    m_bottomMargin = value;
 }
 
 void ToastNotification::processQueue()
