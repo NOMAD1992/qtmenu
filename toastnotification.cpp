@@ -251,16 +251,16 @@ void ToastWidget::setupUi()
     m_messageLabel->setObjectName("toastMessageLabel");
     m_messageLabel->setFont(QFont("Segoe UI", 10));
     m_messageLabel->setWordWrap(true);
-    m_messageLabel->setMaximumWidth(180); // Ширина уведомления 200px минус отступы
+    m_messageLabel->setMaximumWidth(MIN_WIDTH - 40); // Ширина уведомления MIN_WIDTH минус отступы
     mainLayout->addWidget(m_messageLabel);
     
     setLayout(mainLayout);
     adjustSize();
     
-    // Устанавливаем фиксированную ширину 200px
-    setFixedWidth(200);
-    // Уменьшаем минимальную высоту на 20% (было 140, стало 112)
-    setMinimumHeight(112);
+    // Устанавливаем фиксированную ширину MIN_WIDTH
+    setFixedWidth(MIN_WIDTH);
+    // Устанавливаем минимальную высоту MIN_HEIGHT
+    setMinimumHeight(MIN_HEIGHT);
 }
 
 void ToastWidget::applyStyles()
@@ -509,8 +509,8 @@ QPoint ToastNotification::calculatePosition(int index)
         QScreen *screen = QApplication::primaryScreen();
         QRect screenGeometry = screen->availableGeometry();
         
-        int x = screenGeometry.right() - m_rightMargin - 200; // 200 - фиксированная ширина
-        int y = screenGeometry.bottom() - m_bottomMargin - (index * 100);
+        int x = screenGeometry.right() - m_rightMargin - MIN_WIDTH;
+        int y = screenGeometry.bottom() - m_bottomMargin - (index * (MIN_HEIGHT + m_spacing));
         
         return QPoint(x, y);
     }
@@ -518,14 +518,14 @@ QPoint ToastNotification::calculatePosition(int index)
     // Используем геометрию родительского виджета для позиционирования внутри окна
     QRect parentRect = m_parentWidget->geometry();
     
-    // Получаем высоту первого уведомления для расчета позиции
-    int toastHeight = 112; // Уменьшенная высота (140 * 0.8)
+    // Получаем высоту уведомления для расчета позиции
+    int toastHeight = MIN_HEIGHT;
     if (!m_activeToasts.isEmpty() && index < m_activeToasts.size()) {
         toastHeight = m_activeToasts.at(index)->height();
     }
     
     // Позиция относительно родительского виджета (в его координатах)
-    int x = parentRect.width() - m_rightMargin - 200; // 200 - фиксированная ширина
+    int x = parentRect.width() - m_rightMargin - MIN_WIDTH;
     int y = parentRect.height() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
     
     return m_parentWidget->mapToGlobal(QPoint(x, y));

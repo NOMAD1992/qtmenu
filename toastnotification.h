@@ -12,6 +12,10 @@
 #include <QList>
 #include <QPair>
 
+// Размеры уведомлений
+#define MIN_WIDTH 300
+#define MIN_HEIGHT 120
+
 /**
  * @brief Перечисление типов уведомлений.
  */
