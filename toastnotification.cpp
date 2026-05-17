@@ -678,19 +678,23 @@ QPoint ToastNotification::calculatePosition(int index)
 void ToastNotification::onInformationClicked()
 {
     qDebug() << "ToastNotification: Information notification clicked";
+    emit informationClicked();
 }
 
 void ToastNotification::onWarningClicked()
 {
     qDebug() << "ToastNotification: Warning notification clicked";
+    emit warningClicked();
 }
 
 void ToastNotification::onErrorClicked()
 {
     qDebug() << "ToastNotification: Error notification clicked";
+    emit errorClicked();
 }
 
 void ToastNotification::onNewChatMessageClicked()
 {
     qDebug() << "ToastNotification: New chat message notification clicked";
+    emit newChatMessageClicked();
 }
