@@ -89,7 +89,7 @@ ToastWidget::ToastWidget(const QString &title,
     m_messageLabel->setText(message);
     
     // Настраиваем атрибуты окна - убираем WindowStaysOnTopHint для отображения в окне приложения
-    setWindowFlags(Qt::FramelessWindowHint | Qt::Tool);
+    setWindowFlags(Qt::FramelessWindowHint | Qt::BypassWindowManagerHint);
     setAttribute(Qt::WA_TranslucentBackground);
     setAttribute(Qt::WA_ShowWithoutActivating);
     
@@ -272,22 +272,22 @@ void ToastWidget::applyStyles()
     
     switch (property("status").toInt()) {
         case static_cast<int>(ToastStatus::Warning):
-            titleColor = "#FFD700";  // Желтый для предупреждения
+            titleColor = "white";  // Желтый для предупреждения
             headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
             bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
             break;
         case static_cast<int>(ToastStatus::Error):
-            titleColor = "#FF4444";  // Красный для ошибки
+            titleColor = "white";  // Красный для ошибки
             headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
             bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
             break;
         case static_cast<int>(ToastStatus::NewChatMessage):
-            titleColor = "#FFFFFF";  // Белый для сообщений чата
+            titleColor = "white";  // Белый для сообщений чата
             headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
             bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
             break;
         default: // Information
-            titleColor = "#4488FF";  // Синий для информации
+            titleColor = "white";  // Синий для информации
             headerBgColor = QColor(0, 0, 0, 180);  // Полупрозрачный черный
             bodyBgColor = QColor(80, 80, 80, 200);  // Полупрозрачный серый
             break;
