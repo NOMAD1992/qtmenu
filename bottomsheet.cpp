@@ -125,8 +125,7 @@ void BottomSheet::appendLogMessage(const QString &message)
     model->setStringList(messages);
     
     // Прокручиваем к последнему элементу
-    QModelIndex lastIndex = model->index(model->rowCount() - 1, 0);
-    m_listView->scrollTo(lastIndex, QAbstractItemView::ScrollToBottom);
+    m_listView->scrollToBottom();
 }
 
 void BottomSheet::installParentEventFilter()
