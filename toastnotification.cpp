@@ -505,18 +505,19 @@ QPoint ToastNotification::calculatePosition(int index)
         return QPoint(x, y);
     }
     
-    // Используем геометрию родительского виджета для позиционирования внутри окна
-    QRect parentRect = m_parentWidget->geometry();
-    
     // Получаем высоту уведомления для расчета позиции
     int toastHeight = MIN_HEIGHT;
     if (!m_activeToasts.isEmpty() && index < m_activeToasts.size()) {
         toastHeight = m_activeToasts.at(index)->height();
     }
     
-    // Позиция относительно родительского виджета (в его координатах)
-    int x = parentRect.width() - m_rightMargin - MIN_WIDTH;
-    int y = parentRect.height() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
+    // frameGeometry() возвращает глобальную геометрию окна ВКЛЮЧАЯ системные рамки
+    QRect frameRect = m_parentWidget->frameGeometry();
     
-    return m_parentWidget->mapToGlobal(QPoint(x, y));
+    // Вычисляем позицию относительно ПРАВОГО НИЖНЕГО УГЛА окна с учётом рамок
+    // frameRect.right() и frameRect.bottom() уже в глобальных координатах
+    int x = frameRect.right() - m_rightMargin - MIN_WIDTH;
+    int y = frameRect.bottom() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
+    
+    return QPoint(x, y);
 }
