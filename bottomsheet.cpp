@@ -64,20 +64,14 @@ void BottomSheet::setupUi()
     
     // Создаем узкую полоску-ручку сверху для перетаскивания
     m_handleWidget = new QWidget(this);
-    m_handleWidget->setStyleSheet("background-color: black;");
+    m_handleWidget->setObjectName("handleWidget");
     m_handleWidget->setFixedHeight(20);  // Высота полоски для захвата
     m_handleWidget->setCursor(Qt::SizeVerCursor);  // Курсор изменения размера
     
     // Добавляем надпись на ручку
     m_handleLabel = new QLabel("Лог", m_handleWidget);
+    m_handleLabel->setObjectName("handleLabel");
     m_handleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    m_handleLabel->setStyleSheet(
-        "QLabel {"
-        "   color: rgba(255, 255, 255, 150);"
-        "   font-size: 10px;"
-        "   padding-left: 8px;"
-        "}"
-    );
     m_handleLabel->raise();  // Поднимаем label над фоном
     
     // Добавляем ручку в layout
@@ -88,21 +82,14 @@ void BottomSheet::setupUi()
 
 void BottomSheet::applyStyles()
 {
-    // Полупрозрачный фон в стиле шторки с настраиваемой прозрачностью
-    setStyleSheet(
-        QString("BottomSheet {") +
-        QString("   background-color: rgba(40, 40, 40, %1);").arg(m_opacity) +
-        QString("   border: none;") +
-        QString("}")
-    );
-    
-    // Стиль для ручки (полоски сверху) - только граница, фон задан в setupUi()
-    if (m_handleWidget) {
-        m_handleWidget->setStyleSheet(
-            "QWidget {"
-            "   background-color: black;"
-            "   border-bottom: 1px solid rgba(255, 255, 255, 50);"
-            "}"
+    // Стили теперь загружаются из styles.qss в MainWindow
+    // Обновляем только прозрачность если нужно
+    if (m_opacity != 240) {
+        setStyleSheet(
+            QString("BottomSheet {") +
+            QString("   background-color: rgba(40, 40, 40, %1);").arg(m_opacity) +
+            QString("   border: none;") +
+            QString("}")
         );
     }
 }
@@ -122,24 +109,6 @@ void BottomSheet::addListView(QListView *view)
     // Устанавливаем виджет на всю шторку без отступов
     view->setParent(this);
     view->setFrameShape(QFrame::NoFrame);
-    view->setStyleSheet(
-        "QListView {"
-        "   background-color: transparent;"
-        "   color: white;"
-        "   border: none;"
-        "   outline: none;"
-        "}"
-        "QListView::item {"
-        "   padding: 8px 12px;"
-        "   border-bottom: 1px solid rgba(255, 255, 255, 30);"
-        "}"
-        "QListView::item:hover {"
-        "   background-color: rgba(255, 255, 255, 20);"
-        "}"
-        "QListView::item:selected {"
-        "   background-color: rgba(100, 150, 255, 100);"
-        "}"
-    );
     
     m_mainLayout->addWidget(view);
 }

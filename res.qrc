@@ -7,5 +7,6 @@
         <file>img/screen_resolution.png</file>
         <file>img/users.png</file>
         <file>img/user.jpg</file>
+        <file>styles.qss</file>
     </qresource>
 </RCC>

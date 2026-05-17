@@ -59,19 +59,18 @@ void SlidingMenu::setupUi()
     
     // Иконка (слева вверху)
     m_iconLabel = new QLabel(this);
+    m_iconLabel->setObjectName("iconLabel");
     m_iconLabel->setFixedSize(32, 32);
-    m_iconLabel->setStyleSheet("background-color: transparent;");
     topLayout->addWidget(m_iconLabel);
     
     // Заголовок
     m_titleLabel = new QLabel("Menu", this);
-    m_titleLabel->setStyleSheet("color: white; font-size: 18px; font-weight: bold;");
     m_titleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     topLayout->addWidget(m_titleLabel, 1);
     
     // Кнопка закрытия (справа вверху)
     m_closeButton = new QPushButton("✕", this);
-    m_closeButton->setStyleSheet("QPushButton {min-width: 20px;}");
+    m_closeButton->setObjectName("closeButton");
     m_closeButton->setCursor(Qt::PointingHandCursor);
     connect(m_closeButton, &QPushButton::clicked, this, &SlidingMenu::onCloseClicked);
     topLayout->addWidget(m_closeButton);
@@ -82,7 +81,6 @@ void SlidingMenu::setupUi()
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
     scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    scrollArea->setStyleSheet("border: none; background-color: transparent;");
     
     QWidget *contentWidget = new QWidget();
     m_contentLayout = new QVBoxLayout(contentWidget);
@@ -92,7 +90,6 @@ void SlidingMenu::setupUi()
     // Разделитель после заголовка
     QFrame *separator1 = new QFrame(contentWidget);
     separator1->setFrameShape(QFrame::HLine);
-    separator1->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
     m_contentLayout->addWidget(separator1);
     
     m_contentLayout->addStretch();
@@ -114,13 +111,8 @@ void SlidingMenu::setupAnimations()
 
 void SlidingMenu::applyStyles()
 {    
-    // Фон в стиле GitHub - полностью непрозрачный
-    setStyleSheet(
-        "SlidingMenu {"
-        "   background-color: rgba(0, 0, 0, 240);"
-        "   border: none;"
-        "}"
-    );
+    // Стили теперь загружаются из styles.qss в MainWindow
+    // Эта функция может оставаться пустой или использоваться для специфичных стилей
 }
 
 QPushButton* SlidingMenu::createButton(const QString &text, const QPixmap &icon, QWidget *parent)
@@ -132,19 +124,6 @@ QPushButton* SlidingMenu::createButton(const QString &text, const QPixmap &icon,
         btn->setIcon(icon);
         btn->setIconSize(QSize(24, 24));
     }
-    btn->setStyleSheet(
-        "QPushButton {"
-        "   background-color: rgba(255, 255, 255, 50);"
-        "   color: white;"
-        "   border: none;"
-        "   padding: 10px;"
-        "   text-align: left;"
-        "   border-radius: 5px;"
-        "}"
-        "QPushButton:hover {"
-        "   background-color: rgba(255, 255, 255, 80);"
-        "}"
-    );
     return btn;
 }
 
@@ -183,23 +162,6 @@ QCheckBox* SlidingMenu::addCheckBox(const QString &text)
     
     m_checkBox = new QCheckBox(text, contentWidget);
     m_checkBox->setCursor(Qt::PointingHandCursor);
-    m_checkBox->setStyleSheet(
-        "QCheckBox {"
-        "   color: white;"
-        "   font-size: 14px;"
-        "   spacing: 8px;"
-        "}"
-        "QCheckBox::indicator {"
-        "   width: 18px;"
-        "   height: 18px;"
-        "   border-radius: 4px;"
-        "   border: 2px solid rgba(255, 255, 255, 150);"
-        "   background-color: transparent;"
-        "}"
-        "QCheckBox::indicator:checked {"
-        "   background-color: rgba(100, 200, 100, 200);"
-        "}"
-    );
     connect(m_checkBox, &QCheckBox::toggled, this, &SlidingMenu::checkBoxToggled);
     m_contentLayout->addWidget(m_checkBox);
     
@@ -223,34 +185,12 @@ QMenu* SlidingMenu::addMenu(const QString &title, const QPixmap &icon)
     // Разделитель перед меню
     QFrame *separator2 = new QFrame(contentWidget);
     separator2->setFrameShape(QFrame::HLine);
-    separator2->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
     m_contentLayout->addWidget(separator2);
     m_separator = separator2;
     
     // QMenu с возможностью создания подменю
     m_menu = new QMenu(contentWidget);
     m_menu->setTitle(title);
-    m_menu->setStyleSheet(
-        "QMenu {"
-        "   background-color: rgba(50, 50, 50, 200);"
-        "   color: white;"
-        "   border: 1px solid rgba(255, 255, 255, 50);"
-        "   border-radius: 5px;"
-        "   padding: 5px;"
-        "}"
-        "QMenu::item {"
-        "   padding: 8px 20px;"
-        "   border-radius: 3px;"
-        "}"
-        "QMenu::item:selected {"
-        "   background-color: rgba(255, 255, 255, 30);"
-        "}"
-        "QMenu::separator {"
-        "   height: 1px;"
-        "   background: rgba(255, 255, 255, 50);"
-        "   margin: 5px;"
-        "}"
-    );
     
     // Кнопка для открытия меню
     QPushButton *menuButton = createButton(QString("%1 ▷").arg(title), icon, contentWidget);
@@ -278,7 +218,6 @@ void SlidingMenu::addSplitter()
     
     QFrame *separator = new QFrame(contentWidget);
     separator->setFrameShape(QFrame::HLine);
-    separator->setStyleSheet("background-color: rgba(255, 255, 255, 100); min-height: 1px; max-height: 1px;");
     m_contentLayout->addWidget(separator);
     
     m_contentLayout->addStretch();

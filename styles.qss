@@ -1,0 +1,217 @@
+/* ============================================
+   Основные стили приложения (MainWindow)
+   ============================================ */
+
+/* Стили для QPushButton в MainWindow */
+QPushButton {
+    background-color: rgba(255, 255, 255, 30);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 50);
+    padding: 2px 4px;
+    border-radius: 2px;
+    font-size: 12px;
+    min-width: 80px;
+}
+
+QPushButton:hover {
+    background-color: rgba(255, 255, 255, 50);
+    border-color: rgba(255, 255, 255, 80);
+}
+
+QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 20);
+}
+
+/* Минимальные стили для кнопок меню */
+QPushButton#pbRollup,
+QPushButton#pbMenu,
+QPushButton#pbUserMenu {
+    min-width: 20px;
+}
+
+QPushButton#pbRollup {
+    min-width: 16px;
+}
+
+
+/* ============================================
+   Стили для SlidingMenu
+   ============================================ */
+
+/* Фон SlidingMenu */
+SlidingMenu {
+    background-color: rgba(0, 0, 0, 240);
+    border: none;
+}
+
+/* Заголовок меню */
+SlidingMenu QLabel {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Иконка в заголовке */
+SlidingMenu QLabel#iconLabel {
+    background-color: transparent;
+}
+
+/* Кнопка закрытия */
+SlidingMenu QPushButton#closeButton {
+    min-width: 20px;
+}
+
+/* Кнопки в меню */
+SlidingMenu QPushButton {
+    background-color: rgba(255, 255, 255, 50);
+    color: white;
+    border: none;
+    padding: 10px;
+    text-align: left;
+    border-radius: 5px;
+}
+
+SlidingMenu QPushButton:hover {
+    background-color: rgba(255, 255, 255, 80);
+}
+
+/* Чекбоксы в меню */
+SlidingMenu QCheckBox {
+    color: white;
+    font-size: 14px;
+    spacing: 8px;
+}
+
+SlidingMenu QCheckBox::indicator {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 255, 255, 150);
+    background-color: transparent;
+}
+
+SlidingMenu QCheckBox::indicator:checked {
+    background-color: rgba(100, 200, 100, 200);
+}
+
+/* Разделители в меню */
+SlidingMenu QFrame {
+    background-color: rgba(255, 255, 255, 100);
+    min-height: 1px;
+    max-height: 1px;
+}
+
+/* Область прокрутки */
+SlidingMenu QScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+/* Выпадающее меню (QMenu) */
+SlidingMenu QMenu {
+    background-color: rgba(50, 50, 50, 200);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 50);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+SlidingMenu QMenu::item {
+    padding: 8px 20px;
+    border-radius: 3px;
+}
+
+SlidingMenu QMenu::item:selected {
+    background-color: rgba(255, 255, 255, 30);
+}
+
+SlidingMenu QMenu::separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 50);
+    margin: 5px;
+}
+
+
+/* ============================================
+   Стили для UserMenu
+   ============================================ */
+
+/* Фон UserMenu */
+UserMenu {
+    background-color: rgba(0, 0, 0, 240);
+    border: 1px solid rgba(255, 255, 255, 60);
+    border-radius: 2px;
+}
+
+/* Кнопки в UserMenu */
+UserMenu QPushButton {
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 2px 4px;
+    text-align: left;
+    border-radius: 4px;
+    font-size: 13px;
+    min-height: 32px;
+}
+
+UserMenu QPushButton:hover {
+    background-color: rgba(255, 255, 255, 30);
+}
+
+UserMenu QPushButton:pressed {
+    background-color: rgba(255, 255, 255, 20);
+}
+
+/* Разделители в UserMenu */
+UserMenu QFrame {
+    background-color: rgba(255, 255, 255, 80);
+    min-height: 1px;
+    max-height: 1px;
+    margin: 4px 0;
+}
+
+
+/* ============================================
+   Стили для BottomSheet
+   ============================================ */
+
+/* Фон BottomSheet */
+BottomSheet {
+    background-color: rgba(40, 40, 40, 240);
+    border: none;
+}
+
+/* Ручка для перетаскивания */
+BottomSheet QWidget#handleWidget {
+    background-color: black;
+    border-bottom: 1px solid rgba(255, 255, 255, 50);
+}
+
+/* Надпись на ручке */
+BottomSheet QLabel#handleLabel {
+    color: rgba(255, 255, 255, 150);
+    font-size: 10px;
+    padding-left: 8px;
+}
+
+/* Список сообщений (QListView) */
+BottomSheet QListView {
+    background-color: transparent;
+    color: white;
+    border: none;
+    outline: none;
+}
+
+BottomSheet QListView::item {
+    padding: 8px 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 30);
+}
+
+BottomSheet QListView::item:hover {
+    background-color: rgba(255, 255, 255, 20);
+}
+
+BottomSheet QListView::item:selected {
+    background-color: rgba(100, 150, 255, 100);
+}
