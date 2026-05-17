@@ -251,12 +251,14 @@ void ToastWidget::setupUi()
     m_messageLabel->setObjectName("toastMessageLabel");
     m_messageLabel->setFont(QFont("Segoe UI", 10));
     m_messageLabel->setWordWrap(true);
-    m_messageLabel->setMaximumWidth(900); // Увеличиваем ширину в 3 раза (было 350)
+    m_messageLabel->setMaximumWidth(180); // Ширина уведомления 200px минус отступы
     mainLayout->addWidget(m_messageLabel);
     
     setLayout(mainLayout);
     adjustSize();
     
+    // Устанавливаем фиксированную ширину 200px
+    setFixedWidth(200);
     // Уменьшаем минимальную высоту на 20% (было 140, стало 112)
     setMinimumHeight(112);
 }
@@ -507,7 +509,7 @@ QPoint ToastNotification::calculatePosition(int index)
         QScreen *screen = QApplication::primaryScreen();
         QRect screenGeometry = screen->availableGeometry();
         
-        int x = screenGeometry.right() - m_rightMargin - 400; // 400 - примерная ширина
+        int x = screenGeometry.right() - m_rightMargin - 200; // 200 - фиксированная ширина
         int y = screenGeometry.bottom() - m_bottomMargin - (index * 100);
         
         return QPoint(x, y);
@@ -523,7 +525,7 @@ QPoint ToastNotification::calculatePosition(int index)
     }
     
     // Позиция относительно родительского виджета (в его координатах)
-    int x = parentRect.width() - m_rightMargin - 900; // 900 - новая ширина
+    int x = parentRect.width() - m_rightMargin - 200; // 200 - фиксированная ширина
     int y = parentRect.height() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
     
     return m_parentWidget->mapToGlobal(QPoint(x, y));
