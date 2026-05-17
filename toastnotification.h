@@ -237,7 +237,6 @@ private:
 
     QWidget *m_parentWidget;              ///< Родительский виджет
     QList<ToastWidget*> m_activeToasts;   ///< Список активных уведомлений
-    QQueue<QPair<QString, QPair<QString, ToastStatus>>> m_queue; ///< Очередь ожидающих уведомлений
     
     int m_displayDuration;                ///< Время отображения в мс
     int m_maxNotifications;               ///< Максимум одновременных уведомлений

@@ -438,11 +438,59 @@ void ToastNotification::showToast(const QString &title,
                                   const QString &message, 
                                   ToastStatus status)
 {
-    // Добавляем в очередь
-    m_queue.enqueue(qMakePair(title, qMakePair(message, status)));
+    // Выбираем иконку в зависимости от статуса
+    QIcon icon;
+    switch (status) {
+        case ToastStatus::Error:
+            icon = QIcon::fromTheme("dialog-error");
+            break;
+        case ToastStatus::Warning:
+            icon = QIcon::fromTheme("dialog-warning");
+            break;
+        case ToastStatus::Information:
+            icon = QIcon::fromTheme("dialog-information");
+            break;
+        case ToastStatus::NewChatMessage:
+            icon = QIcon::fromTheme("mail-message-new");
+            break;
+        default:
+            icon = QIcon::fromTheme("dialog-information");
+            break;
+    }
     
-    // Обрабатываем очередь
-    processQueue();
+    // Создаем уведомление с выбранной иконкой
+    ToastWidget *toast = new ToastWidget(title, message, icon, m_parentWidget);
+    
+    // Устанавливаем длительность отображения
+    toast->setDisplayDuration(m_displayDuration);
+    
+    // Вычисляем позицию
+    int index = m_activeToasts.size();
+    QPoint pos = calculatePosition(index);
+    toast->move(pos);
+    
+    // Показываем с анимацией появления
+    QGraphicsOpacityEffect *effect = new QGraphicsOpacityEffect(toast);
+    toast->setGraphicsEffect(effect);
+    
+    QPropertyAnimation *showAnimation = new QPropertyAnimation(effect, "opacity");
+    showAnimation->setDuration(300);
+    showAnimation->setStartValue(0.0);
+    showAnimation->setEndValue(1.0);
+    
+    toast->show();
+    showAnimation->start(QAbstractAnimation::DeleteWhenStopped);
+    
+    // Подключаемся к сигналу закрытия для обновления позиций
+    connect(toast, &QWidget::destroyed, this, [this]() {
+        updatePositions();
+        processQueue();
+    });
+    
+    m_activeToasts.append(toast);
+    
+    // Запускаем таймер исчезновения
+    toast->startDismissTimer();
 }
 
 void ToastNotification::showToast(const QString &title, 
