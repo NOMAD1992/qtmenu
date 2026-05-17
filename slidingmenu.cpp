@@ -189,19 +189,19 @@ QMenu* SlidingMenu::addMenu(const QString &title, const QPixmap &icon)
     m_separator = separator2;
     
     // QMenu с возможностью создания подменю
-    m_menu = new QMenu(contentWidget);
-    m_menu->setTitle(title);
+    QMenu *menu = new QMenu(contentWidget);
+    menu->setTitle(title);
     
     // Кнопка для открытия меню
     QPushButton *menuButton = createButton(QString("%1 ▷").arg(title), icon, contentWidget);
-    connect(menuButton, &QPushButton::clicked, [this, menuButton]() {
-        m_menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
+    connect(menuButton, &QPushButton::clicked, [menu, menuButton]() {
+        menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });
     m_contentLayout->addWidget(menuButton);
     
     m_contentLayout->addStretch();
     
-    return m_menu;
+    return menu;
 }
 
 void SlidingMenu::addSplitter()
