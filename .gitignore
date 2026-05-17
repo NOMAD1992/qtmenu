@@ -1,7 +1,2 @@
-```
-# Compiled and build artifacts
-*.o
-*.obj
-*.out
-build/
-```
+/build
+/CMakeLists.txt.user
