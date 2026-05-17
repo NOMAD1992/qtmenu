@@ -65,14 +65,14 @@ void BottomSheet::setupUi()
     // Создаем узкую полоску-ручку сверху для перетаскивания
     m_handleWidget = new QWidget(this);
     m_handleWidget->setObjectName("handleWidget");
-    m_handleWidget->setFixedHeight(20);  // Высота полоски для захвата
+    m_handleWidget->setFixedHeight(6);  // Высота полоски для захвата
     m_handleWidget->setCursor(Qt::SizeVerCursor);  // Курсор изменения размера
     
-    // Добавляем надпись на ручку
-    m_handleLabel = new QLabel("Лог", m_handleWidget);
-    m_handleLabel->setObjectName("handleLabel");
-    m_handleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    m_handleLabel->raise();  // Поднимаем label над фоном
+    // Добавляем надпись на ручку врменно закомментированно
+//    m_handleLabel = new QLabel("Журнал", m_handleWidget);
+//    m_handleLabel->setObjectName("handleLabel");
+//    m_handleLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+//    m_handleLabel->raise();  // Поднимаем label над фоном
     
     // Добавляем ручку в layout
     m_mainLayout->addWidget(m_handleWidget);
