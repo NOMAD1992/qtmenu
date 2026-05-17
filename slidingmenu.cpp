@@ -115,7 +115,7 @@ void SlidingMenu::applyStyles()
     // Эта функция может оставаться пустой или использоваться для специфичных стилей
 }
 
-QPushButton* SlidingMenu::createButton(const QString &text, const QPixmap &icon, QWidget *parent)
+QPushButton* SlidingMenu::createButton(const QString &text, const QIcon &icon, QWidget *parent)
 {
     QPushButton *btn = new QPushButton(text, parent);
     btn->setCursor(Qt::PointingHandCursor);
@@ -127,7 +127,7 @@ QPushButton* SlidingMenu::createButton(const QString &text, const QPixmap &icon,
     return btn;
 }
 
-QPushButton* SlidingMenu::addButton(const QString &text, const QPixmap &icon)
+QPushButton* SlidingMenu::addButton(const QString &text, const QIcon &icon)
 {
     QWidget *contentWidget = findChild<QScrollArea*>()->widget();
     if (!contentWidget || !m_contentLayout) return nullptr;
@@ -170,7 +170,7 @@ QCheckBox* SlidingMenu::addCheckBox(const QString &text)
     return m_checkBox;
 }
 
-QMenu* SlidingMenu::addMenu(const QString &title, const QPixmap &icon)
+QMenu* SlidingMenu::addMenu(const QString &title, const QIcon &icon)
 {
     QWidget *contentWidget = findChild<QScrollArea*>()->widget();
     if (!contentWidget || !m_contentLayout) return nullptr;

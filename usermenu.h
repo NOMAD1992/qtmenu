@@ -39,7 +39,7 @@ public:
      * @param icon Иконка кнопки (по умолчанию пустая).
      * @return Указатель на созданную кнопку.
      */
-    QPushButton* addButton(const QString &text, const QPixmap &icon = QPixmap());
+    QPushButton* addButton(const QString &text, const QIcon &icon = QIcon());
     
     /**
      * @brief Добавляет разделитель в меню.
@@ -132,7 +132,7 @@ private:
      * @param parent Родительский виджет.
      * @return Указатель на созданную кнопку.
      */
-    QPushButton* createButton(const QString &text, const QPixmap &icon, QWidget *parent);
+    QPushButton* createButton(const QString &text, const QIcon &icon, QWidget *parent);
     
     /**
      * @brief Вычисляет оптимальную ширину меню на основе содержимого.

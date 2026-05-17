@@ -11,6 +11,7 @@ QPushButton {
     border-radius: 5px;
     font-size: 12px;
     min-width: 80px;
+    min-height: 24px;
 }
 
 QPushButton:hover {
@@ -26,9 +27,14 @@ QPushButton:pressed {
 /* Минимальные стили для кнопок меню */
 QPushButton#pbRollup,
 QPushButton#pbMenu,
-QPushButton#pbUserMenu {
-    min-width: 20px;
+QPushButton#pbWhatThis,
+QPushButton#pbUserMenu{
+    min-width: 24px;
+    min-height: 24px;
+    max-width: 24px;
+    max-height: 24px;
 }
+
 
 QPushButton#pbRollup {
     min-width: 16px;

@@ -154,13 +154,19 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pbUserMenu">
+        <widget class="QPushButton" name="pbWhatThis">
          <property name="text">
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="res.qrc">
-           <normaloff>:/img/user.jpg</normaloff>:/img/user.jpg</iconset>
+          <iconset theme="system-help"/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pbUserMenu">
+         <property name="text">
+          <string/>
          </property>
          <property name="iconSize">
           <size>
@@ -635,8 +641,6 @@
    </layout>
   </widget>
  </widget>
- <resources>
-  <include location="res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

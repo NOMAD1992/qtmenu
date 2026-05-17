@@ -38,7 +38,6 @@ MainWindow::MainWindow(QWidget *parent)
     // Создаём таймер для автоматического показа тестовых уведомлений
     m_toastTimer = new QTimer(this);
     connect(m_toastTimer, &QTimer::timeout, this, &MainWindow::showTestToast);
-    m_toastTimer->start(2000); // Показываем новое уведомление каждые 2 секунды
     
     // Загружаем стили из файла styles.qss
     QFile styleFile(":/styles.qss");
@@ -81,13 +80,22 @@ MainWindow::MainWindow(QWidget *parent)
     QPushButton *dashboardBtn = m_slidingMenu->addButton("Dashboard");
     QPushButton *repositoriesBtn = m_slidingMenu->addButton("Repositories");
     QPushButton *projectsBtn = m_slidingMenu->addButton("Projects");
-    QPushButton *settingsBtn = m_slidingMenu->addButton("О программе", QPixmap(":/img/documentation.png"));
+    QPushButton *settingsBtn = m_slidingMenu->addButton("О программе", QIcon::fromTheme("dialog-information"));
     
     // Добавляем разделитель
     m_slidingMenu->addSplitter();
     
-    // Добавляем чекбокс
-    QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Enable notifications");
+    // Добавляем чекбокс включения/выключения уведомлений
+    QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Уведомления");
+    notificationsCheckBox->setChecked(false);
+    notificationsCheckBox->setStyleSheet("QCheckBox { color: white; }");
+    connect(notificationsCheckBox, &QCheckBox::toggled, this, [=](bool checked) {
+        if (checked) {
+            m_toastTimer->start(2000); // Показываем новое уведомление каждые 2 секунды
+        } else {
+            m_toastTimer->stop();
+        }
+    });
     // Чекбокс для включения/выключения рамки
     framelessCheckBox_ = m_slidingMenu->addCheckBox("F12 Полноэкранный режим");
     framelessCheckBox_->setChecked(false);
@@ -95,7 +103,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(framelessCheckBox_, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
     
     // Добавляем меню с действиями
-    QMenu *actionsMenu = m_slidingMenu->addMenu("Документация", QPixmap(":/img/documentation_v2.png"));
+    QMenu *actionsMenu = m_slidingMenu->addMenu("Документация", QIcon::fromTheme("help-faq"));
     
     // Настраиваем созданное меню (добавляем пункты и подменю)
     if (actionsMenu) {
@@ -115,7 +123,7 @@ MainWindow::MainWindow(QWidget *parent)
     }
     
     // Добавляем меню "Разрешение" с подменю для смены разрешения окна
-    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение", QPixmap(":/img/screen_resolution.png"));
+    QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение", QIcon::fromTheme("preferences-desktop-display"));
     
     if (resolutionMenu) {
         // Создаем группу действий для взаимоисключающего выбора
@@ -174,10 +182,12 @@ MainWindow::MainWindow(QWidget *parent)
     }
     
     // Создаем выпадающее меню пользователя справа
+    ui->pbUserMenu->setIcon(QIcon::fromTheme("user-available"));
+
     m_userMenu = new UserMenu(this, 180);
        
     // Кнопка "Пользователи"
-    QPushButton *usersBtn = m_userMenu->addButton("Пользователи", QPixmap(":/img/users.png"));
+    QPushButton *usersBtn = m_userMenu->addButton("Пользователи", QIcon::fromTheme("system-users"));
     connect(usersBtn, &QPushButton::clicked, []() {
         qDebug() << "Users clicked";
     });
@@ -186,7 +196,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_userMenu->addSplitter();
 
     // Кнопка "Релогин"
-    QPushButton *reloginBtn = m_userMenu->addButton("Сменить пользователя", QPixmap(":/img/relogin.jpg"));
+    QPushButton *reloginBtn = m_userMenu->addButton("Сменить пользователя", QIcon::fromTheme("system-switch-user"));
     connect(reloginBtn, &QPushButton::clicked, []() {
         qDebug() << "User relogin";
     });
@@ -195,7 +205,7 @@ MainWindow::MainWindow(QWidget *parent)
     m_userMenu->addSplitter();
     
     // Кнопка "Выход"
-    QPushButton *exitBtn = m_userMenu->addButton("Выход", QPixmap(":/img/exit.png"));
+    QPushButton *exitBtn = m_userMenu->addButton("Выход", QIcon::fromTheme("application-exit"));
     connect(exitBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
     
     // Создаем нижнюю полупрозрачную шторку (всегда открыта)

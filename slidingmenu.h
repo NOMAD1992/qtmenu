@@ -64,7 +64,7 @@ public:
      * @param icon Иконка кнопки (по умолчанию пустая).
      * @return Указатель на созданную кнопку.
      */
-    QPushButton* addButton(const QString &text, const QPixmap &icon = QPixmap());
+    QPushButton* addButton(const QString &text, const QIcon &icon = QIcon());
     
     /**
      * @brief Добавляет чекбокс в меню.
@@ -79,7 +79,7 @@ public:
      * @param icon Иконка меню (по умолчанию пустая).
      * @return Указатель на созданное меню.
      */
-    QMenu* addMenu(const QString &title, const QPixmap &icon);
+    QMenu* addMenu(const QString &title, const QIcon &icon);
     
     /**
      * @brief Добавляет разделитель в меню.
@@ -238,7 +238,7 @@ private:
      * @param parent Родительский виджет.
      * @return Указатель на созданную кнопку.
      */
-    QPushButton* createButton(const QString &text, const QPixmap &icon, QWidget *parent);
+    QPushButton* createButton(const QString &text, const QIcon &icon, QWidget *parent);
 
     // Направление скольжения
     SlideDirection m_direction;   ///< Направление появления меню.

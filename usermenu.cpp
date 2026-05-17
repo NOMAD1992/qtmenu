@@ -61,7 +61,7 @@ void UserMenu::applyStyles()
     // Эта функция может оставаться пустой или использоваться для специфичных стилей
 }
 
-QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QWidget *parent)
+QPushButton* UserMenu::createButton(const QString &text, const QIcon &icon, QWidget *parent)
 {
     QPushButton *btn = new QPushButton(text, parent);
     btn->setCursor(Qt::PointingHandCursor);
@@ -79,7 +79,7 @@ QPushButton* UserMenu::createButton(const QString &text, const QPixmap &icon, QW
     return btn;
 }
 
-QPushButton* UserMenu::addButton(const QString &text, const QPixmap &icon)
+QPushButton* UserMenu::addButton(const QString &text, const QIcon &icon)
 {
     if (!m_contentLayout) return nullptr;
     
