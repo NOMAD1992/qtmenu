@@ -257,8 +257,8 @@ void ToastWidget::setupUi()
     setLayout(mainLayout);
     adjustSize();
     
-    // Увеличиваем минимальную высоту в 2 раза (было 70, стало 140)
-    setMinimumHeight(140);
+    // Уменьшаем минимальную высоту на 20% (было 140, стало 112)
+    setMinimumHeight(112);
 }
 
 void ToastWidget::applyStyles()
@@ -516,9 +516,15 @@ QPoint ToastNotification::calculatePosition(int index)
     // Используем геометрию родительского виджета для позиционирования внутри окна
     QRect parentRect = m_parentWidget->geometry();
     
+    // Получаем высоту первого уведомления для расчета позиции
+    int toastHeight = 112; // Уменьшенная высота (140 * 0.8)
+    if (!m_activeToasts.isEmpty() && index < m_activeToasts.size()) {
+        toastHeight = m_activeToasts.at(index)->height();
+    }
+    
     // Позиция относительно родительского виджета (в его координатах)
-    int x = parentRect.width() - m_rightMargin - 400;
-    int y = parentRect.height() - m_bottomMargin - (index * 150); // Увеличиваем отступ между уведомлениями
+    int x = parentRect.width() - m_rightMargin - 900; // 900 - новая ширина
+    int y = parentRect.height() - m_bottomMargin - toastHeight - (index * (toastHeight + m_spacing));
     
     return m_parentWidget->mapToGlobal(QPoint(x, y));
 }
