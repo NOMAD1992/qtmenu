@@ -521,16 +521,42 @@ QPoint ToastNotification::calculatePosition(int index)
         toastHeight = m_activeToasts.at(index)->height();
     }
     
-    // Рассчитываем позицию уведомлений относительно экрана (правый нижний угол доступной области)
-    // Это гарантирует, что уведомления будут видны независимо от положения окна
-    int x = screenGeometry.right() - m_rightMargin - MIN_WIDTH;
-    int y = screenGeometry.bottom() - m_bottomMargin - (index * (toastHeight + m_spacing));
+    // Рассчитываем общую высоту стека уведомлений от 0 до index включительно
+    int stackHeight = (index + 1) * toastHeight + index * m_spacing;
     
-    // Создаем точку в глобальных координатах экрана
-    QPoint globalPos(x, y);
+    // Базовая позиция Y - низ стека уведомлений (дно экрана минус отступ)
+    int baseY = screenGeometry.bottom() - m_bottomMargin;
     
-    // Проверяем, находится ли рассчитанная позиция внутри родительского окна
-    // Если окно перекрывает эту позицию, используем её
-    // Если нет - уведомления всё равно будут отображаться в правом нижнем углу экрана
-    return globalPos;
+    // Позиция верха первого (верхнего) уведомления в стеке
+    int stackTop = baseY - stackHeight;
+    
+    // Проверяем, не перекрывает ли окно область уведомлений
+    // Окно перекрывает уведомления, если его верхняя граница ниже верха стека уведомлений
+    bool windowOverlaps = (parentRect.top() < baseY && parentRect.bottom() > stackTop);
+    
+    int finalYGlobal;
+    
+    if (windowOverlaps && parentRect.height() < screenGeometry.height() - 50) {
+        // Окно перекрывает область уведомлений и не занимает весь экран
+        // Размещаем уведомления выше окна с небольшим отступом
+        int notificationsBottom = parentRect.top() - m_bottomMargin;
+        finalYGlobal = notificationsBottom - ((index + 1) * toastHeight) - (index * m_spacing) + m_bottomMargin;
+    } else {
+        // Окно не перекрывает или занимает весь экран - размещаем в правом нижнем углу экрана
+        finalYGlobal = baseY - ((index + 1) * toastHeight) - (index * m_spacing) + m_bottomMargin;
+    }
+    
+    // Убеждаемся, что уведомления не выходят за верхнюю границу доступной области
+    if (finalYGlobal < screenGeometry.top() + m_bottomMargin) {
+        finalYGlobal = screenGeometry.top() + m_bottomMargin;
+    }
+    
+    // X позиция всегда справа экрана
+    int finalXGlobal = screenGeometry.right() - m_rightMargin - MIN_WIDTH;
+    
+    // Преобразуем глобальные координаты экрана в локальные координаты родительского виджета
+    QPoint globalPos(finalXGlobal, finalYGlobal);
+    QPoint relativePos = m_parentWidget->mapFromGlobal(globalPos);
+    
+    return relativePos;
 }

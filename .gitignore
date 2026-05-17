@@ -1,3 +1,4 @@
+```
 # Compiled and build artifacts
 *.o
 *.obj
@@ -8,11 +9,12 @@
 *.out
 
 # Dependencies
+node_modules/
 venv/
 .venv/
-node_modules/
 __pycache__/
-*.egg-info/
+.mypy_cache/
+.pytest_cache/
 dist/
 build/
 target/
@@ -32,8 +34,6 @@ target/
 # Editors
 .vscode/
 .idea/
-*.swp
-*.swo
 
 # System files
 .DS_Store
@@ -63,3 +63,4 @@ htmlcov/
 *.Z
 *.lz
 *.lzo
+```
