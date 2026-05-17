@@ -324,10 +324,6 @@ void ToastNotification::processQueue()
             m_parentWidget
         );
         
-        // Сохраняем статус как свойство для стилизации
-        toast->setProperty("status", static_cast<int>(notification.second.second));
-        toast->applyStyles();
-        
         // Устанавливаем длительность отображения
         toast->setDisplayDuration(m_displayDuration);
         

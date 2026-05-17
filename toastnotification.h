@@ -110,22 +110,6 @@ private:
      * @brief Слот завершения анимации скрытия.
      */
     void onAnimationFinished();
-private:
-    /**
-     * @brief Инициализация UI компонента.
-     */
-    void setupUi();
-    
-    /**
-     * @brief Применение стилей в зависимости от статуса.
-     */
-    void applyStyles();
-    
-    /**
-     * @brief Создание кнопки закрытия.
-     * @return Указатель на кнопку.
-     */
-    QPushButton* createCloseButton();
 
     QLabel *m_titleLabel;       ///< Метка заголовка
     QLabel *m_messageLabel;     ///< Метка сообщения
