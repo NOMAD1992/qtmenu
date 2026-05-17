@@ -7,6 +7,7 @@
 #include <QStyleOption>
 #include <QPainterPath>
 #include <QDebug>
+#include <QMouseEvent>
 
 // ============================================
 // Реализация ToastWidget
