@@ -106,8 +106,8 @@ SlidingMenu QCheckBox::indicator:checked {
     background-color: rgba(100, 200, 100, 200);
 }
 
-/* Разделители в меню */
-SlidingMenu QFrame {
+/* Разделители в меню - горизонтальные линии */
+SlidingMenu QFrame[shape="HLine"] {
     background-color: rgba(255, 255, 255, 100);
     min-height: 1px;
     max-height: 1px;
@@ -180,8 +180,8 @@ UserMenu QPushButton:pressed {
     background-color: rgba(255, 255, 255, 20);
 }
 
-/* Разделители в UserMenu */
-UserMenu QFrame {
+/* Разделители в UserMenu - горизонтальные линии */
+UserMenu QFrame[shape="HLine"] {
     background-color: rgba(255, 255, 255, 80);
     min-height: 1px;
     max-height: 1px;
