@@ -8,31 +8,24 @@
 *.a
 *.out
 
-# Build directories
-build/
-dist/
-
 # Dependencies
 node_modules/
 venv/
 .venv/
 __pycache__/
-*.egg-info/
-
-# Editors
-.vscode/
-.idea/
-*.swp
-*.swo
+.mypy_cache/
+.pytest_cache/
+target/
+.gradle/
 
 # Logs and temp files
 *.log
 *.tmp
-*.temp
+*.swp
 
-# System files
-.DS_Store
-Thumbs.db
+# Editors
+.vscode/
+.idea/
 
 # Environment
 .env
@@ -44,9 +37,31 @@ coverage/
 htmlcov/
 .coverage
 
-# CMake
-CMakeFiles/
-CMakeCache.txt
-cmake_install.cmake
-Makefile
+# System files
+.DS_Store
+Thumbs.db
+
+# Compressed files
+*.zip
+*.gz
+*.tar
+*.tgz
+*.bz2
+*.xz
+*.7z
+*.rar
+*.zst
+*.lz4
+*.lzh
+*.cab
+*.arj
+*.rpm
+*.deb
+*.Z
+*.lz
+*.lzo
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.tar.zst
 ```
