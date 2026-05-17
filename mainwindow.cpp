@@ -30,13 +30,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     
-    // Инициализация системы уведомлений
+    // Инициализация компонентов
+    loadStyles();
+    setupWindowControlButtons();
+    initToastNotifications();
+    setupSlidingMenu();
+    setupUserMenu();
+    setupBottomSheet();
+}
+
+void MainWindow::initToastNotifications()
+{
     m_toastNotification = new ToastNotification(this);
-    
-    // Настраиваем длительность отображения (5 секунды по умолчанию)
     m_toastNotification->setDisplayDuration(TOAST_TIMEOUT);
     
-    // Подключаем сигналы уведомлений к слотам главного окна
     connect(m_toastNotification, &ToastNotification::informationClicked, 
             this, &MainWindow::onInformationClicked);
     connect(m_toastNotification, &ToastNotification::warningClicked, 
@@ -46,11 +53,12 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_toastNotification, &ToastNotification::newChatMessageClicked, 
             this, &MainWindow::onNewChatMessageClicked);
     
-    // Создаём таймер для автоматического показа тестовых уведомлений
     m_toastTimer = new QTimer(this);
     connect(m_toastTimer, &QTimer::timeout, this, &MainWindow::showTestToast);
-    
-    // Загружаем стили из файла styles.qss
+}
+
+void MainWindow::loadStyles()
+{
     QFile styleFile(":/styles.qss");
     if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream stream(&styleFile);
@@ -60,67 +68,68 @@ MainWindow::MainWindow(QWidget *parent)
     } else {
         qDebug() << "Не удалось загрузить файл стилей styles.qss";
     }
-          
-    // Кнопка свернуть
+}
+
+void MainWindow::setupWindowControlButtons()
+{
     ui->pbRollup->setText("─");
     ui->pbRollup->setVisible(false);
     connect(ui->pbRollup, &QPushButton::clicked, this, &MainWindow::minimizeWindow);
-
-    // Создаем кнопку меню в стиле GitHub "Open menu"
+    
     ui->pbMenu->setToolTip("Открыть меню");
     ui->pbMenu->setCursor(Qt::PointingHandCursor);
     connect(ui->pbMenu, &QPushButton::clicked, this, &MainWindow::toggleMenu);
     
-    // Создаем кнопку пользователя в стиле GitHub "Open user navigation menu"
     ui->pbUserMenu->setToolTip("Профиль пользователя");
     ui->pbUserMenu->setCursor(Qt::PointingHandCursor);
     connect(ui->pbUserMenu, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
     
-    // Создаем виджет стандартных иконок и добавляем его в vlIcons
     m_standardIconsWidget = new StandardIconsWidget(this);
     ui->vlIcons->addWidget(m_standardIconsWidget);
-    
-    // Создаем выезжающее меню слева направо
+}
+
+void MainWindow::setupSlidingMenu()
+{
     m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);
     m_slidingMenu->setTitle("Главное меню");
     
-    // Устанавливаем иконку (можно заменить на свою)
     QPixmap icon(32, 32);
     icon.fill(Qt::transparent);
-    // Здесь можно загрузить реальную иконку
-    // m_slidingMenu->setIcon(QPixmap(":/path/to/icon.png"));
     
-    // Создаем элементы меню через новые методы
-    // Добавляем кнопки
+    setupSlidingMenuItems();
+}
+
+void MainWindow::setupSlidingMenuItems()
+{
     QPushButton *dashboardBtn = m_slidingMenu->addButton("Dashboard");
     QPushButton *repositoriesBtn = m_slidingMenu->addButton("Repositories");
     QPushButton *projectsBtn = m_slidingMenu->addButton("Projects");
     QPushButton *settingsBtn = m_slidingMenu->addButton("О программе", QIcon::fromTheme("dialog-information"));
     
-    // Добавляем разделитель
     m_slidingMenu->addSplitter();
     
-    // Добавляем чекбокс включения/выключения уведомлений
     QCheckBox *notificationsCheckBox = m_slidingMenu->addCheckBox("Уведомления");
     notificationsCheckBox->setChecked(false);
     notificationsCheckBox->setStyleSheet("QCheckBox { color: white; }");
     connect(notificationsCheckBox, &QCheckBox::toggled, this, [=](bool checked) {
         if (checked) {
-            m_toastTimer->start(2000); // Показываем новое уведомление каждые 2 секунды
+            m_toastTimer->start(2000);
         } else {
             m_toastTimer->stop();
         }
     });
-    // Чекбокс для включения/выключения рамки
+    
+    connect(notificationsCheckBox, &QCheckBox::toggled, [](bool checked) {
+        qDebug() << "Notifications:" << (checked ? "enabled" : "disabled");
+    });
+    
     framelessCheckBox_ = m_slidingMenu->addCheckBox("F12 Полноэкранный режим");
     framelessCheckBox_->setChecked(false);
     framelessCheckBox_->setStyleSheet("QCheckBox { color: white; }");
     connect(framelessCheckBox_, &QCheckBox::toggled, this, &MainWindow::toggleFrameless);
     
-    // Добавляем меню с действиями
     QMenu *actionsMenu = m_slidingMenu->addMenu("Документация", QIcon::fromTheme("help-faq"));
     
-    // Настраиваем созданное меню (добавляем пункты и подменю)
     if (actionsMenu) {
         QAction *action1 = actionsMenu->addAction("Action 1");
         QAction *action2 = actionsMenu->addAction("Action 2");
@@ -137,15 +146,31 @@ MainWindow::MainWindow(QWidget *parent)
         actionsMenu->addAction("Action 3");
     }
     
-    // Добавляем меню "Разрешение" с подменю для смены разрешения окна
+    setupResolutionMenu();
+    
+    // Подключаем сигналы кнопок меню
+    connect(dashboardBtn, &QPushButton::clicked, []() {
+        qDebug() << "Dashboard clicked";
+    });
+    connect(repositoriesBtn, &QPushButton::clicked, []() {
+        qDebug() << "Repositories clicked";
+    });
+    connect(projectsBtn, &QPushButton::clicked, []() {
+        qDebug() << "Projects clicked";
+    });
+    connect(settingsBtn, &QPushButton::clicked, []() {
+        qDebug() << "Settings clicked";
+    });
+}
+
+void MainWindow::setupResolutionMenu()
+{
     QMenu *resolutionMenu = m_slidingMenu->addMenu("Разрешение", QIcon::fromTheme("view-fullscreen"));
     
     if (resolutionMenu) {
-        // Создаем группу действий для взаимоисключающего выбора
         QActionGroup *resolutionGroup = new QActionGroup(this);
         resolutionGroup->setExclusive(true);
         
-        // Список разрешений
         QList<QSize> resolutions = {
             QSize(1920, 1080),
             QSize(1536, 864),
@@ -166,75 +191,42 @@ MainWindow::MainWindow(QWidget *parent)
             });
         }
     }
-    
-    // Можно подключиться к сигналам созданных элементов
-    if (notificationsCheckBox) {
-        connect(notificationsCheckBox, &QCheckBox::toggled, [](bool checked) {
-            qDebug() << "Notifications:" << (checked ? "enabled" : "disabled");
-        });
-    }
-    
-    // Пример подключения к кнопкам
-    if (dashboardBtn) {
-        connect(dashboardBtn, &QPushButton::clicked, []() {
-            qDebug() << "Dashboard clicked";
-        });
-    }
-    if (repositoriesBtn) {
-        connect(repositoriesBtn, &QPushButton::clicked, []() {
-            qDebug() << "Repositories clicked";
-        });
-    }
-    if (projectsBtn) {
-        connect(projectsBtn, &QPushButton::clicked, []() {
-            qDebug() << "Projects clicked";
-        });
-    }
-    if (settingsBtn) {
-        connect(settingsBtn, &QPushButton::clicked, []() {
-            qDebug() << "Settings clicked";
-        });
-    }
-    
-    // Создаем выпадающее меню пользователя справа
+}
+
+void MainWindow::setupUserMenu()
+{
     ui->pbUserMenu->setIcon(QIcon::fromTheme("user-available"));
 
     m_userMenu = new UserMenu(this, 180);
        
-    // Кнопка "Пользователи"
     QPushButton *usersBtn = m_userMenu->addButton("Пользователи", QIcon::fromTheme("system-users"));
     connect(usersBtn, &QPushButton::clicked, []() {
         qDebug() << "Users clicked";
     });
 
-    // Разделитель
     m_userMenu->addSplitter();
 
-    // Кнопка "Релогин"
     QPushButton *reloginBtn = m_userMenu->addButton("Сменить пользователя", QIcon::fromTheme("system-switch-user"));
     connect(reloginBtn, &QPushButton::clicked, []() {
         qDebug() << "User relogin";
     });
     
-    // Разделитель
     m_userMenu->addSplitter();
     
-    // Кнопка "Выход"
     QPushButton *exitBtn = m_userMenu->addButton("Выход", QIcon::fromTheme("application-exit"));
     connect(exitBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
-    
-    // Создаем нижнюю полупрозрачную шторку (всегда открыта)
+}
+
+void MainWindow::setupBottomSheet()
+{
     m_bottomSheet = new BottomSheet(this);
     
-    // Создаем QListView для отображения сообщений вместо QDebug
     m_listView = new QListView(this);
     QStringListModel *model = new QStringListModel(this);
     m_listView->setModel(model);
     
-    // Добавляем listView в шторку
     addListView(m_listView);
     
-    // Добавляем тестовые сообщения
     QStringList messages;
     messages << "Сообщение 1: Приложение запущено"
              << "Сообщение 2: Меню инициализировано"

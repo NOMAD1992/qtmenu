@@ -108,6 +108,47 @@ private slots:
     void onNewChatMessageClicked();
 
 private:
+    /**
+     * @brief Инициализация системы уведомлений Toast.
+     */
+    void initToastNotifications();
+    
+    /**
+     * @brief Загрузка стилей из файла QSS.
+     */
+    void loadStyles();
+    
+    /**
+     * @brief Настройка кнопок управления окном.
+     */
+    void setupWindowControlButtons();
+    
+    /**
+     * @brief Настройка главного выдвижного меню (SlidingMenu).
+     */
+    void setupSlidingMenu();
+    
+    /**
+     * @brief Настройка элементов главного меню (кнопки, чекбоксы, подменю).
+     */
+    void setupSlidingMenuItems();
+    
+    /**
+     * @brief Настройка меню разрешения экрана.
+     */
+    void setupResolutionMenu();
+    
+    /**
+     * @brief Настройка пользовательского меню (UserMenu).
+     */
+    void setupUserMenu();
+    
+    /**
+     * @brief Настройка нижней шторки (BottomSheet) и ListView.
+     */
+    void setupBottomSheet();
+
+private:
     Ui::MainWindow *ui;           ///< Указатель на интерфейс пользователя.
     SlidingMenu *m_slidingMenu;   ///< Указатель на выдвижное меню.
     UserMenu *m_userMenu;         ///< Указатель на пользовательское меню.
