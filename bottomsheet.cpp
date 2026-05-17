@@ -113,6 +113,22 @@ void BottomSheet::addListView(QListView *view)
     m_mainLayout->addWidget(view);
 }
 
+void BottomSheet::appendLogMessage(const QString &message)
+{
+    if (!m_listView) return;
+    
+    QStringListModel *model = qobject_cast<QStringListModel*>(m_listView->model());
+    if (!model) return;
+    
+    QStringList messages = model->stringList();
+    messages << message;
+    model->setStringList(messages);
+    
+    // Прокручиваем к последнему элементу
+    QModelIndex lastIndex = model->index(model->rowCount() - 1, 0);
+    m_listView->scrollTo(lastIndex, QAbstractItemView::ScrollToBottom);
+}
+
 void BottomSheet::installParentEventFilter()
 {
     if (parentWidget()) {
