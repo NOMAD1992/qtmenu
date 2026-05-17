@@ -36,6 +36,16 @@ MainWindow::MainWindow(QWidget *parent)
     // Настраиваем длительность отображения (5 секунды по умолчанию)
     m_toastNotification->setDisplayDuration(TOAST_TIMEOUT);
     
+    // Подключаем сигналы уведомлений к слотам главного окна
+    connect(m_toastNotification, &ToastNotification::informationClicked, 
+            this, &MainWindow::onInformationClicked);
+    connect(m_toastNotification, &ToastNotification::warningClicked, 
+            this, &MainWindow::onWarningClicked);
+    connect(m_toastNotification, &ToastNotification::errorClicked, 
+            this, &MainWindow::onErrorClicked);
+    connect(m_toastNotification, &ToastNotification::newChatMessageClicked, 
+            this, &MainWindow::onNewChatMessageClicked);
+    
     // Создаём таймер для автоматического показа тестовых уведомлений
     m_toastTimer = new QTimer(this);
     connect(m_toastTimer, &QTimer::timeout, this, &MainWindow::showTestToast);
@@ -369,3 +379,23 @@ void MainWindow::showTestToast()
     qDebug() << "Показано уведомление:" << title << "-" << message;
 }
 
+
+void MainWindow::onInformationClicked()
+{
+    qDebug() << "MainWindow: Information notification clicked!";
+}
+
+void MainWindow::onWarningClicked()
+{
+    qDebug() << "MainWindow: Warning notification clicked!";
+}
+
+void MainWindow::onErrorClicked()
+{
+    qDebug() << "MainWindow: Error notification clicked!";
+}
+
+void MainWindow::onNewChatMessageClicked()
+{
+    qDebug() << "MainWindow: New chat message notification clicked!";
+}
