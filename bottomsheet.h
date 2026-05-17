@@ -7,6 +7,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QLabel>
+#include <QStringListModel>
 
 /**
  * @brief Класс нижней выдвижной шторки.
@@ -42,6 +43,12 @@ public:
      * @return Указатель на QListView.
      */
     QListView* listView() const { return m_listView; }
+    
+    /**
+     * @brief Добавляет сообщение в лог (QListView).
+     * @param message Сообщение для добавления.
+     */
+    void appendLogMessage(const QString &message);
     
     /**
      * @brief Обновляет максимальную высоту шторки.

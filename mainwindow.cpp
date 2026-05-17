@@ -11,9 +11,60 @@
 #include <QScreen>
 #include <QFile>
 #include <QTextStream>
+#include <QDateTime>
 #include "toastnotification.h"
 
 #define TOAST_TIMEOUT 6000
+
+// Глобальный указатель на BottomSheet для перехвата qDebug
+static BottomSheet *g_bottomSheet = nullptr;
+
+// Структура для хранения оригинальных хуков
+struct QtDebugHooks {
+    QtMessageHandler originalHandler;
+};
+static QtDebugHooks g_debugHooks;
+
+/**
+ * @brief Пользовательская функция для обработки сообщений Qt (qDebug, qInfo, qWarning, qCritical).
+ * @param type Тип сообщения.
+ * @param context Контекст сообщения.
+ * @param msg Текст сообщения.
+ */
+void customMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &msg)
+{
+    // Сначала вызываем оригинальный обработчик (чтобы сообщения всё ещё выводились в консоль)
+    if (g_debugHooks.originalHandler) {
+        g_debugHooks.originalHandler(type, context, msg);
+    }
+    
+    // Добавляем сообщение в BottomSheet если он доступен
+    if (g_bottomSheet) {
+        QString timestamp = QDateTime::currentDateTime().toString("hh:mm:ss.zzz");
+        QString prefix;
+        
+        switch (type) {
+            case QtDebugMsg:
+                prefix = "[DEBUG]";
+                break;
+            case QtInfoMsg:
+                prefix = "[INFO]";
+                break;
+            case QtWarningMsg:
+                prefix = "[WARN]";
+                break;
+            case QtCriticalMsg:
+                prefix = "[ERROR]";
+                break;
+            case QtFatalMsg:
+                prefix = "[FATAL]";
+                break;
+        }
+        
+        QString logMessage = QString("%1 %2").arg(prefix).arg(msg);
+        g_bottomSheet->appendLogMessage(logMessage);
+    }
+}
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -30,13 +81,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     
+    // Сначала создаём BottomSheet, чтобы перехватчик qDebug мог его использовать
+    setupBottomSheet();
+    
     // Инициализация компонентов
     loadStyles();
     setupWindowControlButtons();
     initToastNotifications();
     setupSlidingMenu();
     setupUserMenu();
-    setupBottomSheet();
 }
 
 void MainWindow::initToastNotifications()
@@ -226,6 +279,12 @@ void MainWindow::setupBottomSheet()
     m_listView->setModel(model);
     
     addListView(m_listView);
+    
+    // Устанавливаем глобальный указатель для перехватчика qDebug
+    g_bottomSheet = m_bottomSheet;
+    
+    // Сохраняем оригинальный обработчик сообщений Qt
+    g_debugHooks.originalHandler = qInstallMessageHandler(customMessageHandler);
     
     QStringList messages;
     messages << "Сообщение 1: Приложение запущено"
