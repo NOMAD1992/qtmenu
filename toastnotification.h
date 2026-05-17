@@ -12,6 +12,10 @@
 #include <QList>
 #include <QPair>
 
+// Размеры уведомлений
+#define MIN_WIDTH 300
+#define MIN_HEIGHT 120
+
 /**
  * @brief Перечисление типов уведомлений.
  */
@@ -83,6 +87,12 @@ protected:
      * @param event Событие выхода мыши.
      */
     void leaveEvent(QEvent *event) override;
+    
+    /**
+     * @brief Обработчик события отрисовки для рисования фона.
+     * @param event Событие отрисовки.
+     */
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     /**

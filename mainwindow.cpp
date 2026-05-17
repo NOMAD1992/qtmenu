@@ -13,6 +13,8 @@
 #include <QTextStream>
 #include "toastnotification.h"
 
+#define TOAST_TIMEOUT 6000
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -30,8 +32,8 @@ MainWindow::MainWindow(QWidget *parent)
     // Инициализация системы уведомлений
     m_toastNotification = new ToastNotification(this);
     
-    // Настраиваем длительность отображения (3 секунды по умолчанию)
-    m_toastNotification->setDisplayDuration(3000);
+    // Настраиваем длительность отображения (5 секунды по умолчанию)
+    m_toastNotification->setDisplayDuration(TOAST_TIMEOUT);
     
     // Создаём таймер для автоматического показа тестовых уведомлений
     m_toastTimer = new QTimer(this);
