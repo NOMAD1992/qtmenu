@@ -3,9 +3,11 @@
 
 #include <QMainWindow>
 #include <QListView>
+#include <QTimer>
 #include "slidingmenu.h"
 #include "usermenu.h"
 #include "bottomsheet.h"
+#include "toastnotification.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -78,6 +80,11 @@ private slots:
      * @param action Действие, содержащее информацию о разрешении.
      */
     void changeResolution(QAction *action);
+    
+    /**
+     * @brief Показывает тестовое уведомление.
+     */
+    void showTestToast();
 
 private:
     Ui::MainWindow *ui;           ///< Указатель на интерфейс пользователя.
@@ -86,6 +93,9 @@ private:
     BottomSheet *m_bottomSheet;   ///< Указатель на нижнюю шторку.
     QListView *m_listView;        ///< Указатель на список в шторке.
     QCheckBox *framelessCheckBox_; ///< Указатель на чекбокс безрамочного режима.
+    ToastNotification *m_toastNotification; ///< Указатель на систему уведомлений.
+    QTimer *m_toastTimer;         ///< Таймер для показа тестовых уведомлений.
+    int m_toastCounter;           ///< Счётчик для генерации разных сообщений.
 };
 
 #endif // MAINWINDOW_H

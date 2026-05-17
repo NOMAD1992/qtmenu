@@ -11,6 +11,7 @@
 #include <QScreen>
 #include <QFile>
 #include <QTextStream>
+#include "toastnotification.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,8 +21,22 @@ MainWindow::MainWindow(QWidget *parent)
     , m_bottomSheet(nullptr)
     , m_listView(nullptr)
     , framelessCheckBox_(nullptr)
+    , m_toastNotification(nullptr)
+    , m_toastTimer(nullptr)
+    , m_toastCounter(0)
 {
     ui->setupUi(this);
+    
+    // Инициализация системы уведомлений
+    m_toastNotification = new ToastNotification(this);
+    
+    // Настраиваем длительность отображения (3 секунды по умолчанию)
+    m_toastNotification->setDisplayDuration(3000);
+    
+    // Создаём таймер для автоматического показа тестовых уведомлений
+    m_toastTimer = new QTimer(this);
+    connect(m_toastTimer, &QTimer::timeout, this, &MainWindow::showTestToast);
+    m_toastTimer->start(2000); // Показываем новое уведомление каждые 2 секунды
     
     // Загружаем стили из файла styles.qss
     QFile styleFile(":/styles.qss");
@@ -289,5 +304,49 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         framelessCheckBox_->setChecked(!framelessCheckBox_->isChecked());
     }
     QMainWindow::keyPressEvent(event);
+}
+
+void MainWindow::showTestToast()
+{
+    m_toastCounter++;
+    
+    // Циклически меняем типы уведомлений
+    ToastStatus status;
+    QString title;
+    QString message;
+    
+    int typeIndex = m_toastCounter % 4;
+    
+    switch (typeIndex) {
+        case 0:
+            status = ToastStatus::Information;
+            title = "Информация";
+            message = QString("Это информационное сообщение #%1. Система работает нормально.").arg(m_toastCounter);
+            break;
+        case 1:
+            status = ToastStatus::Warning;
+            title = "Предупреждение";
+            message = QString("Внимание! Обнаружено предупреждение #%1. Проверьте настройки.").arg(m_toastCounter);
+            break;
+        case 2:
+            status = ToastStatus::Error;
+            title = "Ошибка";
+            message = QString("Произошла ошибка #%1. Требуется вмешательство пользователя.").arg(m_toastCounter);
+            break;
+        case 3:
+            status = ToastStatus::NewChatMessage;
+            title = "Новое сообщение";
+            message = QString("В чате получено новое сообщение #%1 от пользователя.").arg(m_toastCounter);
+            break;
+        default:
+            status = ToastStatus::Information;
+            title = "Информация";
+            message = QString("Сообщение #%1").arg(m_toastCounter);
+    }
+    
+    // Показываем уведомление
+    m_toastNotification->showToast(title, message, status);
+    
+    qDebug() << "Показано уведомление:" << title << "-" << message;
 }
 

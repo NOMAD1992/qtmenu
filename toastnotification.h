@@ -84,7 +84,23 @@ protected:
      */
     void leaveEvent(QEvent *event) override;
 
-private slots:
+private:
+    /**
+     * @brief Инициализация UI компонента.
+     */
+    void setupUi();
+    
+    /**
+     * @brief Применение стилей в зависимости от статуса.
+     */
+    void applyStyles();
+    
+    /**
+     * @brief Создание кнопки закрытия.
+     * @return Указатель на кнопку.
+     */
+    QPushButton* createCloseButton();
+    
     /**
      * @brief Слот для скрытия уведомления с анимацией.
      */
@@ -94,7 +110,6 @@ private slots:
      * @brief Слот завершения анимации скрытия.
      */
     void onAnimationFinished();
-
 private:
     /**
      * @brief Инициализация UI компонента.
