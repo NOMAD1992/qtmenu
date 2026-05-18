@@ -154,6 +154,16 @@ bool BottomSheet::eventFilter(QObject *obj, QEvent *event)
         // Проверяем видимость панели меню для правильного позиционирования
         QFrame *menuBarFrame = parentWidget()->findChild<QFrame*>(m_menuBarObjectName);
         bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
+        
+        // Корректируем позицию шторки при изменении размера окна
+        if (menuBarVisible) {
+            // Обновляем высоту и позицию панели меню
+            m_menubarHeight = menuBarFrame->height();
+            m_menuBarY = menuBarFrame->y();
+            move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
+        } else {
+            move(0, parentWidget()->height() - m_sheetHeight);
+        }
     }
     return QWidget::eventFilter(obj, event);
 }
