@@ -19,6 +19,7 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_minHeight(35)   // Минимальная высота
     , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
     , m_menubarHeight(0) // Высота menubar будет определена динамически
+    , m_menuBarY(0)      // Позиция Y панели меню (fMenuBar) относительно родителя
     , m_topOffset(5)     // Отступ сверху по умолчанию (как в запросе пользователя)
     , m_opacity(240)     // Прозрачность по умолчанию (200 из 255)
     , m_dragging(false)
@@ -38,11 +39,14 @@ BottomSheet::BottomSheet(QWidget *parent)
         if (menuBarFrame) {
             m_menubarHeight = menuBarFrame->height();
             qDebug() << "m_menubarHeight" << m_menubarHeight;
+            // Получаем позицию fMenuBar относительно родителя
+            m_menuBarY = menuBarFrame->y();
+            qDebug() << "m_menuBarY" << m_menuBarY;
         }
         recalculateMaxHeight();
         
-        // Позиционируем шторку внизу родителя
-        move(0, parent->height() - m_sheetHeight);
+        // Позиционируем шторку внизу родителя, но выше fMenuBar
+        move(0, parent->height() - m_menubarHeight - m_sheetHeight);
     }
 }
 
@@ -143,8 +147,8 @@ bool BottomSheet::eventFilter(QObject *obj, QEvent *event)
         updateSheetWidth();
         // Пересчитываем максимальную высоту при изменении размера окна
         recalculateMaxHeight();
-        // Перепозиционируем шторку при изменении размера родителя
-        move(0, parentWidget()->height() - m_sheetHeight);
+        // Перепозиционируем шторку при изменении размера родителя - она должна быть над fMenuBar
+        move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
     }
     return QWidget::eventFilter(obj, event);
 }
@@ -236,9 +240,9 @@ void BottomSheet::updateSheetHeight(int height)
     m_sheetHeight = height;
     setFixedHeight(m_sheetHeight);
     
-    // Перепозиционируем шторку, чтобы она оставалась прижатой к низу
+    // Перепозиционируем шторку, чтобы она оставалась над fMenuBar
     if (parentWidget()) {
-        move(x(), parentWidget()->height() - m_sheetHeight);
+        move(x(), parentWidget()->height() - m_menubarHeight - m_sheetHeight);
     }
 }
 

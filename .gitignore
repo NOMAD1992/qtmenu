@@ -1,15 +1,1 @@
-```
-# Build artifacts
-build/
-CMakeCache.txt
-CMakeFiles/
-
-# Compiled files
-*.o
-*.obj
-*.bin
-*.out
-
-# Logs
-*.log
-```
+Nothing should be ignored since only source code files (.cpp and .h) are in the changes.
