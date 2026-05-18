@@ -182,7 +182,6 @@ private:
     bool m_dragging;              ///< Флаг активного перетаскивания.
     int m_dragStartY;             ///< Начальная позиция Y при перетаскивании.
     int m_startHeight;            ///< Начальная высота при перетаскивании.
-    bool m_initialPositioned;     ///< Флаг начального позиционирования шторки.
 };
 
 #endif // BOTTOMSHEET_H

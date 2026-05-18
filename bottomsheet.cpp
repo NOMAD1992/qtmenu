@@ -25,7 +25,6 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_dragging(false)
     , m_dragStartY(0)
     , m_startHeight(0)
-    , m_initialPositioned(false) // Флаг начального позиционирования
 {
     setAttribute(Qt::WA_StyledBackground, true);
     
@@ -43,16 +42,8 @@ BottomSheet::BottomSheet(QWidget *parent)
             // Получаем позицию fMenuBar относительно родителя
             m_menuBarY = menuBarFrame->y();
             qDebug() << "m_menuBarY" << m_menuBarY;
-            
-            // Проверяем видимость панели меню для правильного начального позиционирования
-            bool menuBarVisible = menuBarFrame->isVisible();
-            if (menuBarVisible) {
-                // Панель меню видима - шторка размещается над ней
-                move(0, parent->height() - m_menubarHeight - m_sheetHeight);
-            } else {
-                // Панель меню скрыта - шторка опускается в самый низ
-                move(0, parent->height() - m_sheetHeight);
-            }
+            // Панель меню видима - шторка размещается над ней
+            move(0, parent->height() - m_menubarHeight - m_sheetHeight);
         } else {
             // fMenuBar не найдена - позиционируем в самом низу
             move(0, parent->height() - m_sheetHeight);
@@ -162,19 +153,6 @@ bool BottomSheet::eventFilter(QObject *obj, QEvent *event)
         // Проверяем видимость панели меню для правильного позиционирования
         QFrame *menuBarFrame = parentWidget()->findChild<QFrame*>("fMenuBar");
         bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
-        
-        // Перепозиционируем шторку при изменении размера родителя - она должна быть над fMenuBar или в самом низу
-        // Пропускаем первое событие Resize при запуске, так как начальное позиционирование уже выполнено в конструкторе
-        if (m_initialPositioned) {
-            if (menuBarVisible) {
-                move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
-            } else {
-                move(0, parentWidget()->height() - m_sheetHeight);
-            }
-        } else {
-            // Первое событие Resize после конструктора - считаем что начальное позиционирование выполнено
-            m_initialPositioned = true;
-        }
     }
     return QWidget::eventFilter(obj, event);
 }
