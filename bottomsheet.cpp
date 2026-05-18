@@ -25,6 +25,7 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_dragging(false)
     , m_dragStartY(0)
     , m_startHeight(0)
+    , m_initialPositioned(false) // Флаг начального позиционирования
 {
     setAttribute(Qt::WA_StyledBackground, true);
     
@@ -163,10 +164,16 @@ bool BottomSheet::eventFilter(QObject *obj, QEvent *event)
         bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
         
         // Перепозиционируем шторку при изменении размера родителя - она должна быть над fMenuBar или в самом низу
-        if (menuBarVisible) {
-            move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
+        // Пропускаем первое событие Resize при запуске, так как начальное позиционирование уже выполнено в конструкторе
+        if (m_initialPositioned) {
+            if (menuBarVisible) {
+                move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
+            } else {
+                move(0, parentWidget()->height() - m_sheetHeight);
+            }
         } else {
-            move(0, parentWidget()->height() - m_sheetHeight);
+            // Первое событие Resize после конструктора - считаем что начальное позиционирование выполнено
+            m_initialPositioned = true;
         }
     }
     return QWidget::eventFilter(obj, event);
