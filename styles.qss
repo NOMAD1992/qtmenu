@@ -62,9 +62,29 @@ SlidingMenu QLabel {
     font-weight: bold;
 }
 
-/* Иконка в заголовке */
+/* Иконка в заголовке - больше не используется, оставлено для совместимости */
 SlidingMenu QLabel#iconLabel {
     background-color: transparent;
+}
+
+/* Кнопка пользовательского меню в заголовке */
+SlidingMenu QPushButton#userMenuButton {
+    min-width: 32px;
+    min-height: 32px;
+    max-width: 32px;
+    max-height: 32px;
+    padding: 0;
+    border: none;
+    background-color: transparent;
+}
+
+SlidingMenu QPushButton#userMenuButton:hover {
+    background-color: rgba(255, 255, 255, 30);
+    border-radius: 5px;
+}
+
+SlidingMenu QPushButton#userMenuButton:pressed {
+    background-color: rgba(255, 255, 255, 20);
 }
 
 /* Кнопки в меню */

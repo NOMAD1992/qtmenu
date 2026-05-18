@@ -115,6 +115,12 @@ public:
     QLabel *iconLabel() const { return m_iconLabel; }
     
     /**
+     * @brief Возвращает указатель на кнопку открытия пользовательского меню.
+     * @return Указатель на QPushButton для открытия UserMenu.
+     */
+    QPushButton *userMenuButton() const { return m_userMenuButton; }
+    
+    /**
      * @brief Возвращает указатель на кнопку закрытия.
      * @return Указатель на QPushButton закрытия.
      */
@@ -154,6 +160,11 @@ signals:
      * @param checked Новое состояние чекбокса.
      */
     void checkBoxToggled(bool checked);
+    
+    /**
+     * @brief Сигнал о нажатии на кнопку открытия пользовательского меню.
+     */
+    void userMenuRequested();
 
 protected:
     /**
@@ -246,6 +257,7 @@ private:
     
     // Элементы интерфейса
     QLabel *m_iconLabel;          ///< Метка для отображения иконки.
+    QPushButton *m_userMenuButton; ///< Кнопка для открытия пользовательского меню.
     QLabel *m_titleLabel;         ///< Метка для отображения заголовка.
     QPushButton *m_closeButton;   ///< Кнопка закрытия меню.
     QList<QPushButton*> m_buttons; ///< Список кнопок меню.

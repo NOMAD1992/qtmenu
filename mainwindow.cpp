@@ -146,8 +146,15 @@ void MainWindow::setupSlidingMenu()
     m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);
     m_slidingMenu->setTitle("Главное меню");
     
-    QPixmap icon(32, 32);
-    icon.fill(Qt::transparent);
+    // Настраиваем кнопку для открытия пользовательского меню
+    QPushButton *userMenuBtn = m_slidingMenu->userMenuButton();
+    if (userMenuBtn) {
+        userMenuBtn->setIcon(QIcon::fromTheme("user-available"));
+        userMenuBtn->setToolTip("Профиль пользователя");
+    }
+    
+    // Подключаем сигнал открытия пользовательского меню
+    connect(m_slidingMenu, &SlidingMenu::userMenuRequested, this, &MainWindow::toggleUserMenu);
     
     setupSlidingMenuItems();
 }
