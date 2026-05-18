@@ -1,1 +1,35 @@
-Nothing should be ignored since only source code files (.cpp and .h) were modified.
+```
+# Build artifacts
+build/
+cmake-build-*/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+Makefile
+cmake_install.cmake
+
+# Qt/MOC generated files
+*_autogen/
+
+# Compiled object files
+*.o
+*.obj
+*.d
+
+# Executables
+*.exe
+*.out
+
+# IDE specific
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+```

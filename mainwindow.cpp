@@ -390,10 +390,16 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 
 void MainWindow::toggleMenuBar()
 {
-    if (ui->fMenuBar->isVisible()) {
+    bool isVisible = ui->fMenuBar->isVisible();
+    if (isVisible) {
         ui->fMenuBar->hide();
     } else {
         ui->fMenuBar->show();
+    }
+    
+    // Обновляем позицию шторки в зависимости от видимости панели меню
+    if (m_bottomSheet) {
+        m_bottomSheet->updateForMenuBarVisibility(!isVisible);
     }
 }
 

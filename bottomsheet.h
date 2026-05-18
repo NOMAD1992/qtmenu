@@ -79,6 +79,12 @@ public:
      * @return Отступ в пикселях.
      */
     int topOffset() const { return m_topOffset; }
+    
+    /**
+     * @brief Обновляет позицию и размеры шторки при изменении видимости fMenuBar.
+     * @param menuBarVisible Видима ли панель меню.
+     */
+    void updateForMenuBarVisibility(bool menuBarVisible);
 
 protected:
     /**
