@@ -276,6 +276,7 @@ private:
     
     // Layout для контента
     QVBoxLayout *m_contentLayout; ///< Основной layout для содержимого меню.
+    QVBoxLayout *m_mainContentLayout; ///< Layout для основного контента (над пружиной).
     
     // Анимация
     QPropertyAnimation *m_animation; ///< Анимация свойства menuOffset.
