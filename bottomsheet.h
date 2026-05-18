@@ -68,6 +68,18 @@ public:
      */
     void setHandleText(const QString &text);
 
+    /**
+     * @brief Устанавливает отступ сверху для ограничения высоты шторки.
+     * @param offset Отступ в пикселях.
+     */
+    void setTopOffset(int offset);
+    
+    /**
+     * @brief Возвращает текущий отступ сверху.
+     * @return Отступ в пикселях.
+     */
+    int topOffset() const { return m_topOffset; }
+
 protected:
     /**
      * @brief Обработчик событий фильтрации объектов.
@@ -155,7 +167,8 @@ private:
     int m_sheetHeight;            ///< Текущая высота шторки.
     int m_minHeight;              ///< Минимальная высота шторки.
     int m_maxHeight;              ///< Максимальная высота шторки.
-    int m_menubarHeight;          ///< Высота верхней панели меню.
+    int m_menubarHeight;          ///< Высота панели меню (fMenuBar).
+    int m_topOffset;              ///< Отступ сверху для ограничения высоты шторки.
     int m_opacity;                ///< Прозрачность фона (0-255).
     
     // Для перетаскивания

@@ -19,6 +19,7 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_minHeight(35)   // Минимальная высота
     , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
     , m_menubarHeight(0) // Высота menubar будет определена динамически
+    , m_topOffset(5)     // Отступ сверху по умолчанию (как в запросе пользователя)
     , m_opacity(240)     // Прозрачность по умолчанию (200 из 255)
     , m_dragging(false)
     , m_dragStartY(0)
@@ -243,8 +244,8 @@ void BottomSheet::updateSheetHeight(int height)
 void BottomSheet::recalculateMaxHeight()
 {
     if (parentWidget()) {
-        // Максимальная высота = высота окна минус высота menubar минус небольшой отступ
-        int availableHeight = parentWidget()->height() - m_menubarHeight;
+        // Максимальная высота = высота окна минус высота menubar минус отступ сверху
+        int availableHeight = parentWidget()->height() - m_menubarHeight - m_topOffset;
         m_maxHeight = qMax(m_minHeight, availableHeight);
         
         // Если текущая высота больше новой максимальной, уменьшаем её
@@ -270,4 +271,10 @@ void BottomSheet::setHandleText(const QString &text)
     if (m_handleLabel) {
         m_handleLabel->setText(text);
     }
+}
+
+void BottomSheet::setTopOffset(int offset)
+{
+    m_topOffset = qMax(0, offset);  // Отступ не может быть отрицательным
+    recalculateMaxHeight();  // Пересчитываем максимальную высоту при изменении отступа
 }
