@@ -11,6 +11,7 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     , m_direction(direction)
     , m_menuWidth(menuWidth)
     , m_iconLabel(nullptr)
+    , m_userMenuButton(nullptr)
     , m_titleLabel(nullptr)
     , m_closeButton(nullptr)
     , m_checkBox(nullptr)
@@ -52,16 +53,18 @@ void SlidingMenu::setupUi()
     mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     
-    // Верхняя панель с иконкой и кнопкой закрытия
+    // Верхняя панель с кнопкой пользовательского меню и кнопкой закрытия
     QHBoxLayout *topLayout = new QHBoxLayout();
     topLayout->setContentsMargins(10, 10, 10, 10);
     topLayout->setSpacing(10);
     
-    // Иконка (слева вверху)
-    m_iconLabel = new QLabel(this);
-    m_iconLabel->setObjectName("iconLabel");
-    m_iconLabel->setFixedSize(32, 32);
-    topLayout->addWidget(m_iconLabel);
+    // Кнопка для открытия пользовательского меню (слева вверху)
+    m_userMenuButton = new QPushButton(this);
+    m_userMenuButton->setObjectName("userMenuButton");
+    m_userMenuButton->setFixedSize(32, 32);
+    m_userMenuButton->setCursor(Qt::PointingHandCursor);
+    connect(m_userMenuButton, &QPushButton::clicked, this, &SlidingMenu::userMenuRequested);
+    topLayout->addWidget(m_userMenuButton);
     
     // Заголовок
     m_titleLabel = new QLabel("Menu", this);
@@ -84,8 +87,8 @@ void SlidingMenu::setupUi()
     
     QWidget *contentWidget = new QWidget();
     m_contentLayout = new QVBoxLayout(contentWidget);
-    m_contentLayout->setContentsMargins(15, 10, 15, 10);
-    m_contentLayout->setSpacing(15);
+    m_contentLayout->setContentsMargins(0, 0, 0, 0);
+    m_contentLayout->setSpacing(0);
     
     // Разделитель после заголовка
     QFrame *separator1 = new QFrame(contentWidget);
@@ -242,9 +245,8 @@ void SlidingMenu::setTitle(const QString &title)
 
 void SlidingMenu::setIcon(const QPixmap &icon)
 {
-    if (m_iconLabel) {
-        m_iconLabel->setPixmap(icon.scaled(32, 32, Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    }
+    Q_UNUSED(icon);
+    // Иконка больше не используется, вместо неё кнопка пользовательского меню
 }
 
 void SlidingMenu::showMenu()
