@@ -329,8 +329,8 @@ bool SlidingMenu::eventFilter(QObject *obj, QEvent *event)
     // Обработка клика мыши для скрытия меню
     if (m_isVisible && event->type() == QEvent::MouseButtonPress) {
         QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-        // Преобразуем позицию события в глобальные координаты
-        QPoint globalPos = mouseEvent->globalPosition().toPoint();
+        // Получаем глобальные координаты клика
+        QPoint globalPos = mouseEvent->globalPos();
         
         // Проверяем, находится ли клик вне области меню
         if (!rect().contains(mapFromGlobal(globalPos))) {
