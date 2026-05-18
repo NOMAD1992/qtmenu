@@ -178,6 +178,23 @@ void BottomSheet::showEvent(QShowEvent *event)
     QWidget::showEvent(event);
     // Устанавливаем фокус на шторку при показе, чтобы она могла получать события клавиатуры
     setFocus();
+    
+    // При первом показе принудительно пересчитываем позицию и максимальную высоту
+    // Это нужно для корректного позиционирования при запуске приложения
+    if (parentWidget()) {
+        QFrame *menuBarFrame = parentWidget()->findChild<QFrame*>(m_menuBarObjectName);
+        bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
+        
+        if (menuBarVisible) {
+            m_menubarHeight = menuBarFrame->height();
+            m_menuBarY = menuBarFrame->y();
+            move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
+        } else {
+            move(0, parentWidget()->height() - m_sheetHeight);
+        }
+        
+        recalculateMaxHeight();
+    }
 }
 
 void BottomSheet::mousePressEvent(QMouseEvent *event)
