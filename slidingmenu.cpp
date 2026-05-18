@@ -99,6 +99,12 @@ void SlidingMenu::setupUi()
     
     m_contentLayout->addStretch();
     
+    // Кнопка "Завершение работы" внизу
+    QPushButton *exitButton = createButton("Завершение работы", QIcon::fromTheme("application-exit"), contentWidget);
+    exitButton->setObjectName("exitButton");
+    connect(exitButton, &QPushButton::clicked, this, &SlidingMenu::exitRequested);
+    m_contentLayout->addWidget(exitButton);
+    
     scrollArea->setWidget(contentWidget);
     mainLayout->addWidget(scrollArea, 1);
     

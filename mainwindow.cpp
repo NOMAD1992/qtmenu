@@ -152,6 +152,9 @@ void MainWindow::setupSlidingMenu()
     // Подключаем сигнал открытия пользовательского меню
     connect(m_slidingMenu, &SlidingMenu::userMenuRequested, this, &MainWindow::toggleUserMenu);
     
+    // Подключаем сигнал завершения работы
+    connect(m_slidingMenu, &SlidingMenu::exitRequested, this, &MainWindow::closeWindow);
+    
     setupSlidingMenuItems();
 }
 

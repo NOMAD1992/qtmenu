@@ -165,6 +165,11 @@ signals:
      * @brief Сигнал о нажатии на кнопку открытия пользовательского меню.
      */
     void userMenuRequested(const QPoint &point);
+    
+    /**
+     * @brief Сигнал о нажатии на кнопку завершения работы.
+     */
+    void exitRequested();
 
 protected:
     /**
