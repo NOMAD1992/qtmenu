@@ -87,8 +87,8 @@ void SlidingMenu::setupUi()
     
     QWidget *contentWidget = new QWidget();
     m_contentLayout = new QVBoxLayout(contentWidget);
-    m_contentLayout->setContentsMargins(15, 10, 15, 10);
-    m_contentLayout->setSpacing(15);
+    m_contentLayout->setContentsMargins(0, 0, 0, 0);
+    m_contentLayout->setSpacing(0);
     
     // Разделитель после заголовка
     QFrame *separator1 = new QFrame(contentWidget);
