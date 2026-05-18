@@ -42,11 +42,21 @@ BottomSheet::BottomSheet(QWidget *parent)
             // Получаем позицию fMenuBar относительно родителя
             m_menuBarY = menuBarFrame->y();
             qDebug() << "m_menuBarY" << m_menuBarY;
+            
+            // Проверяем видимость панели меню для правильного начального позиционирования
+            bool menuBarVisible = menuBarFrame->isVisible();
+            if (menuBarVisible) {
+                // Панель меню видима - шторка размещается над ней
+                move(0, parent->height() - m_menubarHeight - m_sheetHeight);
+            } else {
+                // Панель меню скрыта - шторка опускается в самый низ
+                move(0, parent->height() - m_sheetHeight);
+            }
+        } else {
+            // fMenuBar не найдена - позиционируем в самом низу
+            move(0, parent->height() - m_sheetHeight);
         }
         recalculateMaxHeight();
-        
-        // Позиционируем шторку внизу родителя, но выше fMenuBar
-        move(0, parent->height() - m_menubarHeight - m_sheetHeight);
     }
 }
 

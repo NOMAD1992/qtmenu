@@ -1,0 +1,29 @@
+{
+	"BUILD_DIR" : "/workspace/build/untitled_autogen",
+	"CMAKE_BINARY_DIR" : "/workspace/build",
+	"CMAKE_CURRENT_BINARY_DIR" : "/workspace/build",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/workspace",
+	"CMAKE_SOURCE_DIR" : "/workspace",
+	"INCLUDE_DIR" : "/workspace/build/untitled_autogen/include",
+	"INPUTS" : 
+	[
+		"/workspace/styles.qss",
+		"/workspace/img/documentation_v2.png",
+		"/workspace/img/user.jpg",
+		"/workspace/img/relogin.jpg",
+		"/workspace/img/documentation.png",
+		"/workspace/img/exit.png",
+		"/workspace/img/screen_resolution.png",
+		"/workspace/img/users.png"
+	],
+	"LOCK_FILE" : "/workspace/build/CMakeFiles/untitled_autogen.dir/AutoRcc_res_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "res" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_res.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt5/bin/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/workspace/build/CMakeFiles/untitled_autogen.dir/AutoRcc_res_EWIEGA46WW_Used.txt",
+	"SOURCE" : "/workspace/res.qrc",
+	"VERBOSITY" : 0
+}
