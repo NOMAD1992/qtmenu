@@ -58,7 +58,7 @@ private slots:
     /**
      * @brief Переключает видимость пользовательского меню.
      */
-    void toggleUserMenu();
+    void toggleUserMenu(const QPoint &point);
     
     /**
      * @brief Переключает режим безрамочного окна.

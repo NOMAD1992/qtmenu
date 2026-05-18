@@ -164,7 +164,7 @@ signals:
     /**
      * @brief Сигнал о нажатии на кнопку открытия пользовательского меню.
      */
-    void userMenuRequested();
+    void userMenuRequested(const QPoint &point);
 
 protected:
     /**
@@ -208,6 +208,10 @@ private slots:
      * @brief Слот обновления высоты меню.
      */
     void updateMenuHeight();
+    /**
+     * @brief Переключает видимость пользовательского меню.
+     */
+    void toggleUserMenu();
 
 private:
     /**

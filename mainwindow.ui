@@ -159,20 +159,8 @@
           <string/>
          </property>
          <property name="icon">
-          <iconset theme="system-help"/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pbUserMenu">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>24</width>
-           <height>24</height>
-          </size>
+          <iconset theme="system-help">
+           <normaloff>.</normaloff>.</iconset>
          </property>
         </widget>
        </item>

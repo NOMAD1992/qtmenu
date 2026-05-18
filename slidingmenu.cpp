@@ -63,7 +63,7 @@ void SlidingMenu::setupUi()
     m_userMenuButton->setObjectName("userMenuButton");
     m_userMenuButton->setFixedSize(32, 32);
     m_userMenuButton->setCursor(Qt::PointingHandCursor);
-    connect(m_userMenuButton, &QPushButton::clicked, this, &SlidingMenu::userMenuRequested);
+    connect(m_userMenuButton, &QPushButton::clicked, this, &SlidingMenu::toggleUserMenu);
     topLayout->addWidget(m_userMenuButton);
     
     // Заголовок
@@ -350,4 +350,12 @@ void SlidingMenu::updateMenuHeight()
     if (parentWidget()) {
         setFixedHeight(parentWidget()->height());
     }
+}
+
+void SlidingMenu::toggleUserMenu()
+{
+    // Вычисляем позицию: левый верхний угол меню должен быть там, где левый нижний угол кнопки
+    QPoint buttonBottomRight = m_userMenuButton->mapToGlobal(m_userMenuButton->rect().bottomLeft());
+
+    emit userMenuRequested(buttonBottomRight);
 }

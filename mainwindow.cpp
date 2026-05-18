@@ -132,11 +132,7 @@ void MainWindow::setupWindowControlButtons()
     ui->pbMenu->setToolTip("Открыть меню");
     ui->pbMenu->setCursor(Qt::PointingHandCursor);
     connect(ui->pbMenu, &QPushButton::clicked, this, &MainWindow::toggleMenu);
-    
-    ui->pbUserMenu->setToolTip("Профиль пользователя");
-    ui->pbUserMenu->setCursor(Qt::PointingHandCursor);
-    connect(ui->pbUserMenu, &QPushButton::clicked, this, &MainWindow::toggleUserMenu);
-    
+        
     m_standardIconsWidget = new StandardIconsWidget(this);
     ui->vlIcons->addWidget(m_standardIconsWidget);
 }
@@ -255,8 +251,6 @@ void MainWindow::setupResolutionMenu()
 
 void MainWindow::setupUserMenu()
 {
-    ui->pbUserMenu->setIcon(QIcon::fromTheme("user-available"));
-
     m_userMenu = new UserMenu(this, 180);
        
     QPushButton *usersBtn = m_userMenu->addButton("Пользователи", QIcon::fromTheme("system-users"));
@@ -321,15 +315,13 @@ void MainWindow::toggleMenu()
     }
 }
 
-void MainWindow::toggleUserMenu()
+void MainWindow::toggleUserMenu(const QPoint &point)
 {
     if (m_userMenu->isMenuVisible()) {
         m_userMenu->hideMenu();
     } else {
-        // Вычисляем позицию: правый верхний угол меню должен быть там, где правый нижний угол кнопки
-        QPoint buttonBottomRight = ui->pbUserMenu->mapToGlobal(ui->pbUserMenu->rect().bottomRight());
-        int menuX = buttonBottomRight.x() - m_userMenu->width();
-        int menuY = buttonBottomRight.y();
+        int menuX = point.x();
+        int menuY = point.y();
         
         m_userMenu->move(menuX, menuY);
         m_userMenu->showMenu();
