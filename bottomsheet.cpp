@@ -37,6 +37,7 @@ BottomSheet::BottomSheet(QWidget *parent)
         QFrame *menuBarFrame = parent->findChild<QFrame*>("fMenuBar");
         if (menuBarFrame) {
             m_menubarHeight = menuBarFrame->height();
+            qDebug() << "m_menubarHeight" << m_menubarHeight;
         }
         recalculateMaxHeight();
         
