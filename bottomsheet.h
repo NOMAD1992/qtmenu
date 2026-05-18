@@ -24,8 +24,9 @@ public:
     /**
      * @brief Конструктор нижней шторки.
      * @param parent Родительский виджет (по умолчанию nullptr).
+     * @param menuBarObjectName Имя объекта панели меню для поиска в родителе (по умолчанию "fMenuBar").
      */
-    explicit BottomSheet(QWidget *parent = nullptr);
+    explicit BottomSheet(QWidget *parent = nullptr, const QString &menuBarObjectName = "fMenuBar");
     
     /**
      * @brief Деструктор нижней шторки.
@@ -173,10 +174,11 @@ private:
     int m_sheetHeight;            ///< Текущая высота шторки.
     int m_minHeight;              ///< Минимальная высота шторки.
     int m_maxHeight;              ///< Максимальная высота шторки.
-    int m_menubarHeight;          ///< Высота панели меню (fMenuBar).
-    int m_menuBarY;               ///< Позиция Y панели меню (fMenuBar) относительно родителя.
+    int m_menubarHeight;          ///< Высота панели меню.
+    int m_menuBarY;               ///< Позиция Y панели меню относительно родителя.
     int m_topOffset;              ///< Отступ сверху для ограничения высоты шторки.
     int m_opacity;                ///< Прозрачность фона (0-255).
+    QString m_menuBarObjectName;  ///< Имя объекта панели меню для поиска в родителе.
     
     // Для перетаскивания
     bool m_dragging;              ///< Флаг активного перетаскивания.
