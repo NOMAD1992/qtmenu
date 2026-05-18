@@ -104,7 +104,7 @@ void SlidingMenu::setupUi()
     mainContentLayout->setSpacing(0);
     QWidget *mainContentWidget = new QWidget(contentWidget);
     mainContentWidget->setLayout(mainContentLayout);
-    m_contentLayout->addWidget(mainContentWidget, 1);
+    m_contentLayout->addWidget(mainContentWidget);
     
     // Пружинка, которая прижмёт кнопку "Завершение работы" к низу
     m_contentLayout->addStretch();
