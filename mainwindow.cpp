@@ -382,7 +382,19 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_F12) {
         framelessCheckBox_->setChecked(!framelessCheckBox_->isChecked());
     }
+    if (event->key() == Qt::Key_F11) {
+        toggleMenuBar();
+    }
     QMainWindow::keyPressEvent(event);
+}
+
+void MainWindow::toggleMenuBar()
+{
+    if (ui->fMenuBar->isVisible()) {
+        ui->fMenuBar->hide();
+    } else {
+        ui->fMenuBar->show();
+    }
 }
 
 void MainWindow::showTestToast()

@@ -49,6 +49,12 @@ protected:
      */
     void keyPressEvent(QKeyEvent *event) override;
 
+private:
+    /**
+     * @brief Переключает видимость панели меню fMenuBar.
+     */
+    void toggleMenuBar();
+
 private slots:
     /**
      * @brief Переключает видимость выдвижного меню.
