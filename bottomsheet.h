@@ -79,6 +79,12 @@ public:
      * @return Отступ в пикселях.
      */
     int topOffset() const { return m_topOffset; }
+    
+    /**
+     * @brief Обновляет позицию и размеры шторки при изменении видимости fMenuBar.
+     * @param menuBarVisible Видима ли панель меню.
+     */
+    void updateForMenuBarVisibility(bool menuBarVisible);
 
 protected:
     /**
@@ -168,6 +174,7 @@ private:
     int m_minHeight;              ///< Минимальная высота шторки.
     int m_maxHeight;              ///< Максимальная высота шторки.
     int m_menubarHeight;          ///< Высота панели меню (fMenuBar).
+    int m_menuBarY;               ///< Позиция Y панели меню (fMenuBar) относительно родителя.
     int m_topOffset;              ///< Отступ сверху для ограничения высоты шторки.
     int m_opacity;                ///< Прозрачность фона (0-255).
     

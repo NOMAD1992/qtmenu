@@ -382,7 +382,25 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     if (event->key() == Qt::Key_F12) {
         framelessCheckBox_->setChecked(!framelessCheckBox_->isChecked());
     }
+    if (event->key() == Qt::Key_F11) {
+        toggleMenuBar();
+    }
     QMainWindow::keyPressEvent(event);
+}
+
+void MainWindow::toggleMenuBar()
+{
+    bool isVisible = ui->fMenuBar->isVisible();
+    if (isVisible) {
+        ui->fMenuBar->hide();
+    } else {
+        ui->fMenuBar->show();
+    }
+    
+    // Обновляем позицию шторки в зависимости от видимости панели меню
+    if (m_bottomSheet) {
+        m_bottomSheet->updateForMenuBarVisibility(!isVisible);
+    }
 }
 
 void MainWindow::showTestToast()

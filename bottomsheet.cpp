@@ -19,6 +19,7 @@ BottomSheet::BottomSheet(QWidget *parent)
     , m_minHeight(35)   // Минимальная высота
     , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
     , m_menubarHeight(0) // Высота menubar будет определена динамически
+    , m_menuBarY(0)      // Позиция Y панели меню (fMenuBar) относительно родителя
     , m_topOffset(5)     // Отступ сверху по умолчанию (как в запросе пользователя)
     , m_opacity(240)     // Прозрачность по умолчанию (200 из 255)
     , m_dragging(false)
@@ -38,11 +39,16 @@ BottomSheet::BottomSheet(QWidget *parent)
         if (menuBarFrame) {
             m_menubarHeight = menuBarFrame->height();
             qDebug() << "m_menubarHeight" << m_menubarHeight;
+            // Получаем позицию fMenuBar относительно родителя
+            m_menuBarY = menuBarFrame->y();
+            qDebug() << "m_menuBarY" << m_menuBarY;
+            // Панель меню видима - шторка размещается над ней
+            move(0, parent->height() - m_menubarHeight - m_sheetHeight);
+        } else {
+            // fMenuBar не найдена - позиционируем в самом низу
+            move(0, parent->height() - m_sheetHeight);
         }
         recalculateMaxHeight();
-        
-        // Позиционируем шторку внизу родителя
-        move(0, parent->height() - m_sheetHeight);
     }
 }
 
@@ -143,8 +149,10 @@ bool BottomSheet::eventFilter(QObject *obj, QEvent *event)
         updateSheetWidth();
         // Пересчитываем максимальную высоту при изменении размера окна
         recalculateMaxHeight();
-        // Перепозиционируем шторку при изменении размера родителя
-        move(0, parentWidget()->height() - m_sheetHeight);
+        
+        // Проверяем видимость панели меню для правильного позиционирования
+        QFrame *menuBarFrame = parentWidget()->findChild<QFrame*>("fMenuBar");
+        bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
     }
     return QWidget::eventFilter(obj, event);
 }
@@ -236,17 +244,33 @@ void BottomSheet::updateSheetHeight(int height)
     m_sheetHeight = height;
     setFixedHeight(m_sheetHeight);
     
-    // Перепозиционируем шторку, чтобы она оставалась прижатой к низу
+    // Перепозиционируем шторку, чтобы она оставалась над fMenuBar или в самом низу
     if (parentWidget()) {
-        move(x(), parentWidget()->height() - m_sheetHeight);
+        QFrame *menuBarFrame = parentWidget()->findChild<QFrame*>("fMenuBar");
+        bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
+        
+        if (menuBarVisible) {
+            move(x(), parentWidget()->height() - m_menubarHeight - m_sheetHeight);
+        } else {
+            move(x(), parentWidget()->height() - m_sheetHeight);
+        }
     }
 }
 
 void BottomSheet::recalculateMaxHeight()
 {
     if (parentWidget()) {
-        // Максимальная высота = высота окна минус высота menubar минус отступ сверху
-        int availableHeight = parentWidget()->height() - m_menubarHeight - m_topOffset;
+        // Проверяем, видима ли панель меню
+        QFrame *menuBarFrame = parentWidget()->findChild<QFrame*>("fMenuBar");
+        bool menuBarVisible = menuBarFrame && menuBarFrame->isVisible();
+        
+        // Максимальная высота = высота окна минус высота menubar (если видима) минус отступ сверху
+        int availableHeight = parentWidget()->height();
+        if (menuBarVisible && m_menubarHeight > 0) {
+            availableHeight -= m_menubarHeight;
+        }
+        availableHeight -= m_topOffset;
+        
         m_maxHeight = qMax(m_minHeight, availableHeight);
         
         // Если текущая высота больше новой максимальной, уменьшаем её
@@ -278,4 +302,21 @@ void BottomSheet::setTopOffset(int offset)
 {
     m_topOffset = qMax(0, offset);  // Отступ не может быть отрицательным
     recalculateMaxHeight();  // Пересчитываем максимальную высоту при изменении отступа
+}
+
+void BottomSheet::updateForMenuBarVisibility(bool menuBarVisible)
+{
+    if (!parentWidget()) return;
+    
+    if (menuBarVisible) {
+        // Панель меню видима - шторка размещается над ней
+        m_menubarHeight = m_menubarHeight > 0 ? m_menubarHeight : 35; // Используем сохранённую высоту или дефолтную
+        move(0, parentWidget()->height() - m_menubarHeight - m_sheetHeight);
+    } else {
+        // Панель меню скрыта - шторка опускается в самый низ
+        move(0, parentWidget()->height() - m_sheetHeight);
+    }
+    
+    // Пересчитываем максимальную высоту с учётом видимости панели меню
+    recalculateMaxHeight();
 }
