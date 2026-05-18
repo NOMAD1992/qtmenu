@@ -6,6 +6,7 @@
 #include <QShowEvent>
 #include <QHideEvent>
 #include <QMouseEvent>
+#include <QKeyEvent>
 // ◁
 SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidth)
     : QWidget(parent)
@@ -335,6 +336,15 @@ bool SlidingMenu::eventFilter(QObject *obj, QEvent *event)
         // Проверяем, находится ли клик вне области меню
         if (!rect().contains(mapFromGlobal(globalPos))) {
             hideMenu();
+        }
+    }
+    
+    // Обработка нажатия клавиши ESC для скрытия меню
+    if (m_isVisible && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+        if (keyEvent->key() == Qt::Key_Escape) {
+            hideMenu();
+            return true; // Обрабатываем событие, чтобы оно не передавалось дальше
         }
     }
     
