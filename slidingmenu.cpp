@@ -5,6 +5,7 @@
 #include <QResizeEvent>
 #include <QShowEvent>
 #include <QHideEvent>
+#include <QMouseEvent>
 // ◁
 SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidth)
     : QWidget(parent)
@@ -324,6 +325,19 @@ bool SlidingMenu::eventFilter(QObject *obj, QEvent *event)
     if (obj == parentWidget() && event->type() == QEvent::Resize) {
         updateMenuHeight();
     }
+    
+    // Обработка клика мыши для скрытия меню
+    if (m_isVisible && event->type() == QEvent::MouseButtonPress) {
+        QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+        // Преобразуем позицию события в глобальные координаты
+        QPoint globalPos = mouseEvent->globalPosition().toPoint();
+        
+        // Проверяем, находится ли клик вне области меню
+        if (!rect().contains(mapFromGlobal(globalPos))) {
+            hideMenu();
+        }
+    }
+    
     return QWidget::eventFilter(obj, event);
 }
 
