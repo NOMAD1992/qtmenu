@@ -15,8 +15,8 @@ BottomSheet::BottomSheet(QWidget *parent, const QString &menuBarObjectName)
     , m_listView(nullptr)
     , m_mainLayout(nullptr)
     , m_isVisible(true)  // Шторка всегда открыта по умолчанию
-    , m_sheetHeight(200)
-    , m_minHeight(35)   // Минимальная высота
+    , m_sheetHeight(120)
+    , m_minHeight(120)   // Минимальная высота
     , m_maxHeight(400)   // Максимальная высота (будет пересчитана)
     , m_menubarHeight(0) // Высота menubar будет определена динамически
     , m_menuBarY(0)      // Позиция Y панели меню относительно родителя
