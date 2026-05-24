@@ -139,8 +139,8 @@ void MainWindow::setupWindowControlButtons()
 
 void MainWindow::setupSlidingMenu()
 {
-    m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 300);
-    m_slidingMenu->setTitle("Главное меню");
+    m_slidingMenu = new SlidingMenu(this, SlidingMenu::SlideDirection::FromLeft, 250);
+    m_slidingMenu->setTitle("Администратор");
     
     // Настраиваем кнопку для открытия пользовательского меню
     QPushButton *userMenuBtn = m_slidingMenu->userMenuButton();
@@ -151,6 +151,9 @@ void MainWindow::setupSlidingMenu()
     
     // Подключаем сигнал открытия пользовательского меню
     connect(m_slidingMenu, &SlidingMenu::userMenuRequested, this, &MainWindow::toggleUserMenu);
+    
+    // Подключаем сигнал завершения работы
+    connect(m_slidingMenu, &SlidingMenu::exitRequested, this, &MainWindow::closeWindow);
     
     setupSlidingMenuItems();
 }
@@ -264,11 +267,6 @@ void MainWindow::setupUserMenu()
     connect(reloginBtn, &QPushButton::clicked, []() {
         qDebug() << "User relogin";
     });
-    
-    m_userMenu->addSplitter();
-    
-    QPushButton *exitBtn = m_userMenu->addButton("Выход", QIcon::fromTheme("application-exit"));
-    connect(exitBtn, &QPushButton::clicked, this, &MainWindow::closeWindow);
 }
 
 void MainWindow::setupBottomSheet()

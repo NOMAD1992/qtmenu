@@ -165,6 +165,11 @@ signals:
      * @brief Сигнал о нажатии на кнопку открытия пользовательского меню.
      */
     void userMenuRequested(const QPoint &point);
+    
+    /**
+     * @brief Сигнал о нажатии на кнопку завершения работы.
+     */
+    void exitRequested();
 
 protected:
     /**
@@ -271,6 +276,7 @@ private:
     
     // Layout для контента
     QVBoxLayout *m_contentLayout; ///< Основной layout для содержимого меню.
+    QVBoxLayout *m_mainContentLayout; ///< Layout для основного контента (над пружиной).
     
     // Анимация
     QPropertyAnimation *m_animation; ///< Анимация свойства menuOffset.

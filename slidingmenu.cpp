@@ -20,6 +20,7 @@ SlidingMenu::SlidingMenu(QWidget *parent, SlideDirection direction, int menuWidt
     , m_menu(nullptr)
     , m_separator(nullptr)
     , m_contentLayout(nullptr)
+    , m_mainContentLayout(nullptr)
     , m_animation(nullptr)
     , m_isVisible(false)
 {
@@ -97,7 +98,25 @@ void SlidingMenu::setupUi()
     separator1->setFrameShape(QFrame::HLine);
     m_contentLayout->addWidget(separator1);
     
+    // Контейнер для основного контента с пружиной
+    QVBoxLayout *mainContentLayout = new QVBoxLayout();
+    mainContentLayout->setContentsMargins(0, 0, 0, 0);
+    mainContentLayout->setSpacing(0);
+    QWidget *mainContentWidget = new QWidget(contentWidget);
+    mainContentWidget->setLayout(mainContentLayout);
+    m_contentLayout->addWidget(mainContentWidget);
+    
+    // Пружинка, которая прижмёт кнопку "Завершение работы" к низу
     m_contentLayout->addStretch();
+    
+    // Кнопка "Завершение работы" внизу
+    QPushButton *exitButton = createButton("Завершение работы...", QIcon::fromTheme("application-exit"), contentWidget);
+    exitButton->setObjectName("exitButton");
+    connect(exitButton, &QPushButton::clicked, this, &SlidingMenu::exitRequested);
+    m_contentLayout->addWidget(exitButton);
+    
+    // Сохраняем указатель на layout для добавления кнопок
+    m_mainContentLayout = mainContentLayout;
     
     scrollArea->setWidget(contentWidget);
     mainLayout->addWidget(scrollArea, 1);
@@ -134,63 +153,38 @@ QPushButton* SlidingMenu::createButton(const QString &text, const QIcon &icon, Q
 
 QPushButton* SlidingMenu::addButton(const QString &text, const QIcon &icon)
 {
-    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
-    if (!contentWidget || !m_contentLayout) return nullptr;
+    if (!m_mainContentLayout) return nullptr;
     
-    // Удаляем stretch если есть (перед добавлением нового элемента)
-    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
-    if (lastItem && lastItem->spacerItem()) {
-        m_contentLayout->removeItem(lastItem);
-        delete lastItem;
-    }
-    
-    QPushButton *btn = createButton(text, icon, contentWidget);
-    m_contentLayout->addWidget(btn);
+    QPushButton *btn = createButton(text, icon, findChild<QScrollArea*>()->widget());
+    m_mainContentLayout->addWidget(btn);
     m_buttons.append(btn);
-    
-    m_contentLayout->addStretch();
     
     return btn;
 }
 
 QCheckBox* SlidingMenu::addCheckBox(const QString &text)
 {
-    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
-    if (!contentWidget || !m_contentLayout) return nullptr;
+    if (!m_mainContentLayout) return nullptr;
     
-    // Удаляем stretch если есть
-    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
-    if (lastItem && lastItem->spacerItem()) {
-        m_contentLayout->removeItem(lastItem);
-        delete lastItem;
-    }
-    
-    m_checkBox = new QCheckBox(text, contentWidget);
+    m_checkBox = new QCheckBox(findChild<QScrollArea*>()->widget());
+    m_checkBox->setText(text);
     m_checkBox->setCursor(Qt::PointingHandCursor);
     connect(m_checkBox, &QCheckBox::toggled, this, &SlidingMenu::checkBoxToggled);
-    m_contentLayout->addWidget(m_checkBox);
-    
-    m_contentLayout->addStretch();
+    m_mainContentLayout->addWidget(m_checkBox);
     
     return m_checkBox;
 }
 
 QMenu* SlidingMenu::addMenu(const QString &title, const QIcon &icon)
 {
-    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
-    if (!contentWidget || !m_contentLayout) return nullptr;
+    if (!m_mainContentLayout) return nullptr;
     
-    // Удаляем stretch если есть
-    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
-    if (lastItem && lastItem->spacerItem()) {
-        m_contentLayout->removeItem(lastItem);
-        delete lastItem;
-    }
+    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
     
     // Разделитель перед меню
     QFrame *separator2 = new QFrame(contentWidget);
     separator2->setFrameShape(QFrame::HLine);
-    m_contentLayout->addWidget(separator2);
+    m_mainContentLayout->addWidget(separator2);
     m_separator = separator2;
     
     // QMenu с возможностью создания подменю
@@ -202,30 +196,20 @@ QMenu* SlidingMenu::addMenu(const QString &title, const QIcon &icon)
     connect(menuButton, &QPushButton::clicked, [menu, menuButton]() {
         menu->exec(menuButton->mapToGlobal(QPoint(menuButton->width(), 0)));
     });
-    m_contentLayout->addWidget(menuButton);
-    
-    m_contentLayout->addStretch();
+    m_mainContentLayout->addWidget(menuButton);
     
     return menu;
 }
 
 void SlidingMenu::addSplitter()
 {
-    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
-    if (!contentWidget || !m_contentLayout) return;
+    if (!m_mainContentLayout) return;
     
-    // Удаляем stretch если есть
-    QLayoutItem *lastItem = m_contentLayout->itemAt(m_contentLayout->count() - 1);
-    if (lastItem && lastItem->spacerItem()) {
-        m_contentLayout->removeItem(lastItem);
-        delete lastItem;
-    }
+    QWidget *contentWidget = findChild<QScrollArea*>()->widget();
     
     QFrame *separator = new QFrame(contentWidget);
     separator->setFrameShape(QFrame::HLine);
-    m_contentLayout->addWidget(separator);
-    
-    m_contentLayout->addStretch();
+    m_mainContentLayout->addWidget(separator);
 }
 
 int SlidingMenu::menuOffset() const
